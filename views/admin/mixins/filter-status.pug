@@ -1,0 +1,6 @@
+mixin filter-status(filterStatus)
+  .col-md-3.mb-2.mb-md-0
+    select.form-control.admin-select#filterStatus
+      if filterStatus.length > 0
+        each item in filterStatus
+          option(value=item.status selected=(item.class == "active"))= item.name

@@ -1,0 +1,7 @@
+mixin sort(sortOptions)
+  .col-md-3.mb-2.mb-md-0
+    select.form-control.admin-select#sortSelect
+      option(value="") Sắp xếp theo
+      if sortOptions.length > 0
+        each item in sortOptions
+          option(value=item.value)= item.label

@@ -1,4 +1,7 @@
 extends ../../layouts/default.pug
+include ../../mixins/search.pug
+include ../../mixins/filter-status.pug
+include ../../mixins/sort.pug
 
 block main
   .admin-page-header.d-flex.justify-content-between.align-items-center.flex-wrap
@@ -12,21 +15,9 @@ block main
   //- Filter bar
   .admin-filter-bar.mb-4
     .row.align-items-center
-      .col-md-4.mb-2.mb-md-0
-        .admin-search-box
-          i.fas.fa-search
-          input.form-control#searchKeyword(type="text" placeholder="Tìm kiếm sản phẩm..." value=keyword)
-      .col-md-3.mb-2.mb-md-0
-        select.form-control.admin-select#filterStatus
-          if filterStatus.length > 0
-            each item in filterStatus
-              option(value=item.status selected=(item.class == "active"))= item.name
-      .col-md-3.mb-2.mb-md-0
-        select.form-control.admin-select#sortSelect
-          option(value="") Sắp xếp theo
-          if sortOptions.length > 0
-            each item in sortOptions
-              option(value=item.value)= item.label
+      +search(keyword)
+      +filter-status(filterStatus)
+      +sort(sortOptions)
       .col-md-2
         .d-flex.gap-2
           button.btn.btn-batch-action(type="button" title="Thay đổi trạng thái")
