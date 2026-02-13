@@ -1,0 +1,97 @@
+extends ../../layouts/default.pug
+
+block main
+  .admin-page-header.d-flex.justify-content-between.align-items-center.flex-wrap
+    div
+      h1.admin-page-title Danh sách sản phẩm
+      p.admin-page-subtitle Quản lý tất cả sản phẩm trong hệ thống
+    a.btn.btn-add-product(href=`${prefixAdmin}/products/create`)
+      i.fas.fa-plus.mr-2
+      | Thêm sản phẩm
+
+  //- Filter bar
+  .admin-filter-bar.mb-4
+    .row.align-items-center
+      .col-md-4.mb-2.mb-md-0
+        .admin-search-box
+          i.fas.fa-search
+          input.form-control(type="text" placeholder="Tìm kiếm sản phẩm...")
+      .col-md-3.mb-2.mb-md-0
+        select.form-control.admin-select
+          option(value="") Tất cả trạng thái
+          option(value="active") Hoạt động
+          option(value="inactive") Dừng hoạt động
+      .col-md-3.mb-2.mb-md-0
+        select.form-control.admin-select
+          option(value="") Sắp xếp theo
+          option(value="position-desc") Vị trí giảm dần
+          option(value="position-asc") Vị trí tăng dần
+          option(value="price-desc") Giá giảm dần
+          option(value="price-asc") Giá tăng dần
+      .col-md-2
+        .d-flex.gap-2
+          button.btn.btn-batch-action(type="button" title="Thay đổi trạng thái")
+            i.fas.fa-exchange-alt
+
+  //- Products Table
+  .admin-table-wrapper
+    if products && products.length > 0
+      table.admin-table
+        thead
+          tr
+            th.col-check
+              input.form-check-input(type="checkbox" id="checkAll")
+            th.col-stt STT
+            th.col-img Hình ảnh
+            th.col-title Tên sản phẩm
+            th.col-price Giá
+            th.col-stock Số lượng
+            th.col-status Trạng thái
+            th.col-actions Hành động
+        tbody
+          each product, index in products
+            tr.animate-in
+              td.col-check
+                input.form-check-input(type="checkbox" value=product._id)
+              td.col-stt= index + 1
+              td.col-img
+                if product.thumbnail
+                  img.product-thumb(src=product.thumbnail alt=product.title)
+                else
+                  .product-thumb-placeholder
+                    i.fas.fa-image
+              td.col-title
+                .product-title-cell
+                  span.product-name= product.title
+                  if product.discountPercentage > 0
+                    span.discount-tag= `-${product.discountPercentage}%`
+              td.col-price
+                if product.discountPercentage > 0
+                  .price-group
+                    span.price-new= `${(product.price * (1 - product.discountPercentage / 100)).toLocaleString()}đ`
+                    span.price-old= `${product.price.toLocaleString()}đ`
+                else
+                  span.price-new= `${product.price.toLocaleString()}đ`
+              td.col-stock
+                span.stock-badge(class=product.stock > 0 ? "in-stock" : "out-stock")= product.stock
+              td.col-status
+                if product.status === "active"
+                  span.status-badge.status-active Hoạt động
+                else
+                  span.status-badge.status-inactive Dừng hoạt động
+              td.col-actions
+                .action-buttons
+                  a.btn-action.btn-edit(href=`${prefixAdmin}/products/edit/${product._id}` title="Sửa")
+                    i.fas.fa-pen
+                  a.btn-action.btn-detail(href=`${prefixAdmin}/products/detail/${product._id}` title="Chi tiết")
+                    i.fas.fa-eye
+                  button.btn-action.btn-delete(type="button" title="Xoá" data-id=product._id)
+                    i.fas.fa-trash-alt
+    else
+      .admin-empty-state
+        i.fas.fa-box-open
+        h4 Chưa có sản phẩm nào
+        p Bắt đầu thêm sản phẩm đầu tiên cho cửa hàng của bạn
+        a.btn.btn-add-product(href=`${prefixAdmin}/products/create`)
+          i.fas.fa-plus.mr-2
+          | Thêm sản phẩm

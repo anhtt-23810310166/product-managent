@@ -1,0 +1,15 @@
+header.admin-header
+  .admin-header-left
+    button.sider-toggle-btn#siderToggle(type="button")
+      i.fas.fa-bars
+    .admin-breadcrumb
+      | Admin &rsaquo;&nbsp;
+      span= pageTitle || "Dashboard"
+
+  .admin-header-right
+    button.btn-icon(type="button" title="Thông báo")
+      i.fas.fa-bell
+      span.notification-dot
+    button.btn-icon(type="button" title="Tin nhắn")
+      i.fas.fa-envelope
+    .admin-avatar(title="Admin") A

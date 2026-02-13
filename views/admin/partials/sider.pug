@@ -1,0 +1,41 @@
+aside.admin-sider#adminSider
+  .admin-sider-brand
+    img(src="/images/logo.svg" alt="Logo")
+    span Admin Panel
+
+  nav.admin-sider-nav
+    .sider-menu-label Menu chính
+    ul.list-unstyled.mb-0
+      li.sider-menu-item
+        a.sider-menu-link(href=`${prefixAdmin}/dashboard` class=(currentPage === "dashboard" ? "active" : ""))
+          i.fas.fa-th-large
+          span Dashboard
+
+      li.sider-menu-item
+        a.sider-menu-link(href=`${prefixAdmin}/products` class=(currentPage === "products" ? "active" : ""))
+          i.fas.fa-box
+          span Sản phẩm
+
+      li.sider-menu-item
+        a.sider-menu-link(href=`${prefixAdmin}/product-category` class=(currentPage === "product-category" ? "active" : ""))
+          i.fas.fa-tags
+          span Danh mục
+
+    .sider-menu-label Hệ thống
+    ul.list-unstyled.mb-0
+      li.sider-menu-item
+        a.sider-menu-link(href=`${prefixAdmin}/roles` class=(currentPage === "roles" ? "active" : ""))
+          i.fas.fa-user-shield
+          span Phân quyền
+
+      li.sider-menu-item
+        a.sider-menu-link(href=`${prefixAdmin}/accounts` class=(currentPage === "accounts" ? "active" : ""))
+          i.fas.fa-users
+          span Tài khoản
+
+      li.sider-menu-item
+        a.sider-menu-link(href=`${prefixAdmin}/settings` class=(currentPage === "settings" ? "active" : ""))
+          i.fas.fa-cog
+          span Cài đặt
+
+

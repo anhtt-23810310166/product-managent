@@ -1,0 +1,32 @@
+extends ../../layouts/default.pug
+
+block main
+  .admin-page-header
+    h1.admin-page-title Dashboard
+    p.admin-page-subtitle Tổng quan hệ thống quản lý sản phẩm
+
+  .row
+    .col-lg-3.col-md-6.mb-4
+      .stat-card.card-primary.animate-in
+        .stat-card-icon
+          i.fas.fa-box
+        .stat-card-value 128
+        .stat-card-label Sản phẩm
+    .col-lg-3.col-md-6.mb-4
+      .stat-card.card-success.animate-in
+        .stat-card-icon
+          i.fas.fa-tags
+        .stat-card-value 12
+        .stat-card-label Danh mục
+    .col-lg-3.col-md-6.mb-4
+      .stat-card.card-warning.animate-in
+        .stat-card-icon
+          i.fas.fa-users
+        .stat-card-value 5
+        .stat-card-label Tài khoản
+    .col-lg-3.col-md-6.mb-4
+      .stat-card.card-danger.animate-in
+        .stat-card-icon
+          i.fas.fa-shopping-cart
+        .stat-card-value 64
+        .stat-card-label Đơn hàng
