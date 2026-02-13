@@ -37,3 +37,74 @@
     }
   });
 })();
+
+// Filter by Status
+(function () {
+  const filterStatus = document.getElementById("filterStatus");
+  if (!filterStatus) return;
+
+  // Restore selected value from URL
+  const url = new URL(window.location.href);
+  const currentStatus = url.searchParams.get("status") || "";
+  filterStatus.value = currentStatus;
+
+  // On change, update URL and reload
+  filterStatus.addEventListener("change", function () {
+    const value = this.value;
+    if (value) {
+      url.searchParams.set("status", value);
+    } else {
+      url.searchParams.delete("status");
+    }
+    window.location.href = url.href;
+  });
+})();
+
+// Search by Keyword
+(function () {
+  const searchInput = document.getElementById("searchKeyword");
+  if (!searchInput) return;
+
+  const url = new URL(window.location.href);
+  const currentKeyword = url.searchParams.get("keyword") || "";
+  searchInput.value = currentKeyword;
+
+  // Search on Enter key
+  searchInput.addEventListener("keyup", function (e) {
+    if (e.key === "Enter") {
+      const value = this.value.trim();
+      if (value) {
+        url.searchParams.set("keyword", value);
+      } else {
+        url.searchParams.delete("keyword");
+      }
+      window.location.href = url.href;
+    }
+  });
+})();
+
+// Sort Products
+(function () {
+  const sortSelect = document.getElementById("sortSelect");
+  if (!sortSelect) return;
+
+  const url = new URL(window.location.href);
+  const currentSortKey = url.searchParams.get("sortKey") || "";
+  const currentSortValue = url.searchParams.get("sortValue") || "";
+  if (currentSortKey && currentSortValue) {
+    sortSelect.value = currentSortKey + "-" + currentSortValue;
+  }
+
+  sortSelect.addEventListener("change", function () {
+    const value = this.value;
+    if (value) {
+      const [sortKey, sortValue] = value.split("-");
+      url.searchParams.set("sortKey", sortKey);
+      url.searchParams.set("sortValue", sortValue);
+    } else {
+      url.searchParams.delete("sortKey");
+      url.searchParams.delete("sortValue");
+    }
+    window.location.href = url.href;
+  });
+})();

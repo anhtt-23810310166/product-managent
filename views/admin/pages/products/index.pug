@@ -15,14 +15,14 @@ block main
       .col-md-4.mb-2.mb-md-0
         .admin-search-box
           i.fas.fa-search
-          input.form-control(type="text" placeholder="Tìm kiếm sản phẩm...")
+          input.form-control#searchKeyword(type="text" placeholder="Tìm kiếm sản phẩm...")
       .col-md-3.mb-2.mb-md-0
-        select.form-control.admin-select
+        select.form-control.admin-select#filterStatus
           option(value="") Tất cả trạng thái
           option(value="active") Hoạt động
           option(value="inactive") Dừng hoạt động
       .col-md-3.mb-2.mb-md-0
-        select.form-control.admin-select
+        select.form-control.admin-select#sortSelect
           option(value="") Sắp xếp theo
           option(value="position-desc") Vị trí giảm dần
           option(value="position-asc") Vị trí tăng dần
