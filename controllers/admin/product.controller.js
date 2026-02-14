@@ -63,3 +63,46 @@ module.exports.changeStatus = async (req, res) => {
         });
     }
 }
+
+// [PATCH] /admin/products/change-multi
+module.exports.changeMulti = async (req, res) => {
+    try {
+        const { ids, type } = req.body;
+
+        switch (type) {
+            case "active":
+                await Product.updateMany(
+                    { _id: { $in: ids } },
+                    { status: "active" }
+                );
+                break;
+            case "inactive":
+                await Product.updateMany(
+                    { _id: { $in: ids } },
+                    { status: "inactive" }
+                );
+                break;
+            case "delete":
+                await Product.updateMany(
+                    { _id: { $in: ids } },
+                    { deleted: true }
+                );
+                break;
+            default:
+                return res.json({
+                    code: 400,
+                    message: "Hành động không hợp lệ!"
+                });
+        }
+
+        res.json({
+            code: 200,
+            message: "Cập nhật thành công!"
+        });
+    } catch (error) {
+        res.json({
+            code: 400,
+            message: "Có lỗi xảy ra!"
+        });
+    }
+}
