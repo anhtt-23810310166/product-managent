@@ -2,6 +2,7 @@ extends ../../layouts/default.pug
 include ../../mixins/search.pug
 include ../../mixins/filter-status.pug
 include ../../mixins/sort.pug
+include ../../mixins/pagination.pug
 
 block main
   .admin-page-header.d-flex.justify-content-between.align-items-center.flex-wrap
@@ -43,7 +44,7 @@ block main
             tr.animate-in
               td.col-check
                 input.form-check-input(type="checkbox" value=product._id)
-              td.col-stt= index + 1
+              td.col-stt= pagination.skip + index + 1
               td.col-img
                 if product.thumbnail
                   img.product-thumb(src=product.thumbnail alt=product.title)
@@ -66,9 +67,9 @@ block main
                 span.stock-badge(class=product.stock > 0 ? "in-stock" : "out-stock")= product.stock
               td.col-status
                 if product.status === "active"
-                  span.status-badge.status-active Hoạt động
+                  span.status-badge.status-active.btn-change-status(data-id=product._id data-status="active" style="cursor: pointer;") Hoạt động
                 else
-                  span.status-badge.status-inactive Dừng hoạt động
+                  span.status-badge.status-inactive.btn-change-status(data-id=product._id data-status="inactive" style="cursor: pointer;") Dừng hoạt động
               td.col-actions
                 .action-buttons
                   a.btn-action.btn-edit(href=`${prefixAdmin}/products/edit/${product._id}` title="Sửa")
@@ -85,3 +86,6 @@ block main
         a.btn.btn-add-product(href=`${prefixAdmin}/products/create`)
           i.fas.fa-plus.mr-2
           | Thêm sản phẩm
+
+  //- Pagination
+  +pagination(pagination)

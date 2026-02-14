@@ -1,0 +1,51 @@
+mixin pagination(pagination)
+  if pagination.totalPage > 1
+    nav.admin-pagination
+      ul.pagination-list
+        //- First page button
+        li.pagination-item(class=pagination.currentPage <= 1 ? "disabled" : "")
+          a.pagination-link(href="?page=1" data-page="1" title="Trang đầu")
+            i.fas.fa-angle-double-left
+
+        //- Previous button
+        li.pagination-item(class=pagination.currentPage <= 1 ? "disabled" : "")
+          a.pagination-link(href=`?page=${pagination.currentPage - 1}` data-page=pagination.currentPage - 1 title="Trang trước")
+            i.fas.fa-chevron-left
+
+        //- Page numbers
+        - const maxVisible = 5
+        - const half = Math.floor(maxVisible / 2)
+        - let startPage = Math.max(1, pagination.currentPage - half)
+        - let endPage = Math.min(pagination.totalPage, startPage + maxVisible - 1)
+        - if (endPage - startPage + 1 < maxVisible) startPage = Math.max(1, endPage - maxVisible + 1)
+
+        if startPage > 1
+          li.pagination-item
+            a.pagination-link(href="?page=1" data-page="1") 1
+          if startPage > 2
+            li.pagination-item.pagination-ellipsis
+              span ...
+
+        - for (let i = startPage; i <= endPage; i++)
+          li.pagination-item(class=i === pagination.currentPage ? "active" : "")
+            a.pagination-link(href=`?page=${i}` data-page=i)= i
+
+        if endPage < pagination.totalPage
+          if endPage < pagination.totalPage - 1
+            li.pagination-item.pagination-ellipsis
+              span ...
+          li.pagination-item
+            a.pagination-link(href=`?page=${pagination.totalPage}` data-page=pagination.totalPage)= pagination.totalPage
+
+        //- Next button
+        li.pagination-item(class=pagination.currentPage >= pagination.totalPage ? "disabled" : "")
+          a.pagination-link(href=`?page=${pagination.currentPage + 1}` data-page=pagination.currentPage + 1 title="Trang sau")
+            i.fas.fa-chevron-right
+
+        //- Last page button
+        li.pagination-item(class=pagination.currentPage >= pagination.totalPage ? "disabled" : "")
+          a.pagination-link(href=`?page=${pagination.totalPage}` data-page=pagination.totalPage title="Trang cuối")
+            i.fas.fa-angle-double-right
+
+      .pagination-info
+        span Trang #{pagination.currentPage} / #{pagination.totalPage} (#{pagination.totalItems} sản phẩm)

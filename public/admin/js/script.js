@@ -108,3 +108,68 @@
     window.location.href = url.href;
   });
 })();
+
+// Pagination
+(function () {
+  const paginationLinks = document.querySelectorAll(".pagination-link[data-page]");
+  if (!paginationLinks.length) return;
+
+  paginationLinks.forEach(function (link) {
+    link.addEventListener("click", function (e) {
+      e.preventDefault();
+      const page = this.getAttribute("data-page");
+      const url = new URL(window.location.href);
+
+      if (page && parseInt(page) > 0) {
+        url.searchParams.set("page", page);
+      } else {
+        url.searchParams.delete("page");
+      }
+
+      window.location.href = url.href;
+    });
+  });
+})();
+
+// Change Status
+(function () {
+  const buttons = document.querySelectorAll(".btn-change-status");
+  if (!buttons.length) return;
+
+  buttons.forEach(function (button) {
+    button.addEventListener("click", function () {
+      const id = this.getAttribute("data-id");
+      const currentStatus = this.getAttribute("data-status");
+      const newStatus = currentStatus === "active" ? "inactive" : "active";
+      const self = this;
+
+      fetch(`/admin/products/change-status/${newStatus}/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" }
+      })
+        .then(function (response) { return response.json(); })
+        .then(function (data) {
+          if (data.code === 200) {
+            // Update data attribute
+            self.setAttribute("data-status", newStatus);
+
+            // Update text and class
+            if (newStatus === "active") {
+              self.textContent = "Hoạt động";
+              self.classList.remove("status-inactive");
+              self.classList.add("status-active");
+            } else {
+              self.textContent = "Dừng hoạt động";
+              self.classList.remove("status-active");
+              self.classList.add("status-inactive");
+            }
+          } else {
+            alert(data.message);
+          }
+        })
+        .catch(function () {
+          alert("Có lỗi xảy ra!");
+        });
+    });
+  });
+})();
