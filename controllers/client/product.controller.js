@@ -4,7 +4,7 @@ const Product = require("../../models/product.model");
 module.exports.index = async (req, res) => {
     const products = await Product.find({
         deleted: false
-    });
+    }).sort({ createdAt: -1 });
 
     res.render("client/pages/products/index", {
         title: "Trang sản phẩm",

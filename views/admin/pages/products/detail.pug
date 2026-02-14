@@ -19,7 +19,7 @@ block main
 
             .detail-item
               .detail-label Mô tả
-              .detail-value= product.description || "Chưa có mô tả"
+              .detail-value!= product.description || "Chưa có mô tả"
 
         .detail-section
           h3.detail-section-title Giá & Kho hàng

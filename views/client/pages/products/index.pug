@@ -5,13 +5,7 @@ block main
     //- Page header
     .d-flex.justify-content-between.align-items-center.mb-4
       .page-header-left
-        h2.page-title
-          i.fas.fa-box.mr-2
-          | Danh sách sản phẩm
-        p.text-muted.mb-0
-          | Tổng cộng: 
-          strong= products.length
-          |  sản phẩm
+        h2.page-title Danh sách sản phẩm
 
     //- Product grid
     if products && products.length > 0
@@ -38,11 +32,8 @@ block main
                     span.badge.badge-danger.product-discount-badge
                       | -#{product.discountPercentage}%
 
-              //- Card body
               .card-body.d-flex.flex-column
-                h5.card-title.product-title= product.title
-                if product.description
-                  p.card-text.product-description.text-muted= product.description
+                a.card-title.product-title(href=`/products/detail/${product.slug}`)= product.title
 
                 .mt-auto
                   //- Price section
@@ -54,27 +45,9 @@ block main
                     else
                       span.product-price-current= product.price ? product.price.toLocaleString() + ' ₫' : 'Liên hệ'
 
-                  //- Stock info
-                  .product-stock
-                    if product.stock > 10
-                      span.text-success
-                        i.fas.fa-check.mr-1
-                        | Còn #{product.stock} sản phẩm
-                    else if product.stock > 0
-                      span.text-warning
-                        i.fas.fa-exclamation-triangle.mr-1
-                        | Chỉ còn #{product.stock} sản phẩm
-                    else
-                      span.text-danger
-                        i.fas.fa-times-circle.mr-1
-                        | Hết hàng
 
-              //- Card footer with action buttons
-              .card-footer.bg-white.border-top-0
-                .btn-group.w-100(role="group")
-                  a.btn.btn-outline-primary.btn-sm(href=`/products/detail/${product.slug}`)
-                    i.fas.fa-eye.mr-1
-                    | Xem
+
+
 
 
     else

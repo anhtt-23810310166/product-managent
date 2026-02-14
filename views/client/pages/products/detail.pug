@@ -1,58 +1,80 @@
 extends ../../layouts/default
 
 block main
-  .container.py-4
-    //- Breadcrumb
-    nav(aria-label="breadcrumb")
-      ol.breadcrumb
-        li.breadcrumb-item
-          a(href="/") Trang chủ
-        li.breadcrumb-item
-          a(href="/products") Sản phẩm
-        li.breadcrumb-item.active= product.title
+  .product-detail-page
+    .container.py-4
+      //- Breadcrumb
+      nav.product-breadcrumb(aria-label="breadcrumb")
+        ol.breadcrumb
+          li.breadcrumb-item
+            a(href="/")
+              i.fas.fa-home.mr-1
+              | Trang chủ
+          li.breadcrumb-item
+            a(href="/products") Sản phẩm
+          li.breadcrumb-item.active= product.title
 
-    .row
-      //- Product image
-      .col-md-5.mb-4
-        if product.thumbnail
-          img.img-fluid.rounded.shadow(src=product.thumbnail alt=product.title style="width: 100%; object-fit: cover;")
-        else
-          .product-img-placeholder.rounded.shadow.d-flex.align-items-center.justify-content-center(style="height: 400px; background: #f5f5f5;")
-            i.fas.fa-image.fa-4x.text-muted
+      //- Product Detail Card
+      .product-detail-card
+        .row.no-gutters
+          //- Product Image
+          .col-lg-5.col-md-6
+            .product-detail-img-wrap
+              if product.thumbnail
+                img.product-detail-img(src=product.thumbnail alt=product.title)
+              else
+                .product-detail-no-img
+                  i.fas.fa-image.fa-4x
+                  p Chưa có ảnh
 
-      //- Product info
-      .col-md-7
-        h2.mb-3= product.title
+              if product.discountPercentage && product.discountPercentage > 0
+                .product-detail-discount-badge
+                  | -#{product.discountPercentage}%
 
-        //- Price
-        .mb-3
-          if product.discountPercentage && product.discountPercentage > 0
-            - var discountedPrice = Math.round(product.price * (1 - product.discountPercentage / 100) / 1000) * 1000
-            span.h3.text-danger.mr-2= discountedPrice.toLocaleString() + ' ₫'
-            span.text-muted(style="text-decoration: line-through;")= product.price.toLocaleString() + ' ₫'
-            span.badge.badge-danger.ml-2= '-' + product.discountPercentage + '%'
-          else
-            span.h3.text-danger= product.price ? product.price.toLocaleString() + ' ₫' : 'Liên hệ'
+          //- Product Info
+          .col-lg-7.col-md-6
+            .product-detail-info
+              h1.product-detail-title= product.title
 
-        //- Stock
-        .mb-3
-          if product.stock > 0
-            span.text-success
-              i.fas.fa-check-circle.mr-1
-              | Còn #{product.stock} sản phẩm
-          else
-            span.text-danger
-              i.fas.fa-times-circle.mr-1
-              | Hết hàng
+              //- Price
+              .product-detail-price-box
+                if product.discountPercentage && product.discountPercentage > 0
+                  - var discountedPrice = Math.round(product.price * (1 - product.discountPercentage / 100) / 1000) * 1000
+                  .product-detail-price-new= discountedPrice.toLocaleString() + ' ₫'
+                  .product-detail-price-old
+                    span.price-line-through= product.price.toLocaleString() + ' ₫'
+                    span.discount-text Tiết kiệm #{(product.price - discountedPrice).toLocaleString()} ₫
+                else
+                  .product-detail-price-new= product.price ? product.price.toLocaleString() + ' ₫' : 'Liên hệ'
 
-        //- Description
-        if product.description
-          hr
-          h5 Mô tả sản phẩm
-          p= product.description
+              //- Stock
+              .product-detail-stock
+                if product.stock > 10
+                  .stock-available
+                    i.fas.fa-check-circle.mr-2
+                    | Còn hàng (#{product.stock} sản phẩm)
+                else if product.stock > 0
+                  .stock-low
+                    i.fas.fa-exclamation-triangle.mr-2
+                    | Sắp hết (chỉ còn #{product.stock} sản phẩm)
+                else
+                  .stock-out
+                    i.fas.fa-times-circle.mr-2
+                    | Hết hàng
 
-        //- Back button
-        .mt-4
-          a.btn.btn-outline-secondary(href="/products")
-            i.fas.fa-arrow-left.mr-1
-            | Quay lại danh sách
+              //- Divider
+              hr.product-detail-divider
+
+              //- Description
+              if product.description
+                .product-detail-desc
+                  h5.desc-title
+                    i.fas.fa-align-left.mr-2
+                    | Mô tả sản phẩm
+                  .desc-text!= product.description
+
+              //- Actions
+              .product-detail-actions
+                a.btn-back-list(href="/products")
+                  i.fas.fa-arrow-left.mr-2
+                  | Quay lại danh sách
