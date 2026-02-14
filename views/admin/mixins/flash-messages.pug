@@ -1,0 +1,14 @@
+mixin flash-messages()
+  .flash-container#flashContainer
+    if messages.success && messages.success.length
+      each msg in messages.success
+        .flash-toast.flash-success
+          i.fas.fa-check-circle.flash-icon
+          span.flash-text= msg
+          button.flash-close(type="button") &times;
+    if messages.error && messages.error.length
+      each msg in messages.error
+        .flash-toast.flash-error
+          i.fas.fa-exclamation-circle.flash-icon
+          span.flash-text= msg
+          button.flash-close(type="button") &times;
