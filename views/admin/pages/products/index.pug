@@ -1,4 +1,5 @@
 extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
 include ../../mixins/search.pug
 include ../../mixins/filter-status.pug
 include ../../mixins/sort.pug
@@ -6,10 +7,7 @@ include ../../mixins/pagination.pug
 include ../../mixins/batch-actions.pug
 
 block main
-  .admin-page-header.d-flex.justify-content-between.align-items-center.flex-wrap
-    div
-      h1.admin-page-title Danh sách sản phẩm
-      p.admin-page-subtitle Quản lý tất cả sản phẩm trong hệ thống
+  +pageHeader("Danh sách sản phẩm", "Quản lý tất cả sản phẩm trong hệ thống")
     a.btn.btn-add-product(href=`${prefixAdmin}/products/create`)
       i.fas.fa-plus.mr-2
       | Thêm sản phẩm
@@ -36,6 +34,7 @@ block main
             th.col-img Hình ảnh
             th.col-title Tên sản phẩm
             th.col-price Giá / Giá đặc biệt
+            th.col-position Vị trí
             th.col-stock Số lượng
             th.col-status Trạng thái
         tbody
@@ -65,9 +64,11 @@ block main
                   a.hover-action-link.hover-action-danger(href="javascript:void(0)" data-id=product._id) Xoá
               td.col-price
                 if product.discountPercentage > 0
-                  span.price-text= `${product.price.toLocaleString()} / ${Math.round(product.price * (1 - product.discountPercentage / 100)).toLocaleString()}`
+                  span.price-text= `${product.price.toLocaleString()} / ${(Math.round(product.price * (1 - product.discountPercentage / 100) / 1000) * 1000).toLocaleString()}`
                 else
                   span.price-text= `${product.price.toLocaleString()}`
+              td.col-position
+                input.position-input(type="number" value=product.position data-id=product._id min="1")
               td.col-stock
                 span.stock-badge(class=product.stock > 0 ? "in-stock" : "out-stock")= product.stock
               td.col-status

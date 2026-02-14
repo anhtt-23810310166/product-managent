@@ -41,13 +41,17 @@
                   badge.classList.add("status-inactive");
                 }
               }
+
+            }
+            if (!data.noChange) {
+              showFlashMessage("success", data.message);
             }
           } else {
-            alert(data.message);
+            showFlashMessage("error", data.message);
           }
         })
         .catch(function () {
-          alert("Có lỗi xảy ra!");
+          showFlashMessage("error", "Có lỗi xảy ra!");
         });
     });
   });
@@ -133,13 +137,18 @@
         .then(function (res) { return res.json(); })
         .then(function (data) {
           if (data.code === 200) {
-            window.location.reload();
+            if (data.count > 0) {
+              showFlashMessage("success", data.message);
+            }
+            setTimeout(function () {
+              window.location.reload();
+            }, 1000);
           } else {
-            alert(data.message);
+            showFlashMessage("error", data.message);
           }
         })
         .catch(function () {
-          alert("Có lỗi xảy ra!");
+          showFlashMessage("error", "Có lỗi xảy ra!");
         });
     });
   });
@@ -167,12 +176,55 @@
           if (data.code === 200) {
             var row = link.closest("tr");
             if (row) row.remove();
+            if (!data.noChange) {
+              showFlashMessage("success", data.message);
+            }
           } else {
-            alert(data.message);
+            showFlashMessage("error", data.message);
           }
         })
         .catch(function () {
-          alert("Có lỗi xảy ra!");
+          showFlashMessage("error", "Có lỗi xảy ra!");
+        });
+    });
+  });
+})();
+
+// Change Position
+(function () {
+  var positionInputs = document.querySelectorAll(".position-input");
+  if (!positionInputs.length) return;
+
+  positionInputs.forEach(function (input) {
+    input.addEventListener("change", function () {
+      var id = this.getAttribute("data-id");
+      var position = parseInt(this.value);
+
+      if (!position || position < 1) {
+        alert("Vị trí phải là số lớn hơn 0!");
+        return;
+      }
+
+      fetch("/admin/products/change-multi", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ids: [{ id: id, position: position }],
+          type: "change-position"
+        })
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data.code === 200) {
+            if (!data.noChange) {
+              showFlashMessage("success", "Cập nhật vị trí thành công!");
+            }
+          } else {
+            showFlashMessage("error", data.message);
+          }
+        })
+        .catch(function () {
+          showFlashMessage("error", "Có lỗi xảy ra!");
         });
     });
   });

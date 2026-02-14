@@ -1,0 +1,12 @@
+mixin pageHeader(title, subtitle)
+  if block
+    .admin-page-header.d-flex.justify-content-between.align-items-center.flex-wrap
+      div
+        h1.admin-page-title= title
+        p.admin-page-subtitle= subtitle
+      block
+  else
+    .admin-page-header
+      div
+        h1.admin-page-title= title
+        p.admin-page-subtitle= subtitle

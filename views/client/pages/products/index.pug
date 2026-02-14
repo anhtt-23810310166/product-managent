@@ -48,8 +48,8 @@ block main
                   //- Price section
                   .product-price-section.mb-2
                     if product.discountPercentage && product.discountPercentage > 0
-                      - var discountedPrice = product.price * (1 - product.discountPercentage / 100)
-                      span.product-price-current= Math.round(discountedPrice).toLocaleString() + ' ₫'
+                      - var discountedPrice = Math.round(product.price * (1 - product.discountPercentage / 100) / 1000) * 1000
+                      span.product-price-current= discountedPrice.toLocaleString() + ' ₫'
                       span.product-price-original.ml-2= product.price.toLocaleString() + ' ₫'
                     else
                       span.product-price-current= product.price ? product.price.toLocaleString() + ' ₫' : 'Liên hệ'

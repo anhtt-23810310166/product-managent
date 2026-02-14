@@ -27,9 +27,11 @@ module.exports.index = async (req, res) => {
     // Sort
     const objectSort = sortHelper(req.query);
 
+    const sort = Object.keys(objectSort.sortObject).length > 0 ? objectSort.sortObject : { position: 1 };
+
     const products = await Product
         .find(find)
-        .sort(objectSort.sortObject)
+        .sort(sort)
         .skip(objectPagination.skip)
         .limit(objectPagination.limitItems);
 
@@ -44,18 +46,123 @@ module.exports.index = async (req, res) => {
     });
 }
 
+// [GET] /admin/products/create
+module.exports.create = async (req, res) => {
+    res.render("admin/pages/products/create", {
+        pageTitle: "Thêm sản phẩm mới",
+        currentPage: "product-create"
+    });
+}
+
+// [POST] /admin/products/create
+module.exports.createPost = async (req, res) => {
+    try {
+        req.body.price = parseInt(req.body.price) || 0;
+        req.body.discountPercentage = parseInt(req.body.discountPercentage) || 0;
+        req.body.stock = parseInt(req.body.stock) || 0;
+
+        if (req.body.position === "" || req.body.position === undefined) {
+            const countProducts = await Product.countDocuments();
+            req.body.position = countProducts + 1;
+        } else {
+            req.body.position = parseInt(req.body.position);
+        }
+
+        if (req.file) {
+            req.body.thumbnail = "/uploads/" + req.file.filename;
+        }
+
+        const product = new Product(req.body);
+        await product.save();
+
+        req.flash("success", "Thêm sản phẩm thành công!");
+        res.redirect("/admin/products");
+    } catch (error) {
+        req.flash("error", "Có lỗi xảy ra!");
+        res.redirect("back");
+    }
+}
+
+// [GET] /admin/products/edit/:id
+module.exports.edit = async (req, res) => {
+    try {
+        const product = await Product.findOne({ _id: req.params.id, deleted: false });
+        if (!product) {
+            req.flash("error", "Sản phẩm không tồn tại!");
+            return res.redirect("/admin/products");
+        }
+        res.render("admin/pages/products/edit", {
+            pageTitle: "Chỉnh sửa sản phẩm",
+            currentPage: "products",
+            product: product
+        });
+    } catch (error) {
+        req.flash("error", "Có lỗi xảy ra!");
+        res.redirect("/admin/products");
+    }
+}
+
+// [PATCH] /admin/products/edit/:id
+module.exports.editPatch = async (req, res) => {
+    try {
+        req.body.price = parseInt(req.body.price) || 0;
+        req.body.discountPercentage = parseInt(req.body.discountPercentage) || 0;
+        req.body.stock = parseInt(req.body.stock) || 0;
+        req.body.position = parseInt(req.body.position) || 0;
+
+        if (req.file) {
+            req.body.thumbnail = "/uploads/" + req.file.filename;
+        }
+
+        await Product.updateOne({ _id: req.params.id }, req.body);
+
+        req.flash("success", "Cập nhật sản phẩm thành công!");
+        res.redirect("/admin/products");
+    } catch (error) {
+        req.flash("error", "Có lỗi xảy ra!");
+        res.redirect("back");
+    }
+}
+
+// [GET] /admin/products/detail/:id
+module.exports.detail = async (req, res) => {
+    try {
+        const product = await Product.findOne({ _id: req.params.id, deleted: false });
+        if (!product) {
+            req.flash("error", "Sản phẩm không tồn tại!");
+            return res.redirect("/admin/products");
+        }
+        res.render("admin/pages/products/detail", {
+            pageTitle: "Chi tiết sản phẩm",
+            currentPage: "products",
+            product: product
+        });
+    } catch (error) {
+        req.flash("error", "Có lỗi xảy ra!");
+        res.redirect("/admin/products");
+    }
+}
+
 // [PATCH] /admin/products/change-status/:status/:id
 module.exports.changeStatus = async (req, res) => {
     try {
         const status = req.params.status;
         const id = req.params.id;
 
-        await Product.updateOne({ _id: id }, { status: status });
+        const result = await Product.updateOne({ _id: id }, { status: status });
 
-        res.json({
-            code: 200,
-            message: "Cập nhật trạng thái thành công!"
-        });
+        if (result.modifiedCount > 0) {
+            res.json({
+                code: 200,
+                message: "Cập nhật trạng thái thành công!"
+            });
+        } else {
+            res.json({
+                code: 200,
+                message: "Không có thay đổi nào!",
+                noChange: true
+            });
+        }
     } catch (error) {
         res.json({
             code: 400,
@@ -69,24 +176,38 @@ module.exports.changeMulti = async (req, res) => {
     try {
         const { ids, type } = req.body;
 
+        let count = 0;
+
         switch (type) {
             case "active":
-                await Product.updateMany(
+                const resultActive = await Product.updateMany(
                     { _id: { $in: ids } },
                     { status: "active" }
                 );
+                count = resultActive.modifiedCount;
                 break;
             case "inactive":
-                await Product.updateMany(
+                const resultInactive = await Product.updateMany(
                     { _id: { $in: ids } },
                     { status: "inactive" }
                 );
+                count = resultInactive.modifiedCount;
                 break;
             case "delete":
-                await Product.updateMany(
+                const resultDelete = await Product.updateMany(
                     { _id: { $in: ids } },
                     { deleted: true }
                 );
+                count = resultDelete.modifiedCount;
+                break;
+            case "change-position":
+                for (const item of ids) {
+                    const resultPos = await Product.updateOne(
+                        { _id: item.id },
+                        { position: parseInt(item.position) }
+                    );
+                    count += resultPos.modifiedCount;
+                }
                 break;
             default:
                 return res.json({
@@ -95,9 +216,11 @@ module.exports.changeMulti = async (req, res) => {
                 });
         }
 
+        
         res.json({
             code: 200,
-            message: "Cập nhật thành công!"
+            message: count > 0 ? "Cập nhật thành công!" : "Không có thay đổi nào!",
+            count: count
         });
     } catch (error) {
         res.json({
@@ -111,11 +234,20 @@ module.exports.changeMulti = async (req, res) => {
 module.exports.deleteProduct = async (req, res) => {
     try {
         const id = req.params.id;
-        await Product.updateOne({ _id: id }, { deleted: true, deletedAt: new Date() });
-        res.json({
-            code: 200,
-            message: "Xoá sản phẩm thành công!"
-        });
+        const result = await Product.updateOne({ _id: id }, { deleted: true, deletedAt: new Date() });
+        
+        if (result.modifiedCount > 0) {
+            res.json({
+                code: 200,
+                message: "Xoá sản phẩm thành công!"
+            });
+        } else {
+            res.json({
+                code: 200,
+                message: "Không có thay đổi nào!",
+                noChange: true
+            });
+        }
     } catch (error) {
         res.json({
             code: 400,

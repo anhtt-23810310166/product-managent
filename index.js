@@ -1,4 +1,7 @@
 const express = require("express");
+const methodOverride = require("method-override");
+const cookieSession = require("cookie-session");
+const flash = require("express-flash");
 
 const dotenv = require("dotenv");
 
@@ -18,7 +21,17 @@ app.set('views', './views');
 app.set('view engine', 'pug');
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));
 app.use(express.static('public'));
+
+// Session & Flash
+app.use(cookieSession({
+    name: 'session',
+    keys: ['PRODUCT_MANAGEMENT_SECRET_KEY'],
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}));
+app.use(flash());
 
 // System config
 const systemConfig = require("./config/system");

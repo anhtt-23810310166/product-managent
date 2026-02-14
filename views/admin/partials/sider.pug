@@ -32,14 +32,14 @@ aside.admin-sider#adminSider
 
     .sider-menu-label Bán hàng
     ul.list-unstyled.mb-0
-      li.sider-menu-item.has-submenu(class=(currentPage === "products" || currentPage === "product-category" ? "open" : ""))
+      li.sider-menu-item.has-submenu(class=(currentPage === "products" || currentPage === "product-create" || currentPage === "product-category" ? "open" : ""))
         a.sider-menu-link.submenu-toggle(href="javascript:void(0)")
           i.fas.fa-box
           span Sản phẩm
           i.fas.fa-chevron-right.submenu-arrow
         ul.sider-submenu.list-unstyled
           li
-            a.sider-submenu-link(href=`${prefixAdmin}/products/create`) Thêm sản phẩm
+            a.sider-submenu-link(href=`${prefixAdmin}/products/create` class=(currentPage === "product-create" ? "active" : "")) Thêm sản phẩm
           li
             a.sider-submenu-link(href=`${prefixAdmin}/products` class=(currentPage === "products" ? "active" : "")) Danh sách
           li

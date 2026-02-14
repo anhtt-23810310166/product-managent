@@ -6,8 +6,6 @@ module.exports.index = async (req, res) => {
         deleted: false
     });
 
-    
-
     res.render("client/pages/products/index", {
         title: "Trang sản phẩm",
         products: products

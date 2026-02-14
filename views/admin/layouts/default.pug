@@ -20,6 +20,21 @@ html
       //- Top Header
       include ../partials/header.pug
 
+      //- Flash Messages
+      .flash-container#flashContainer
+        if messages.success && messages.success.length
+          each msg in messages.success
+            .flash-toast.flash-success
+              i.fas.fa-check-circle.flash-icon
+              span.flash-text= msg
+              button.flash-close(type="button") &times;
+        if messages.error && messages.error.length
+          each msg in messages.error
+            .flash-toast.flash-error
+              i.fas.fa-exclamation-circle.flash-icon
+              span.flash-text= msg
+              button.flash-close(type="button") &times;
+
       //- Main Content
       main.admin-main
         block main
@@ -30,4 +45,5 @@ html
     script(src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous")
     script(src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous")
     script(src="/admin/js/script.js")
+    script(src="/admin/js/flash.js")
     block scripts

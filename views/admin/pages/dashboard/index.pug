@@ -1,9 +1,8 @@
 extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
 
 block main
-  .admin-page-header
-    h1.admin-page-title Dashboard
-    p.admin-page-subtitle Tổng quan hệ thống quản lý sản phẩm
+  +pageHeader("Dashboard", "Tổng quan hệ thống quản lý sản phẩm")
 
   .row
     .col-lg-3.col-md-6.mb-4
