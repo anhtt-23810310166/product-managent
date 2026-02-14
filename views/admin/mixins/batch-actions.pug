@@ -1,0 +1,14 @@
+mixin batch-actions()
+  .batch-action-wrapper
+    button.btn.btn-batch-action#batchActionBtn(type="button" title="Thay đổi trạng thái")
+      i.fas.fa-exchange-alt
+    .batch-action-dropdown#batchDropdown
+      button.batch-action-item(type="button" data-action="active")
+        i.fas.fa-check-circle
+        | Hoạt động
+      button.batch-action-item(type="button" data-action="inactive")
+        i.fas.fa-ban
+        | Dừng hoạt động
+      button.batch-action-item.batch-action-danger(type="button" data-action="delete")
+        i.fas.fa-trash-alt
+        | Xoá

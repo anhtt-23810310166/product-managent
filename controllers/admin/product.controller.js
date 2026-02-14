@@ -106,3 +106,20 @@ module.exports.changeMulti = async (req, res) => {
         });
     }
 }
+
+// [DELETE] /admin/products/delete/:id
+module.exports.deleteProduct = async (req, res) => {
+    try {
+        const id = req.params.id;
+        await Product.updateOne({ _id: id }, { deleted: true, deletedAt: new Date() });
+        res.json({
+            code: 200,
+            message: "Xoá sản phẩm thành công!"
+        });
+    } catch (error) {
+        res.json({
+            code: 400,
+            message: "Có lỗi xảy ra!"
+        });
+    }
+}

@@ -4,38 +4,82 @@ aside.admin-sider#adminSider
     span Admin Panel
 
   nav.admin-sider-nav
-    .sider-menu-label Menu chính
     ul.list-unstyled.mb-0
       li.sider-menu-item
         a.sider-menu-link(href=`${prefixAdmin}/dashboard` class=(currentPage === "dashboard" ? "active" : ""))
           i.fas.fa-th-large
-          span Dashboard
+          span Tổng quan
+
+    .sider-menu-label Bài viết
+    ul.list-unstyled.mb-0
+      li.sider-menu-item.has-submenu
+        a.sider-menu-link.submenu-toggle(href="javascript:void(0)")
+          i.fas.fa-newspaper
+          span Bài viết
+          i.fas.fa-chevron-right.submenu-arrow
+        ul.sider-submenu.list-unstyled
+          li
+            a.sider-submenu-link(href="#") Thêm bài viết
+          li
+            a.sider-submenu-link(href="#") Danh sách
+          li
+            a.sider-submenu-link(href="#") Danh mục
 
       li.sider-menu-item
-        a.sider-menu-link(href=`${prefixAdmin}/products` class=(currentPage === "products" ? "active" : ""))
+        a.sider-menu-link(href="#")
+          i.fas.fa-photo-video
+          span Media
+
+    .sider-menu-label Bán hàng
+    ul.list-unstyled.mb-0
+      li.sider-menu-item.has-submenu(class=(currentPage === "products" || currentPage === "product-category" ? "open" : ""))
+        a.sider-menu-link.submenu-toggle(href="javascript:void(0)")
           i.fas.fa-box
           span Sản phẩm
+          i.fas.fa-chevron-right.submenu-arrow
+        ul.sider-submenu.list-unstyled
+          li
+            a.sider-submenu-link(href=`${prefixAdmin}/products/create`) Thêm sản phẩm
+          li
+            a.sider-submenu-link(href=`${prefixAdmin}/products` class=(currentPage === "products" ? "active" : "")) Danh sách
+          li
+            a.sider-submenu-link(href=`${prefixAdmin}/product-category` class=(currentPage === "product-category" ? "active" : "")) Danh mục
 
-      li.sider-menu-item
-        a.sider-menu-link(href=`${prefixAdmin}/product-category` class=(currentPage === "product-category" ? "active" : ""))
-          i.fas.fa-tags
-          span Danh mục
+      li.sider-menu-item.has-submenu
+        a.sider-menu-link.submenu-toggle(href="javascript:void(0)")
+          i.fas.fa-shopping-cart
+          span Đơn hàng
+          i.fas.fa-chevron-right.submenu-arrow
+        ul.sider-submenu.list-unstyled
+          li
+            a.sider-submenu-link(href="#") Danh sách
+          li
+            a.sider-submenu-link(href="#") Trạng thái
 
-    .sider-menu-label Hệ thống
+      li.sider-menu-item.has-submenu
+        a.sider-menu-link.submenu-toggle(href="javascript:void(0)")
+          i.fas.fa-chart-bar
+          span Báo cáo
+          i.fas.fa-chevron-right.submenu-arrow
+        ul.sider-submenu.list-unstyled
+          li
+            a.sider-submenu-link(href="#") Doanh thu
+          li
+            a.sider-submenu-link(href="#") Thống kê
+
+    .sider-menu-label Khách hàng
     ul.list-unstyled.mb-0
       li.sider-menu-item
-        a.sider-menu-link(href=`${prefixAdmin}/roles` class=(currentPage === "roles" ? "active" : ""))
-          i.fas.fa-user-shield
-          span Phân quyền
-
-      li.sider-menu-item
-        a.sider-menu-link(href=`${prefixAdmin}/accounts` class=(currentPage === "accounts" ? "active" : ""))
+        a.sider-menu-link(href="#")
           i.fas.fa-users
-          span Tài khoản
+          span Khách hàng
 
       li.sider-menu-item
-        a.sider-menu-link(href=`${prefixAdmin}/settings` class=(currentPage === "settings" ? "active" : ""))
-          i.fas.fa-cog
-          span Cài đặt
+        a.sider-menu-link(href="#")
+          i.fas.fa-comments
+          span Bình luận/Đánh giá
 
-
+      li.sider-menu-item
+        a.sider-menu-link(href="#")
+          i.fas.fa-envelope
+          span Liên hệ

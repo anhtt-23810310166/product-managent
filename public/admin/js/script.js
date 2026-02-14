@@ -38,6 +38,22 @@
   });
 })();
 
+// Sidebar Submenu Toggle
+(function () {
+  var toggles = document.querySelectorAll(".submenu-toggle");
+  if (!toggles.length) return;
+
+  toggles.forEach(function (toggle) {
+    toggle.addEventListener("click", function (e) {
+      e.preventDefault();
+      var parent = this.closest(".has-submenu");
+      if (parent) {
+        parent.classList.toggle("open");
+      }
+    });
+  });
+})();
+
 // Filter by Status
 (function () {
   const filterStatus = document.getElementById("filterStatus");
@@ -127,141 +143,6 @@
       }
 
       window.location.href = url.href;
-    });
-  });
-})();
-
-// Change Status
-(function () {
-  const buttons = document.querySelectorAll(".btn-change-status");
-  if (!buttons.length) return;
-
-  buttons.forEach(function (button) {
-    button.addEventListener("click", function () {
-      const id = this.getAttribute("data-id");
-      const currentStatus = this.getAttribute("data-status");
-      const newStatus = currentStatus === "active" ? "inactive" : "active";
-      const self = this;
-
-      fetch(`/admin/products/change-status/${newStatus}/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" }
-      })
-        .then(function (response) { return response.json(); })
-        .then(function (data) {
-          if (data.code === 200) {
-            // Update data attribute
-            self.setAttribute("data-status", newStatus);
-
-            // Update text and class
-            if (newStatus === "active") {
-              self.textContent = "Hoạt động";
-              self.classList.remove("status-inactive");
-              self.classList.add("status-active");
-            } else {
-              self.textContent = "Dừng hoạt động";
-              self.classList.remove("status-active");
-              self.classList.add("status-inactive");
-            }
-          } else {
-            alert(data.message);
-          }
-        })
-        .catch(function () {
-          alert("Có lỗi xảy ra!");
-        });
-    });
-  });
-})();
-
-// Check All
-(function () {
-  const checkAll = document.getElementById("checkAll");
-  if (!checkAll) return;
-
-  var checkboxItems = document.querySelectorAll(".checkbox-item");
-
-  checkAll.addEventListener("change", function () {
-    var isChecked = this.checked;
-    checkboxItems.forEach(function (item) {
-      item.checked = isChecked;
-    });
-  });
-
-  checkboxItems.forEach(function (item) {
-    item.addEventListener("change", function () {
-      var allChecked = true;
-      checkboxItems.forEach(function (cb) {
-        if (!cb.checked) allChecked = false;
-      });
-      checkAll.checked = allChecked;
-    });
-  });
-})();
-
-// Batch Action Dropdown
-(function () {
-  var batchBtn = document.getElementById("batchActionBtn");
-  var dropdown = document.getElementById("batchDropdown");
-  if (!batchBtn || !dropdown) return;
-
-  batchBtn.addEventListener("click", function (e) {
-    e.stopPropagation();
-    dropdown.classList.toggle("show");
-  });
-
-  document.addEventListener("click", function () {
-    dropdown.classList.remove("show");
-  });
-
-  dropdown.addEventListener("click", function (e) {
-    e.stopPropagation();
-  });
-})();
-
-// Batch Action Handler
-(function () {
-  var batchItems = document.querySelectorAll(".batch-action-item");
-  if (!batchItems.length) return;
-
-  batchItems.forEach(function (item) {
-    item.addEventListener("click", function () {
-      var action = this.getAttribute("data-action");
-      var checkboxes = document.querySelectorAll(".checkbox-item:checked");
-
-      if (checkboxes.length === 0) {
-        alert("Vui lòng chọn ít nhất một sản phẩm!");
-        return;
-      }
-
-      var ids = [];
-      checkboxes.forEach(function (cb) {
-        ids.push(cb.value);
-      });
-
-      var confirmMsg = "Bạn có chắc muốn thực hiện hành động này cho " + ids.length + " sản phẩm?";
-      if (action === "delete") {
-        confirmMsg = "Bạn có chắc muốn xoá " + ids.length + " sản phẩm đã chọn?";
-      }
-
-      if (!confirm(confirmMsg)) return;
-
-      fetch("/admin/products/change-multi", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ids: ids, type: action })
-      })
-        .then(function (res) { return res.json(); })
-        .then(function (data) {
-          if (data.code === 200) {
-            window.location.reload();
-          } else {
-            alert(data.message);
-          }
-        })
-        .catch(function () {
-          alert("Có lỗi xảy ra!");
-        });
     });
   });
 })();

@@ -3,6 +3,7 @@ include ../../mixins/search.pug
 include ../../mixins/filter-status.pug
 include ../../mixins/sort.pug
 include ../../mixins/pagination.pug
+include ../../mixins/batch-actions.pug
 
 block main
   .admin-page-header.d-flex.justify-content-between.align-items-center.flex-wrap
@@ -21,19 +22,7 @@ block main
       +sort(sortOptions)
       .col-md-2
         .d-flex.gap-2
-          .batch-action-wrapper
-            button.btn.btn-batch-action#batchActionBtn(type="button" title="Thay đổi trạng thái")
-              i.fas.fa-exchange-alt
-            .batch-action-dropdown#batchDropdown
-              button.batch-action-item(type="button" data-action="active")
-                i.fas.fa-check-circle
-                | Hoạt động
-              button.batch-action-item(type="button" data-action="inactive")
-                i.fas.fa-ban
-                | Dừng hoạt động
-              button.batch-action-item.batch-action-danger(type="button" data-action="delete")
-                i.fas.fa-trash-alt
-                | Xoá
+          +batch-actions()
 
   //- Products Table
   .admin-table-wrapper
@@ -46,10 +35,9 @@ block main
             th.col-stt STT
             th.col-img Hình ảnh
             th.col-title Tên sản phẩm
-            th.col-price Giá
+            th.col-price Giá / Giá đặc biệt
             th.col-stock Số lượng
             th.col-status Trạng thái
-            th.col-actions Hành động
         tbody
           each product, index in products
             tr.animate-in
@@ -67,28 +55,26 @@ block main
                   span.product-name= product.title
                   if product.discountPercentage > 0
                     span.discount-tag= `-${product.discountPercentage}%`
+                .product-hover-actions
+                  a.hover-action-link.hover-action-edit(href=`${prefixAdmin}/products/edit/${product._id}`) Sửa
+                  a.hover-action-link.hover-action-detail(href=`${prefixAdmin}/products/detail/${product._id}`) Chi tiết
+                  if product.status === "active"
+                    a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=product._id data-status="active") Dừng hoạt động
+                  else
+                    a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=product._id data-status="inactive") Hoạt động
+                  a.hover-action-link.hover-action-danger(href="javascript:void(0)" data-id=product._id) Xoá
               td.col-price
                 if product.discountPercentage > 0
-                  .price-group
-                    span.price-new= `${(product.price * (1 - product.discountPercentage / 100)).toLocaleString()}đ`
-                    span.price-old= `${product.price.toLocaleString()}đ`
+                  span.price-text= `${product.price.toLocaleString()} / ${Math.round(product.price * (1 - product.discountPercentage / 100)).toLocaleString()}`
                 else
-                  span.price-new= `${product.price.toLocaleString()}đ`
+                  span.price-text= `${product.price.toLocaleString()}`
               td.col-stock
                 span.stock-badge(class=product.stock > 0 ? "in-stock" : "out-stock")= product.stock
               td.col-status
                 if product.status === "active"
-                  span.status-badge.status-active.btn-change-status(data-id=product._id data-status="active" style="cursor: pointer;") Hoạt động
+                  span.status-badge.status-active Hoạt động
                 else
-                  span.status-badge.status-inactive.btn-change-status(data-id=product._id data-status="inactive" style="cursor: pointer;") Dừng hoạt động
-              td.col-actions
-                .action-buttons
-                  a.btn-action.btn-edit(href=`${prefixAdmin}/products/edit/${product._id}` title="Sửa")
-                    i.fas.fa-pen
-                  a.btn-action.btn-detail(href=`${prefixAdmin}/products/detail/${product._id}` title="Chi tiết")
-                    i.fas.fa-eye
-                  button.btn-action.btn-delete(type="button" title="Xoá" data-id=product._id)
-                    i.fas.fa-trash-alt
+                  span.status-badge.status-inactive Dừng hoạt động
     else
       .admin-empty-state
         i.fas.fa-box-open
@@ -100,3 +86,6 @@ block main
 
   //- Pagination
   +pagination(pagination)
+
+block append scripts
+  script(src="/admin/js/product.js")

@@ -1,0 +1,179 @@
+// Change Status
+(function () {
+  const buttons = document.querySelectorAll(".btn-change-status");
+  if (!buttons.length) return;
+
+  buttons.forEach(function (button) {
+    button.addEventListener("click", function (e) {
+      e.preventDefault();
+      const id = this.getAttribute("data-id");
+      const currentStatus = this.getAttribute("data-status");
+      const newStatus = currentStatus === "active" ? "inactive" : "active";
+      const self = this;
+      const row = this.closest("tr");
+
+      fetch(`/admin/products/change-status/${newStatus}/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" }
+      })
+        .then(function (response) { return response.json(); })
+        .then(function (data) {
+          if (data.code === 200) {
+            // Update link data attribute and text
+            self.setAttribute("data-status", newStatus);
+            if (newStatus === "active") {
+              self.textContent = "Dừng hoạt động";
+            } else {
+              self.textContent = "Hoạt động";
+            }
+
+            // Update the status badge in the same row
+            if (row) {
+              var badge = row.querySelector(".status-badge");
+              if (badge) {
+                if (newStatus === "active") {
+                  badge.textContent = "Hoạt động";
+                  badge.classList.remove("status-inactive");
+                  badge.classList.add("status-active");
+                } else {
+                  badge.textContent = "Dừng hoạt động";
+                  badge.classList.remove("status-active");
+                  badge.classList.add("status-inactive");
+                }
+              }
+            }
+          } else {
+            alert(data.message);
+          }
+        })
+        .catch(function () {
+          alert("Có lỗi xảy ra!");
+        });
+    });
+  });
+})();
+
+// Check All
+(function () {
+  const checkAll = document.getElementById("checkAll");
+  if (!checkAll) return;
+
+  var checkboxItems = document.querySelectorAll(".checkbox-item");
+
+  checkAll.addEventListener("change", function () {
+    var isChecked = this.checked;
+    checkboxItems.forEach(function (item) {
+      item.checked = isChecked;
+    });
+  });
+
+  checkboxItems.forEach(function (item) {
+    item.addEventListener("change", function () {
+      var allChecked = true;
+      checkboxItems.forEach(function (cb) {
+        if (!cb.checked) allChecked = false;
+      });
+      checkAll.checked = allChecked;
+    });
+  });
+})();
+
+// Batch Action Dropdown
+(function () {
+  var batchBtn = document.getElementById("batchActionBtn");
+  var dropdown = document.getElementById("batchDropdown");
+  if (!batchBtn || !dropdown) return;
+
+  batchBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    dropdown.classList.toggle("show");
+  });
+
+  document.addEventListener("click", function () {
+    dropdown.classList.remove("show");
+  });
+
+  dropdown.addEventListener("click", function (e) {
+    e.stopPropagation();
+  });
+})();
+
+// Batch Action Handler
+(function () {
+  var batchItems = document.querySelectorAll(".batch-action-item");
+  if (!batchItems.length) return;
+
+  batchItems.forEach(function (item) {
+    item.addEventListener("click", function () {
+      var action = this.getAttribute("data-action");
+      var checkboxes = document.querySelectorAll(".checkbox-item:checked");
+
+      if (checkboxes.length === 0) {
+        alert("Vui lòng chọn ít nhất một sản phẩm!");
+        return;
+      }
+
+      var ids = [];
+      checkboxes.forEach(function (cb) {
+        ids.push(cb.value);
+      });
+
+      var confirmMsg = "Bạn có chắc muốn thực hiện hành động này cho " + ids.length + " sản phẩm?";
+      if (action === "delete") {
+        confirmMsg = "Bạn có chắc muốn xoá " + ids.length + " sản phẩm đã chọn?";
+      }
+
+      if (!confirm(confirmMsg)) return;
+
+      fetch("/admin/products/change-multi", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: ids, type: action })
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data.code === 200) {
+            window.location.reload();
+          } else {
+            alert(data.message);
+          }
+        })
+        .catch(function () {
+          alert("Có lỗi xảy ra!");
+        });
+    });
+  });
+})();
+
+// Soft Delete Single Product
+(function () {
+  var deleteLinks = document.querySelectorAll(".hover-action-danger");
+  if (!deleteLinks.length) return;
+
+  deleteLinks.forEach(function (link) {
+    link.addEventListener("click", function (e) {
+      e.preventDefault();
+      var id = this.getAttribute("data-id");
+      if (!id) return;
+
+      if (!confirm("Bạn có chắc muốn xoá sản phẩm này?")) return;
+
+      fetch("/admin/products/delete/" + id, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" }
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data.code === 200) {
+            var row = link.closest("tr");
+            if (row) row.remove();
+          } else {
+            alert(data.message);
+          }
+        })
+        .catch(function () {
+          alert("Có lỗi xảy ra!");
+        });
+    });
+  });
+})();

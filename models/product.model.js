@@ -12,7 +12,8 @@ const Product = mongoose.model("Product", {
     deleted: {
         type: Boolean,
         default: false
-    }
+    },
+    deletedAt: Date
 });
 
 module.exports = Product;

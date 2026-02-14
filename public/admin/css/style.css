@@ -1,14 +1,14 @@
 /* ===== Admin Layout Variables ===== */
 :root {
-  --sider-width: 250px;
+  --sider-width: 200px;
   --sider-collapsed-width: 0px;
   --header-height: 60px;
   --sider-bg: #1e1e2d;
   --sider-bg-hover: #2a2a3c;
   --sider-text: #9899ac;
   --sider-text-hover: #ffffff;
-  --sider-active-bg: rgba(62, 151, 255, 0.08);
-  --sider-active-border: #3e97ff;
+  --sider-active-bg: #20212D;
+  --sider-active-border: #F9F9F9;
   --content-bg: #f5f8fa;
   --header-bg: #ffffff;
   --accent: #3e97ff;
@@ -17,7 +17,7 @@
   --card-bg: #ffffff;
   --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
   --card-shadow-hover: 0 10px 40px rgba(0, 0, 0, 0.08);
-  --card-radius: 12px;
+  --card-radius: 4px;
   --text-primary: #181c32;
   --text-secondary: #7e8299;
   --text-muted: #a1a5b7;
@@ -63,7 +63,7 @@ body.admin-page {
 /* ===== Sidebar ===== */
 .admin-sider {
   width: var(--sider-width);
-  min-height: 100vh;
+  height: 100vh;
   background: var(--sider-bg);
   position: fixed;
   top: 0;
@@ -111,11 +111,11 @@ body.admin-page {
 
 .admin-sider-nav::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .sider-menu-label {
-  font-size: 0.68rem;
+  font-size: 0.64rem;
   text-transform: uppercase;
   letter-spacing: 1.8px;
   color: #474761;
@@ -134,8 +134,8 @@ body.admin-page {
   padding: 10px 14px;
   color: var(--sider-text);
   text-decoration: none;
-  border-radius: 8px;
-  font-size: 0.85rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
   font-weight: 500;
   transition: var(--transition);
   margin-bottom: 2px;
@@ -170,7 +170,69 @@ body.admin-page {
   color: var(--sider-active-border);
 }
 
-/* Sidebar Footer */
+/* Submenu Arrow */
+.submenu-arrow {
+  margin-left: auto;
+  font-size: 0.65rem !important;
+  transition: transform 0.2s ease;
+  opacity: 0.5 !important;
+}
+
+.has-submenu.open .submenu-arrow {
+  transform: rotate(90deg);
+}
+
+/* Submenu */
+.sider-submenu {
+  display: none;
+  padding-left: 32px;
+  margin-top: 2px;
+}
+
+.has-submenu.open .sider-submenu {
+  display: block;
+}
+
+.sider-submenu-link {
+  display: flex;
+  align-items: center;
+  padding: 7px 14px;
+  color: var(--sider-text);
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 400;
+  transition: var(--transition);
+  position: relative;
+  padding-left: 18px;
+}
+
+.sider-submenu-link::before {
+  content: "•";
+  position: absolute;
+  left: 4px;
+  color: var(--sider-text);
+  opacity: 0.4;
+  font-size: 0.9rem;
+}
+
+.sider-submenu-link:hover {
+  color: var(--sider-text-hover);
+  text-decoration: none;
+}
+
+.sider-submenu-link:hover::before {
+  opacity: 0.8;
+}
+
+.sider-submenu-link.active {
+  color: var(--sider-active-border);
+  font-weight: 600;
+}
+
+.sider-submenu-link.active::before {
+  color: var(--sider-active-border);
+  opacity: 1;
+}
 .admin-sider-footer {
   padding: 14px 18px;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -185,7 +247,7 @@ body.admin-page {
   font-size: 0.82rem;
   font-weight: 500;
   padding: 8px 12px;
-  border-radius: 8px;
+  border-radius: 4px;
   transition: var(--transition);
 }
 
@@ -234,7 +296,7 @@ body.admin-page {
   color: var(--text-secondary);
   cursor: pointer;
   padding: 6px 10px;
-  border-radius: 8px;
+  border-radius: 4px;
   transition: var(--transition);
 }
 
@@ -263,7 +325,7 @@ body.admin-page {
 .admin-header-right .btn-icon {
   width: 36px;
   height: 36px;
-  border-radius: 8px;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -295,7 +357,7 @@ body.admin-page {
 .admin-avatar {
   width: 36px;
   height: 36px;
-  border-radius: 8px;
+  border-radius: 4px;
   background: var(--accent);
   display: flex;
   align-items: center;
@@ -379,7 +441,7 @@ body.admin-page {
 .stat-card-icon {
   width: 44px;
   height: 44px;
-  border-radius: 10px;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -430,7 +492,7 @@ body.admin-page {
   color: #fff;
   border: none;
   padding: 9px 18px;
-  border-radius: 8px;
+  border-radius: 4px;
   font-weight: 600;
   font-size: 0.82rem;
   transition: var(--transition);
@@ -469,7 +531,7 @@ body.admin-page {
 
 .admin-search-box .form-control {
   padding-left: 38px;
-  border-radius: 8px;
+  border-radius: 4px;
   border: 1px solid var(--border-color);
   font-size: 0.82rem;
   height: 40px;
@@ -485,7 +547,7 @@ body.admin-page {
 }
 
 .admin-select {
-  border-radius: 8px;
+  border-radius: 4px;
   border: 1px solid var(--border-color);
   font-size: 0.82rem;
   height: 40px;
@@ -504,7 +566,7 @@ body.admin-page {
 .btn-batch-action {
   width: 40px;
   height: 40px;
-  border-radius: 8px;
+  border-radius: 4px;
   border: 1px solid var(--border-color);
   background: var(--content-bg);
   color: var(--text-secondary);
@@ -533,7 +595,7 @@ body.admin-page {
   right: 0;
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 4px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   min-width: 180px;
   z-index: 1050;
@@ -555,7 +617,7 @@ body.admin-page {
   color: var(--text-secondary);
   font-size: 0.82rem;
   font-weight: 500;
-  border-radius: 6px;
+  border-radius: 3px;
   cursor: pointer;
   transition: var(--transition);
   text-align: left;
@@ -642,7 +704,7 @@ body.admin-page {
   margin-top: 2px;
   vertical-align: middle;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .col-stt {
@@ -662,14 +724,14 @@ body.admin-page {
   width: 48px;
   height: 48px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 4px;
   border: 1px solid var(--border-color);
 }
 
 .product-thumb-placeholder {
   width: 48px;
   height: 48px;
-  border-radius: 8px;
+  border-radius: 4px;
   background: var(--content-bg);
   display: flex;
   align-items: center;
@@ -697,8 +759,76 @@ body.admin-page {
   color: var(--danger);
   background: var(--danger-bg);
   padding: 2px 8px;
-  border-radius: 4px;
+  border-radius: 3px;
   white-space: nowrap;
+}
+
+/* Product Hover Actions */
+.product-hover-actions {
+  display: none;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  gap: 10px;
+  align-items: center;
+}
+
+.admin-table tbody tr:hover .product-hover-actions {
+  display: flex;
+}
+
+.hover-action-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  opacity: 0.75;
+}
+
+.hover-action-link:hover {
+  opacity: 1;
+  text-decoration: none;
+}
+
+/* Edit - blue */
+.hover-action-link.hover-action-edit {
+  color: var(--accent);
+}
+.hover-action-link.hover-action-edit:hover {
+  color: var(--accent-hover);
+}
+
+/* Detail - teal */
+.hover-action-link.hover-action-detail {
+  color: var(--info);
+}
+.hover-action-link.hover-action-detail:hover {
+  color: #5b2bc4;
+}
+
+/* Status toggle - orange */
+.hover-action-link.hover-action-status {
+  color: #e67e22;
+}
+.hover-action-link.hover-action-status:hover {
+  color: #d35400;
+}
+
+/* Delete - red */
+.hover-action-link.hover-action-danger {
+  color: var(--danger);
+}
+
+.hover-action-link.hover-action-danger:hover {
+  color: #d63157;
+}
+
+.hover-action-sep {
+  color: var(--text-muted);
+  margin: 0 6px;
+  font-size: 0.7rem;
+  user-select: none;
+  opacity: 0.5;
 }
 
 /* Price */
@@ -727,7 +857,7 @@ body.admin-page {
   justify-content: center;
   min-width: 32px;
   padding: 4px 10px;
-  border-radius: 6px;
+  border-radius: 3px;
   font-size: 0.78rem;
   font-weight: 600;
 }
@@ -747,7 +877,7 @@ body.admin-page {
   display: inline-flex;
   align-items: center;
   padding: 5px 12px;
-  border-radius: 6px;
+  border-radius: 3px;
   font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
@@ -779,7 +909,7 @@ body.admin-page {
 .btn-action {
   width: 32px;
   height: 32px;
-  border-radius: 6px;
+  border-radius: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -877,7 +1007,7 @@ body.admin-page {
   justify-content: center;
   min-width: 36px;
   height: 36px;
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 0.82rem;
   font-weight: 600;
   color: var(--text-secondary);
