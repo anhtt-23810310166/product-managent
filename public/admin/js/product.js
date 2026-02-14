@@ -1,25 +1,27 @@
+// ===== Product Page Scripts =====
+// Chỉ dùng cho trang quản lý sản phẩm
+
 // Change Status
 (function () {
-  const buttons = document.querySelectorAll(".btn-change-status");
+  var buttons = document.querySelectorAll(".btn-change-status");
   if (!buttons.length) return;
 
   buttons.forEach(function (button) {
     button.addEventListener("click", function (e) {
       e.preventDefault();
-      const id = this.getAttribute("data-id");
-      const currentStatus = this.getAttribute("data-status");
-      const newStatus = currentStatus === "active" ? "inactive" : "active";
-      const self = this;
-      const row = this.closest("tr");
+      var id = this.getAttribute("data-id");
+      var currentStatus = this.getAttribute("data-status");
+      var newStatus = currentStatus === "active" ? "inactive" : "active";
+      var self = this;
+      var row = this.closest("tr");
 
-      fetch(`/admin/products/change-status/${newStatus}/${id}`, {
+      fetch("/admin/products/change-status/" + newStatus + "/" + id, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" }
       })
         .then(function (response) { return response.json(); })
         .then(function (data) {
           if (data.code === 200) {
-            // Update link data attribute and text
             self.setAttribute("data-status", newStatus);
             if (newStatus === "active") {
               self.textContent = "Dừng hoạt động";
@@ -27,7 +29,6 @@
               self.textContent = "Hoạt động";
             }
 
-            // Update the status badge in the same row
             if (row) {
               var badge = row.querySelector(".status-badge");
               if (badge) {
@@ -41,7 +42,6 @@
                   badge.classList.add("status-inactive");
                 }
               }
-
             }
             if (!data.noChange) {
               showFlashMessage("success", data.message);
@@ -54,51 +54,6 @@
           showFlashMessage("error", "Có lỗi xảy ra!");
         });
     });
-  });
-})();
-
-// Check All
-(function () {
-  const checkAll = document.getElementById("checkAll");
-  if (!checkAll) return;
-
-  var checkboxItems = document.querySelectorAll(".checkbox-item");
-
-  checkAll.addEventListener("change", function () {
-    var isChecked = this.checked;
-    checkboxItems.forEach(function (item) {
-      item.checked = isChecked;
-    });
-  });
-
-  checkboxItems.forEach(function (item) {
-    item.addEventListener("change", function () {
-      var allChecked = true;
-      checkboxItems.forEach(function (cb) {
-        if (!cb.checked) allChecked = false;
-      });
-      checkAll.checked = allChecked;
-    });
-  });
-})();
-
-// Batch Action Dropdown
-(function () {
-  var batchBtn = document.getElementById("batchActionBtn");
-  var dropdown = document.getElementById("batchDropdown");
-  if (!batchBtn || !dropdown) return;
-
-  batchBtn.addEventListener("click", function (e) {
-    e.stopPropagation();
-    dropdown.classList.toggle("show");
-  });
-
-  document.addEventListener("click", function () {
-    dropdown.classList.remove("show");
-  });
-
-  dropdown.addEventListener("click", function (e) {
-    e.stopPropagation();
   });
 })();
 

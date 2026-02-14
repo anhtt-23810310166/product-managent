@@ -1,8 +1,11 @@
-// Admin Sidebar Toggle
+// ===== Admin Global Scripts =====
+// Dùng chung cho toàn bộ admin
+
+// Sidebar Toggle
 (function () {
-  const sider = document.getElementById("adminSider");
-  const overlay = document.getElementById("siderOverlay");
-  const toggleBtn = document.getElementById("siderToggle");
+  var sider = document.getElementById("adminSider");
+  var overlay = document.getElementById("siderOverlay");
+  var toggleBtn = document.getElementById("siderToggle");
 
   if (!sider || !toggleBtn) return;
 
@@ -30,7 +33,6 @@
     overlay.addEventListener("click", closeSider);
   }
 
-  // Close sidebar on Escape key
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && sider.classList.contains("open")) {
       closeSider();
@@ -54,19 +56,62 @@
   });
 })();
 
+// Check All Checkbox
+(function () {
+  var checkAll = document.getElementById("checkAll");
+  if (!checkAll) return;
+
+  var checkboxItems = document.querySelectorAll(".checkbox-item");
+
+  checkAll.addEventListener("change", function () {
+    var isChecked = this.checked;
+    checkboxItems.forEach(function (item) {
+      item.checked = isChecked;
+    });
+  });
+
+  checkboxItems.forEach(function (item) {
+    item.addEventListener("change", function () {
+      var allChecked = true;
+      checkboxItems.forEach(function (cb) {
+        if (!cb.checked) allChecked = false;
+      });
+      checkAll.checked = allChecked;
+    });
+  });
+})();
+
+// Batch Action Dropdown
+(function () {
+  var batchBtn = document.getElementById("batchActionBtn");
+  var dropdown = document.getElementById("batchDropdown");
+  if (!batchBtn || !dropdown) return;
+
+  batchBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    dropdown.classList.toggle("show");
+  });
+
+  document.addEventListener("click", function () {
+    dropdown.classList.remove("show");
+  });
+
+  dropdown.addEventListener("click", function (e) {
+    e.stopPropagation();
+  });
+})();
+
 // Filter by Status
 (function () {
-  const filterStatus = document.getElementById("filterStatus");
+  var filterStatus = document.getElementById("filterStatus");
   if (!filterStatus) return;
 
-  // Restore selected value from URL
-  const url = new URL(window.location.href);
-  const currentStatus = url.searchParams.get("status") || "";
+  var url = new URL(window.location.href);
+  var currentStatus = url.searchParams.get("status") || "";
   filterStatus.value = currentStatus;
 
-  // On change, update URL and reload
   filterStatus.addEventListener("change", function () {
-    const value = this.value;
+    var value = this.value;
     if (value) {
       url.searchParams.set("status", value);
     } else {
@@ -78,17 +123,16 @@
 
 // Search by Keyword
 (function () {
-  const searchInput = document.getElementById("searchKeyword");
+  var searchInput = document.getElementById("searchKeyword");
   if (!searchInput) return;
 
-  const url = new URL(window.location.href);
-  const currentKeyword = url.searchParams.get("keyword") || "";
+  var url = new URL(window.location.href);
+  var currentKeyword = url.searchParams.get("keyword") || "";
   searchInput.value = currentKeyword;
 
-  // Search on Enter key
   searchInput.addEventListener("keyup", function (e) {
     if (e.key === "Enter") {
-      const value = this.value.trim();
+      var value = this.value.trim();
       if (value) {
         url.searchParams.set("keyword", value);
       } else {
@@ -99,24 +143,24 @@
   });
 })();
 
-// Sort Products
+// Sort
 (function () {
-  const sortSelect = document.getElementById("sortSelect");
+  var sortSelect = document.getElementById("sortSelect");
   if (!sortSelect) return;
 
-  const url = new URL(window.location.href);
-  const currentSortKey = url.searchParams.get("sortKey") || "";
-  const currentSortValue = url.searchParams.get("sortValue") || "";
+  var url = new URL(window.location.href);
+  var currentSortKey = url.searchParams.get("sortKey") || "";
+  var currentSortValue = url.searchParams.get("sortValue") || "";
   if (currentSortKey && currentSortValue) {
     sortSelect.value = currentSortKey + "-" + currentSortValue;
   }
 
   sortSelect.addEventListener("change", function () {
-    const value = this.value;
+    var value = this.value;
     if (value) {
-      const [sortKey, sortValue] = value.split("-");
-      url.searchParams.set("sortKey", sortKey);
-      url.searchParams.set("sortValue", sortValue);
+      var parts = value.split("-");
+      url.searchParams.set("sortKey", parts[0]);
+      url.searchParams.set("sortValue", parts[1]);
     } else {
       url.searchParams.delete("sortKey");
       url.searchParams.delete("sortValue");
@@ -127,14 +171,14 @@
 
 // Pagination
 (function () {
-  const paginationLinks = document.querySelectorAll(".pagination-link[data-page]");
+  var paginationLinks = document.querySelectorAll(".pagination-link[data-page]");
   if (!paginationLinks.length) return;
 
   paginationLinks.forEach(function (link) {
     link.addEventListener("click", function (e) {
       e.preventDefault();
-      const page = this.getAttribute("data-page");
-      const url = new URL(window.location.href);
+      var page = this.getAttribute("data-page");
+      var url = new URL(window.location.href);
 
       if (page && parseInt(page) > 0) {
         url.searchParams.set("page", page);

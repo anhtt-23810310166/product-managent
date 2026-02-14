@@ -52,8 +52,6 @@ block main
               td.col-title
                 .product-title-cell
                   span.product-name= product.title
-                  if product.discountPercentage > 0
-                    span.discount-tag= `-${product.discountPercentage}%`
                 .product-hover-actions
                   a.hover-action-link.hover-action-edit(href=`${prefixAdmin}/products/edit/${product._id}`) Sửa
                   a.hover-action-link.hover-action-detail(href=`${prefixAdmin}/products/detail/${product._id}`) Chi tiết

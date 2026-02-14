@@ -1,0 +1,58 @@
+extends ../../layouts/default
+
+block main
+  .container.py-4
+    //- Breadcrumb
+    nav(aria-label="breadcrumb")
+      ol.breadcrumb
+        li.breadcrumb-item
+          a(href="/") Trang chủ
+        li.breadcrumb-item
+          a(href="/products") Sản phẩm
+        li.breadcrumb-item.active= product.title
+
+    .row
+      //- Product image
+      .col-md-5.mb-4
+        if product.thumbnail
+          img.img-fluid.rounded.shadow(src=product.thumbnail alt=product.title style="width: 100%; object-fit: cover;")
+        else
+          .product-img-placeholder.rounded.shadow.d-flex.align-items-center.justify-content-center(style="height: 400px; background: #f5f5f5;")
+            i.fas.fa-image.fa-4x.text-muted
+
+      //- Product info
+      .col-md-7
+        h2.mb-3= product.title
+
+        //- Price
+        .mb-3
+          if product.discountPercentage && product.discountPercentage > 0
+            - var discountedPrice = Math.round(product.price * (1 - product.discountPercentage / 100) / 1000) * 1000
+            span.h3.text-danger.mr-2= discountedPrice.toLocaleString() + ' ₫'
+            span.text-muted(style="text-decoration: line-through;")= product.price.toLocaleString() + ' ₫'
+            span.badge.badge-danger.ml-2= '-' + product.discountPercentage + '%'
+          else
+            span.h3.text-danger= product.price ? product.price.toLocaleString() + ' ₫' : 'Liên hệ'
+
+        //- Stock
+        .mb-3
+          if product.stock > 0
+            span.text-success
+              i.fas.fa-check-circle.mr-1
+              | Còn #{product.stock} sản phẩm
+          else
+            span.text-danger
+              i.fas.fa-times-circle.mr-1
+              | Hết hàng
+
+        //- Description
+        if product.description
+          hr
+          h5 Mô tả sản phẩm
+          p= product.description
+
+        //- Back button
+        .mt-4
+          a.btn.btn-outline-secondary(href="/products")
+            i.fas.fa-arrow-left.mr-1
+            | Quay lại danh sách

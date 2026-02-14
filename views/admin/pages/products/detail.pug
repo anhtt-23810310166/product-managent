@@ -16,6 +16,7 @@ block main
             .detail-item
               .detail-label Tên sản phẩm
               .detail-value= product.title
+
             .detail-item
               .detail-label Mô tả
               .detail-value= product.description || "Chưa có mô tả"
@@ -25,10 +26,12 @@ block main
           .detail-grid.detail-grid-3
             .detail-item
               .detail-label Giá gốc
-              .detail-value.detail-price= product.price ? product.price.toLocaleString() + " VNĐ" : "0 VNĐ"
+              .detail-value.detail-price
+                = product.price ? product.price.toLocaleString() + " VNĐ" : "0 VNĐ"
             .detail-item
               .detail-label Giảm giá
-              .detail-value= product.discountPercentage ? product.discountPercentage + "%" : "0%"
+              .detail-value
+                = product.discountPercentage ? product.discountPercentage + "%" : "0%"
             .detail-item
               .detail-label Giá sau giảm
               - var finalPrice = product.price ? Math.round(product.price * (1 - (product.discountPercentage || 0) / 100) / 1000) * 1000 : 0
@@ -36,7 +39,9 @@ block main
             .detail-item
               .detail-label Số lượng tồn kho
               .detail-value
-                span.stock-badge(class=product.stock > 0 ? "in-stock" : "out-stock")= product.stock || 0
+                span.stock-badge(
+                  class=(product.stock > 0 ? "in-stock" : "out-stock")
+                )= product.stock || 0
             .detail-item
               .detail-label Vị trí
               .detail-value= product.position || "Chưa đặt"
@@ -54,9 +59,12 @@ block main
 
       .detail-side
         .detail-section
-          h3.detail-section-title Ảnh Thumbnail
+          h3.detail-section-title Ảnh
           if product.thumbnail
-            img.detail-thumbnail(src=product.thumbnail alt=product.title)
+            img.detail-thumbnail(
+              src=product.thumbnail
+              alt=product.title
+            )
           else
             .detail-no-image
               i.fas.fa-image
