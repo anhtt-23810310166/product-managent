@@ -1710,7 +1710,7 @@ body.admin-page {
 
 .detail-parent-link:hover {
   color: var(--accent-hover);
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 .detail-description {

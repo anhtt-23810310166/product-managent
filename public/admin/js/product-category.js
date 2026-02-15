@@ -42,6 +42,35 @@
                 }
               }
             }
+
+            // Update UI for descendant categories
+            if (data.descendantIds && data.descendantIds.length > 0) {
+              data.descendantIds.forEach(function(descendantId) {
+                var descendantBtn = document.querySelector(`.btn-change-status[data-id="${descendantId}"]`);
+                if (descendantBtn) {
+                  // Update button
+                  descendantBtn.setAttribute("data-status", newStatus);
+                  descendantBtn.textContent = newStatus === "active" ? "Dừng hoạt động" : "Hoạt động";
+                  
+                  // Update badge
+                  var descendantRow = descendantBtn.closest("tr");
+                  if (descendantRow) {
+                    var descendantBadge = descendantRow.querySelector(".status-badge");
+                    if (descendantBadge) {
+                      if (newStatus === "active") {
+                        descendantBadge.textContent = "Hoạt động";
+                        descendantBadge.classList.remove("status-inactive");
+                        descendantBadge.classList.add("status-active");
+                      } else {
+                        descendantBadge.textContent = "Dừng hoạt động";
+                        descendantBadge.classList.remove("status-active");
+                        descendantBadge.classList.add("status-inactive");
+                      }
+                    }
+                  }
+                }
+              });
+            }
             if (!data.noChange) {
               showFlashMessage("success", data.message);
             }

@@ -1,9 +1,21 @@
 const ProductCategory = require("../../models/product-category.model");
+const systemConfig = require("../../config/system");
 const createTree = require("../../helpers/createTree");
 const filterStatusHelper = require("../../helpers/filterStatus");
 const searchHelper = require("../../helpers/search");
 const sortHelper = require("../../helpers/sort");
-const paginationHelper = require("../../helpers/pagination");
+
+// Helper: Recursively get all descendant categories
+const getDescendants = async (parentId) => {
+    const children = await ProductCategory.find({ parent_id: parentId, deleted: false });
+    let descendants = [];
+    for (const child of children) {
+        descendants.push(child);
+        const grandChildren = await getDescendants(child._id);
+        descendants = descendants.concat(grandChildren);
+    }
+    return descendants;
+};
 
 // [GET] /admin/product-category
 module.exports.index = async (req, res) => {
@@ -22,11 +34,7 @@ module.exports.index = async (req, res) => {
             find.title = objectSearch.regex;
         }
 
-        // Pagination
-        const totalItems = await ProductCategory.countDocuments(find);
-        const objectPagination = paginationHelper(req.query, totalItems);
-
-        // Sort (danh mục không có giá)
+        // Sort
         const categorySortOptions = [
             { value: "position-desc", label: "Vị trí giảm dần" },
             { value: "position-asc", label: "Vị trí tăng dần" },
@@ -38,9 +46,7 @@ module.exports.index = async (req, res) => {
 
         const categories = await ProductCategory
             .find(find)
-            .sort(sort)
-            .skip(objectPagination.skip)
-            .limit(objectPagination.limitItems);
+            .sort(sort);
 
         const tree = createTree(categories);
 
@@ -50,8 +56,7 @@ module.exports.index = async (req, res) => {
             categories: tree,
             filterStatus: filterStatus,
             keyword: objectSearch.keyword,
-            sortOptions: objectSort.sortOptions,
-            pagination: objectPagination
+            sortOptions: objectSort.sortOptions
         });
     } catch (error) {
         console.log(error);
@@ -183,6 +188,19 @@ module.exports.editPatch = async (req, res) => {
         }
 
         await ProductCategory.updateOne({ _id: id }, req.body);
+
+        // If status is updated, cascade to all descendants
+        if (req.body.status) {
+             const descendants = await getDescendants(id);
+             const descendantIds = descendants.map(item => item._id);
+             if (descendantIds.length > 0) {
+                 await ProductCategory.updateMany(
+                     { _id: { $in: descendantIds } },
+                     { status: req.body.status }
+                 );
+             }
+        }
+
         req.flash("success", "Cập nhật danh mục thành công!");
         res.redirect(`${res.app.locals.prefixAdmin}/product-category`);
     } catch (error) {
@@ -195,22 +213,28 @@ module.exports.editPatch = async (req, res) => {
 // [PATCH] /admin/product-category/change-status/:status/:id
 module.exports.changeStatus = async (req, res) => {
     try {
-        const { id, status } = req.params;
+        const status = req.params.status;
+        const id = req.params.id;
 
-        const result = await ProductCategory.updateOne({ _id: id }, { status: status });
+        await ProductCategory.updateOne({ _id: id }, { status: status });
 
-        if (result.modifiedCount > 0) {
-            res.json({
-                code: 200,
-                message: "Cập nhật trạng thái thành công!"
-            });
-        } else {
-            res.json({
-                code: 200,
-                message: "Không có thay đổi nào!",
-                noChange: true
-            });
+        // Cascade status update to all descendant categories
+        const descendants = await getDescendants(id);
+        const descendantIds = descendants.map(item => item._id);
+        
+        if (descendantIds.length > 0) {
+            await ProductCategory.updateMany(
+                { _id: { $in: descendantIds } },
+                { status: status }
+            );
         }
+
+        res.json({
+            code: 200,
+            message: "Cập nhật trạng thái thành công!",
+            descendantsUpdated: descendantIds.length,
+            descendantIds: descendantIds
+        });
     } catch (error) {
         res.json({
             code: 400,
@@ -227,19 +251,28 @@ module.exports.changeMulti = async (req, res) => {
 
         switch (type) {
             case "active":
-                const resultActive = await ProductCategory.updateMany(
-                    { _id: { $in: ids } },
-                    { status: "active" }
-                );
-                count = resultActive.modifiedCount;
-                break;
             case "inactive":
-                const resultInactive = await ProductCategory.updateMany(
+                await ProductCategory.updateMany(
                     { _id: { $in: ids } },
-                    { status: "inactive" }
+                    { status: type }
                 );
-                count = resultInactive.modifiedCount;
-                break;
+                
+                // Cascade status update to descendants for each selected category
+                for (const id of ids) {
+                    const descendants = await getDescendants(id);
+                    const descendantIds = descendants.map(item => item._id);
+                    if (descendantIds.length > 0) {
+                        await ProductCategory.updateMany(
+                            { _id: { $in: descendantIds } },
+                            { status: type }
+                        );
+                    }
+                }
+                
+                return res.json({
+                    code: 200,
+                    message: "Cập nhật trạng thái thành công!"
+                });
             case "delete":
                 const resultDelete = await ProductCategory.updateMany(
                     { _id: { $in: ids } },
@@ -280,23 +313,32 @@ module.exports.changeMulti = async (req, res) => {
 module.exports.deleteCategory = async (req, res) => {
     try {
         const id = req.params.id;
-        const result = await ProductCategory.updateOne({ _id: id }, {
+
+        // Find the category to get its parent_id
+        const category = await ProductCategory.findById(id);
+        if (!category) {
+            return res.json({
+                code: 400,
+                message: "Danh mục không tồn tại!"
+            });
+        }
+
+        // Re-parent: move children up to the deleted category's parent
+        await ProductCategory.updateMany(
+            { parent_id: id },
+            { parent_id: category.parent_id }
+        );
+
+        // Soft delete the category
+        await ProductCategory.updateOne({ _id: id }, {
             deleted: true,
             deletedAt: new Date()
         });
 
-        if (result.modifiedCount > 0) {
-            res.json({
-                code: 200,
-                message: "Xóa danh mục thành công!"
-            });
-        } else {
-            res.json({
-                code: 200,
-                message: "Không có thay đổi nào!",
-                noChange: true
-            });
-        }
+        res.json({
+            code: 200,
+            message: "Xóa danh mục thành công!"
+        });
     } catch (error) {
         res.json({
             code: 400,

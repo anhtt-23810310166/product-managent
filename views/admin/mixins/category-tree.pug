@@ -1,0 +1,36 @@
+mixin categoryTree(categories, level)
+  each category, index in categories
+    - rowIndex++
+    tr.animate-in
+      td.col-check
+        input.form-check-input.checkbox-item(type="checkbox" name="id" value=category._id)
+      td.col-stt-num= rowIndex
+      td.col-img
+        if category.thumbnail
+          img.product-thumb(src=category.thumbnail alt=category.title)
+        else
+          .product-thumb-placeholder
+            i.fas.fa-folder
+      td.col-title
+        .product-title-cell
+          span
+            if level > 0
+              | #{("── ").repeat(level)}
+            span.product-name= category.title
+        .product-hover-actions
+          a.hover-action-link.hover-action-detail(href=`${prefixAdmin}/product-category/detail/${category._id}`) Chi tiết
+          a.hover-action-link.hover-action-edit(href=`${prefixAdmin}/product-category/edit/${category._id}`) Sửa
+          if category.status === "active"
+            a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=category._id data-status="active") Dừng hoạt động
+          else
+            a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=category._id data-status="inactive") Hoạt động
+          a.hover-action-link.hover-action-danger(href="javascript:void(0)" data-id=category._id) Xoá
+      td.col-position
+        input.position-input(type="number" value=category.position data-id=category._id min="1")
+      td.col-status
+        if category.status === "active"
+          span.status-badge.status-active Hoạt động
+        else
+          span.status-badge.status-inactive Dừng hoạt động
+    if category.children && category.children.length > 0
+      +categoryTree(category.children, level + 1)
