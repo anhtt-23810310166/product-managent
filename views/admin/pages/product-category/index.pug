@@ -1,0 +1,91 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+include ../../mixins/search.pug
+include ../../mixins/filter-status.pug
+include ../../mixins/sort.pug
+include ../../mixins/pagination.pug
+include ../../mixins/batch-actions.pug
+
+mixin categoryTree(categories, level)
+  each category, index in categories
+    - rowIndex++
+    tr.animate-in
+      td.col-check
+        input.form-check-input.checkbox-item(type="checkbox" name="id" value=category._id)
+      td.col-stt-num= rowIndex
+      td.col-img
+        if category.thumbnail
+          img.product-thumb(src=category.thumbnail alt=category.title)
+        else
+          .product-thumb-placeholder
+            i.fas.fa-folder
+      td.col-title
+        .product-title-cell
+          span(style=`padding-left: ${level * 20}px`)
+            if level > 0
+              | ├── 
+            span.product-name= category.title
+        .product-hover-actions
+          a.hover-action-link.hover-action-detail(href=`${prefixAdmin}/product-category/detail/${category._id}`) Chi tiết
+          a.hover-action-link.hover-action-edit(href=`${prefixAdmin}/product-category/edit/${category._id}`) Sửa
+          if category.status === "active"
+            a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=category._id data-status="active") Dừng hoạt động
+          else
+            a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=category._id data-status="inactive") Hoạt động
+          a.hover-action-link.hover-action-danger(href="javascript:void(0)" data-id=category._id) Xoá
+      td.col-position
+        input.position-input(type="number" value=category.position data-id=category._id min="1")
+      td.col-status
+        if category.status === "active"
+          span.status-badge.status-active Hoạt động
+        else
+          span.status-badge.status-inactive Dừng hoạt động
+    if category.children && category.children.length > 0
+      +categoryTree(category.children, level + 1)
+
+block main
+  +pageHeader("Danh mục sản phẩm", "Quản lý danh mục sản phẩm trong hệ thống")
+    a.btn.btn-add-product(href=`${prefixAdmin}/product-category/create`)
+      i.fas.fa-plus.mr-2
+      | Thêm danh mục
+
+  //- Filter bar
+  .admin-filter-bar.mb-4
+    .row.align-items-center
+      +search(keyword)
+      +filter-status(filterStatus)
+      +sort(sortOptions)
+      .col-md-2
+        .d-flex.gap-2
+          +batch-actions()
+
+  //- Categories Table
+  .admin-table-wrapper
+    if categories && categories.length > 0
+      - var rowIndex = 0
+      table.admin-table
+        thead
+          tr
+            th.col-check
+              input.form-check-input(type="checkbox" id="checkAll")
+            th.col-stt-num STT
+            th.col-img Ảnh
+            th.col-title Tên danh mục
+            th.col-position Vị trí
+            th.col-status Trạng thái
+        tbody
+          +categoryTree(categories, 0)
+    else
+      .admin-empty-state
+        i.fas.fa-folder-open
+        h4 Chưa có danh mục nào
+        p Bắt đầu thêm danh mục đầu tiên cho cửa hàng
+        a.btn.btn-add-product(href=`${prefixAdmin}/product-category/create`)
+          i.fas.fa-plus.mr-2
+          | Thêm danh mục
+
+  //- Pagination
+  +pagination(pagination)
+
+block append scripts
+  script(src="/admin/js/product-category.js")

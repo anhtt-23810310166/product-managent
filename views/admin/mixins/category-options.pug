@@ -1,0 +1,8 @@
+mixin categoryOptions(categories, level, selectedId)
+  each category in categories
+    if selectedId
+      option(value=category._id selected=(category._id.toString() === selectedId))= `${"──".repeat(level)} ${category.title}`
+    else
+      option(value=category._id)= `${"──".repeat(level)} ${category.title}`
+    if category.children && category.children.length > 0
+      +categoryOptions(category.children, level + 1, selectedId)

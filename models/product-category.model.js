@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 const slug = require("mongoose-slug-updater");
 
-const productSchema = new mongoose.Schema({
+const productCategorySchema = new mongoose.Schema({
     title: String,
-    product_category_id: {
+    parent_id: {
         type: String,
         default: ""
     },
@@ -13,11 +13,11 @@ const productSchema = new mongoose.Schema({
         unique: true
     },
     description: String,
-    price: Number,
-    discountPercentage: Number,
-    stock: Number,
     thumbnail: String,
-    status: String,
+    status: {
+        type: String,
+        default: "active"
+    },
     position: Number,
     deleted: {
         type: Boolean,
@@ -26,8 +26,8 @@ const productSchema = new mongoose.Schema({
     deletedAt: Date
 }, { timestamps: true });
 
-productSchema.plugin(slug);
+productCategorySchema.plugin(slug);
 
-const Product = mongoose.model("Product", productSchema);
+const ProductCategory = mongoose.model("ProductCategory", productCategorySchema);
 
-module.exports = Product;
+module.exports = ProductCategory;

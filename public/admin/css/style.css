@@ -743,6 +743,10 @@ body.admin-page {
 }
 
 /* Product Title Cell */
+.col-title {
+  position: relative;
+}
+
 .product-title-cell {
   display: flex;
   align-items: center;
@@ -767,15 +771,23 @@ body.admin-page {
 
 /* Product Hover Actions */
 .product-hover-actions {
-  display: none;
-  margin-top: 4px;
+  display: flex;
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  left: 16px;
+  bottom: 4px;
   font-size: 0.75rem;
   gap: 10px;
   align-items: center;
+  transition: opacity 0.15s ease, visibility 0.15s ease;
+  white-space: nowrap;
+  z-index: 5;
 }
 
 .admin-table tbody tr:hover .product-hover-actions {
-  display: flex;
+  visibility: visible;
+  opacity: 1;
 }
 
 .hover-action-link {
@@ -1004,6 +1016,13 @@ body.admin-page {
   color: var(--text-muted);
   font-size: 0.85rem;
   margin-bottom: 24px;
+}
+
+.admin-empty-state .btn-add-product {
+  display: inline-flex;
+  padding: 8px 20px;
+  font-size: 0.85rem;
+  gap: 6px;
 }
 
 /* ===== Pagination ===== */
@@ -1568,4 +1587,305 @@ body.admin-page {
 
 .detail-no-image p {
   font-size: 0.82rem;
+}
+
+/* Category Tag */
+.category-tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  background: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+  white-space: nowrap;
+}
+
+/* Category Description */
+.category-desc {
+  max-width: 200px;
+  max-height: 60px;
+  overflow: hidden;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+.category-desc p {
+  margin: 0;
+}
+
+/* ===== Category Detail Page ===== */
+.category-detail-wrapper {
+  margin-top: 8px;
+}
+
+.detail-card {
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.detail-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: var(--content-bg);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.detail-card-header i {
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+.detail-card-body {
+  padding: 20px;
+}
+
+.detail-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  min-width: 160px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-value {
+  flex: 1;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+}
+
+.detail-value-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.detail-slug {
+  background: var(--content-bg);
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.detail-position {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-light);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 2px 12px;
+  border-radius: 4px;
+  min-width: 36px;
+}
+
+.detail-parent-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.detail-parent-link:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+.detail-description {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.detail-description p {
+  margin-bottom: 8px;
+}
+
+.detail-description p:last-child {
+  margin-bottom: 0;
+}
+
+.detail-empty {
+  text-align: center;
+  padding: 24px 0;
+  color: var(--text-muted);
+}
+
+.detail-empty i {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  opacity: 0.4;
+}
+
+.detail-empty p {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.detail-thumbnail {
+  max-width: 100%;
+  max-height: 260px;
+  object-fit: contain;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+.detail-thumb-placeholder {
+  padding: 40px 0;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.detail-thumb-placeholder i {
+  font-size: 3rem;
+  opacity: 0.3;
+  margin-bottom: 8px;
+}
+
+.detail-thumb-placeholder p {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.detail-children-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.detail-child-item {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.detail-child-item:last-child {
+  border-bottom: none;
+}
+
+.detail-child-item a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 4px;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: var(--transition);
+  border-radius: 4px;
+}
+
+.detail-child-item a:hover {
+  background: var(--content-bg);
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.detail-child-item a i {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.detail-child-item a:hover i {
+  color: var(--accent);
+}
+
+.detail-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding: 16px 0;
+}
+
+.detail-actions-right {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.btn-back:hover {
+  color: var(--text-primary);
+  background: var(--content-bg);
+  text-decoration: none;
+}
+
+.btn-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.btn-edit:hover {
+  background: var(--accent-hover);
+  color: #fff;
+  text-decoration: none;
+}
+
+/* Hover action detail link */
+.hover-action-link.hover-action-detail {
+  color: #6366f1;
+}
+.hover-action-link.hover-action-detail:hover {
+  color: #4f46e5;
+}
+
+.mt-4 {
+  margin-top: 16px;
+}
+
+.ml-2 {
+  margin-left: 8px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-muted {
+  color: var(--text-muted);
 }

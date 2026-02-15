@@ -1,0 +1,74 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+
+block main
+  +pageHeader("Chi tiết danh mục", category.title)
+    a.btn.btn-add-product(href=`${prefixAdmin}/product-category/edit/${category._id}`)
+      i.fas.fa-edit.mr-2
+      | Chỉnh sửa
+
+  .category-detail-wrapper
+    .row
+      //- Left column: Main info
+      .col-md-8
+        .detail-card
+          .detail-card-header
+            i.fas.fa-info-circle
+            span Thông tin danh mục
+
+          .detail-card-body
+            .detail-row
+              .detail-label Tên danh mục
+              .detail-value.detail-value-title= category.title
+
+            .detail-row
+              .detail-label Vị trí
+              .detail-value
+                span.detail-position= category.position
+
+            .detail-row
+              .detail-label Trạng thái
+              .detail-value
+                if category.status === "active"
+                  span.status-badge.status-active Hoạt động
+                else
+                  span.status-badge.status-inactive Dừng hoạt động
+
+        //- Description card
+        .detail-card.mt-4
+          .detail-card-header
+            i.fas.fa-align-left
+            span Mô tả
+
+          .detail-card-body
+            if category.description
+              .detail-description!= category.description
+            else
+              .detail-empty
+                i.fas.fa-file-alt
+                p Chưa có mô tả
+
+      //- Right column: Thumbnail
+      .col-md-4
+        .detail-card
+          .detail-card-header
+            i.fas.fa-image
+            span Ảnh danh mục
+
+          .detail-card-body.text-center
+            if category.thumbnail
+              img.detail-thumbnail(src=category.thumbnail alt=category.title)
+            else
+              .detail-thumb-placeholder
+                i.fas.fa-folder-open
+                p Chưa có ảnh
+
+    //- Action buttons
+    .detail-actions
+      a.btn-back(href=`${prefixAdmin}/product-category`)
+        i.fas.fa-arrow-left
+        |  Quay lại danh sách
+      .detail-actions-right
+        a.btn-edit(href=`${prefixAdmin}/product-category/edit/${category._id}`)
+          i.fas.fa-edit
+          |  Chỉnh sửa

@@ -1,5 +1,5 @@
-module.exports = (query) => {
-    const sortOptions = [
+module.exports = (query, customOptions) => {
+    const defaultOptions = [
         { value: "position-desc", label: "Vị trí giảm dần" },
         { value: "position-asc", label: "Vị trí tăng dần" },
         { value: "price-desc", label: "Giá giảm dần" },
@@ -7,6 +7,8 @@ module.exports = (query) => {
         { value: "title-asc", label: "Tiêu đề A - Z" },
         { value: "title-desc", label: "Tiêu đề Z - A" }
     ];
+
+    const sortOptions = customOptions || defaultOptions;
 
     const sortObject = {};
 

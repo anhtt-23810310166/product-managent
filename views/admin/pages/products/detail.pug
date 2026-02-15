@@ -47,6 +47,17 @@ block main
               .detail-value= product.position || "Chưa đặt"
 
         .detail-section
+          h3.detail-section-title Danh mục
+          .detail-grid
+            .detail-item
+              .detail-label Danh mục sản phẩm
+              .detail-value
+                if category
+                  a.detail-parent-link(href=`${prefixAdmin}/product-category/detail/${category._id}`)= category.title
+                else
+                  span.text-muted Chưa phân loại
+
+        .detail-section
           h3.detail-section-title Trạng thái
           .detail-grid
             .detail-item

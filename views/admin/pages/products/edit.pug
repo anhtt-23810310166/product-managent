@@ -1,5 +1,6 @@
 extends ../../layouts/default.pug
 include ../../mixins/page-header.pug
+include ../../mixins/category-options.pug
 
 block main
   +pageHeader("Chỉnh sửa sản phẩm", product.title)
@@ -22,6 +23,13 @@ block main
               value=product.title
               required
             )
+
+          .form-group
+            label.form-label Danh mục sản phẩm
+            select.form-input.form-select(name="product_category_id")
+              option(value="" selected=(product.product_category_id === "" || !product.product_category_id)) ── Chọn danh mục ──
+              if categories
+                +categoryOptions(categories, 1, product.product_category_id || "")
 
           .form-group
             label.form-label Mô tả

@@ -1,4 +1,6 @@
 const Product = require("../../models/product.model");
+const ProductCategory = require("../../models/product-category.model");
+const createTree = require("../../helpers/createTree");
 const filterStatusHelper = require("../../helpers/filterStatus");
 const searchHelper = require("../../helpers/search");
 const sortHelper = require("../../helpers/sort");
@@ -35,6 +37,13 @@ module.exports.index = async (req, res) => {
         .skip(objectPagination.skip)
         .limit(objectPagination.limitItems);
 
+    // Category lookup
+    const categories = await ProductCategory.find({ deleted: false });
+    const categoryMap = {};
+    categories.forEach(cat => {
+        categoryMap[cat._id.toString()] = cat.title;
+    });
+
     res.render("admin/pages/products/index", {
         pageTitle: "Danh sách sản phẩm",
         currentPage: "products",
@@ -42,15 +51,20 @@ module.exports.index = async (req, res) => {
         filterStatus: filterStatus,
         keyword: objectSearch.keyword,
         sortOptions: objectSort.sortOptions,
-        pagination: objectPagination
+        pagination: objectPagination,
+        categoryMap: categoryMap
     });
 }
 
 // [GET] /admin/products/create
 module.exports.create = async (req, res) => {
+    const categories = await ProductCategory.find({ deleted: false }).sort({ position: "asc" });
+    const tree = createTree(categories);
+
     res.render("admin/pages/products/create", {
         pageTitle: "Thêm sản phẩm mới",
-        currentPage: "product-create"
+        currentPage: "product-create",
+        categories: tree
     });
 }
 
@@ -91,10 +105,15 @@ module.exports.edit = async (req, res) => {
             req.flash("error", "Sản phẩm không tồn tại!");
             return res.redirect(`${res.app.locals.prefixAdmin}/products`);
         }
+
+        const categories = await ProductCategory.find({ deleted: false }).sort({ position: "asc" });
+        const tree = createTree(categories);
+
         res.render("admin/pages/products/edit", {
             pageTitle: "Chỉnh sửa sản phẩm",
             currentPage: "products",
-            product: product
+            product: product,
+            categories: tree
         });
     } catch (error) {
         req.flash("error", "Có lỗi xảy ra!");
@@ -141,10 +160,18 @@ module.exports.detail = async (req, res) => {
             req.flash("error", "Sản phẩm không tồn tại!");
             return res.redirect(`${res.app.locals.prefixAdmin}/products`);
         }
+
+        // Get category
+        let category = null;
+        if (product.product_category_id) {
+            category = await ProductCategory.findById(product.product_category_id);
+        }
+
         res.render("admin/pages/products/detail", {
             pageTitle: "Chi tiết sản phẩm",
             currentPage: "products",
-            product: product
+            product: product,
+            category: category
         });
     } catch (error) {
         req.flash("error", "Có lỗi xảy ra!");

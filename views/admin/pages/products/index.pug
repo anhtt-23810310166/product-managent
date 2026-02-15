@@ -34,6 +34,7 @@ block main
             th.col-img Hình ảnh
             th.col-title Tên sản phẩm
             th.col-price Giá / Giá đặc biệt
+            th.col-category Danh mục
             th.col-position Vị trí
             th.col-stock Số lượng
             th.col-status Trạng thái
@@ -65,6 +66,11 @@ block main
                   span.price-text= `${product.price.toLocaleString()} / ${(Math.round(product.price * (1 - product.discountPercentage / 100) / 1000) * 1000).toLocaleString()}`
                 else
                   span.price-text= `${product.price.toLocaleString()}`
+              td.col-category
+                if product.product_category_id && categoryMap[product.product_category_id]
+                  span.category-tag= categoryMap[product.product_category_id]
+                else
+                  span.text-muted --
               td.col-position
                 input.position-input(type="number" value=product.position data-id=product._id min="1")
               td.col-stock

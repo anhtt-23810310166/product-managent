@@ -1,0 +1,89 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+include ../../mixins/category-options.pug
+
+block main
+  +pageHeader("Chỉnh sửa danh mục", "Cập nhật thông tin danh mục")
+
+  .admin-form-card
+    form(
+      action=`${prefixAdmin}/product-category/edit/${category._id}?_method=PATCH`
+      method="POST"
+      enctype="multipart/form-data"
+    )
+      .form-row
+        .form-col
+          .form-group
+            label.form-label Tên danh mục
+              span.required *
+            input.form-input(
+              type="text"
+              name="title"
+              value=category.title
+              placeholder="Nhập tên danh mục"
+              required
+            )
+
+          .form-group
+            label.form-label Danh mục cha
+            select.form-input.form-select(name="parent_id")
+              option(value="" selected=(category.parent_id === "")) ── Danh mục gốc ──
+              if categories
+                +categoryOptions(categories, 1, category.parent_id)
+
+          .form-group
+            label.form-label Mô tả
+            textarea.form-input.form-textarea(
+              name="description"
+              placeholder="Nhập mô tả danh mục"
+              rows="4"
+            )= category.description
+
+          .form-row-inline
+            .form-group.form-group-half
+              label.form-label Vị trí
+              input.form-input(
+                type="text"
+                name="position"
+                value=category.position
+                placeholder="Tự động"
+              )
+            .form-group.form-group-half
+              label.form-label Trạng thái
+              select.form-input.form-select(name="status")
+                option(value="active" selected=(category.status === "active")) Hoạt động
+                option(value="inactive" selected=(category.status === "inactive")) Dừng hoạt động
+
+        .form-col.form-col-side
+          .form-group
+            label.form-label Ảnh
+            .upload-area#uploadArea
+              input.upload-input(
+                type="file"
+                name="thumbnail"
+                id="uploadFile"
+                accept="image/*"
+              )
+              if category.thumbnail
+                .upload-placeholder#uploadPlaceholder(style="display: none")
+                  i.fas.fa-cloud-upload-alt
+                  p Kéo thả hoặc click để chọn ảnh
+                  span.upload-hint Hỗ trợ: JPG, PNG, GIF, WebP
+                img.upload-preview#uploadPreview(src=category.thumbnail alt=category.title style="display: block")
+              else
+                .upload-placeholder#uploadPlaceholder
+                  i.fas.fa-cloud-upload-alt
+                  p Kéo thả hoặc click để chọn ảnh
+                  span.upload-hint Hỗ trợ: JPG, PNG, GIF, WebP
+                img.upload-preview#uploadPreview(src="" alt="Preview")
+
+      .form-actions
+        a.btn-cancel(href=`${prefixAdmin}/product-category`) Huỷ
+        button.btn-submit(type="submit")
+          i.fas.fa-save
+          |  Cập nhật
+
+block append scripts
+  script(src="/admin/js/upload-preview.js")
+  script(src="/admin/libs/tinymce/tinymce.min.js")
+  script(src="/admin/js/tinymce-init.js")
