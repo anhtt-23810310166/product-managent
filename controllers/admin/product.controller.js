@@ -69,7 +69,7 @@ module.exports.createPost = async (req, res) => {
         }
 
         if (req.file) {
-            req.body.thumbnail = "/uploads/" + req.file.filename;
+            req.body.thumbnail = req.file.path;
         }
 
         const product = new Product(req.body);
@@ -120,7 +120,7 @@ module.exports.editPatch = async (req, res) => {
         product.status = req.body.status;
 
         if (req.file) {
-            product.thumbnail = "/uploads/" + req.file.filename;
+            product.thumbnail = req.file.path;
         }
 
         await product.save();
