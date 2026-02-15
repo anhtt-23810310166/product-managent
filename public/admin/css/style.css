@@ -268,6 +268,8 @@ body.admin-page {
   background: var(--content-bg);
 }
 
+
+
 /* ===== Top Header ===== */
 .admin-header {
   height: var(--header-height);
@@ -491,10 +493,10 @@ body.admin-page {
   background: var(--accent);
   color: #fff;
   border: none;
-  padding: 9px 18px;
+  padding: 7px 14px;
   border-radius: 4px;
   font-weight: 600;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   transition: var(--transition);
   text-decoration: none;
   display: inline-flex;
@@ -790,37 +792,37 @@ body.admin-page {
   text-decoration: none;
 }
 
-/* Edit - blue */
+/* Sửa - Xanh biển (Blue) */
 .hover-action-link.hover-action-edit {
-  color: var(--accent);
+  color: #2980b9;
 }
 .hover-action-link.hover-action-edit:hover {
-  color: var(--accent-hover);
+  color: #1c6ea4;
 }
 
-/* Detail - teal */
+/* Chi tiết - Vàng (Yellow) */
 .hover-action-link.hover-action-detail {
-  color: var(--info);
+  color: #f39c12;
 }
 .hover-action-link.hover-action-detail:hover {
-  color: #5b2bc4;
+  color: #d68910;
 }
 
-/* Status toggle - orange */
+/* Hoạt động/Dừng - Xanh lá (Green) */
 .hover-action-link.hover-action-status {
-  color: #e67e22;
+  color: #27ae60;
 }
 .hover-action-link.hover-action-status:hover {
-  color: #d35400;
+  color: #1e8449;
 }
 
-/* Delete - red */
+/* Xoá - Đỏ (Red) */
 .hover-action-link.hover-action-danger {
-  color: var(--danger);
+  color: #c0392b;
 }
 
 .hover-action-link.hover-action-danger:hover {
-  color: #d63157;
+  color: #a93226;
 }
 
 .hover-action-sep {

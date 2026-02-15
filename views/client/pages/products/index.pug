@@ -14,23 +14,18 @@ block main
           .col-lg-3.col-md-4.col-sm-6.mb-4
             .card.product-card.h-100.shadow-sm
               //- Product thumbnail
-              if product.thumbnail
-                .product-img-wrapper
-                  img.card-img-top.product-img(src=product.thumbnail alt=product.title)
-                  //- Status badge
+              a.product-detail-link(href=`/products/detail/${product.slug}` style="text-decoration: none;")
+                if product.thumbnail
+                  .product-img-wrapper
+                    img.card-img-top.product-img(src=product.thumbnail alt=product.title)
+                else
+                  .product-img-wrapper
+                    .product-img-placeholder
+                      i.fas.fa-image.fa-3x.text-muted
 
-                  //- Discount badge
-                  if product.discountPercentage && product.discountPercentage > 0
-                    span.badge.badge-danger.product-discount-badge
-                      | -#{product.discountPercentage}%
-              else
-                .product-img-wrapper
-                  .product-img-placeholder
-                    i.fas.fa-image.fa-3x.text-muted
-
-                  if product.discountPercentage && product.discountPercentage > 0
-                    span.badge.badge-danger.product-discount-badge
-                      | -#{product.discountPercentage}%
+                if product.discountPercentage && product.discountPercentage > 0
+                  span.badge.badge-danger.product-discount-badge
+                    | -#{product.discountPercentage}%
 
               .card-body.d-flex.flex-column
                 a.card-title.product-title(href=`/products/detail/${product.slug}`)= product.title
