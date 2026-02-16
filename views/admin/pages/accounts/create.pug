@@ -1,0 +1,53 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+
+block main
+  +pageHeader("Thêm tài khoản", "Tạo tài khoản nhân viên mới")
+
+  .admin-form-card
+    .p-4
+      form(action=`${prefixAdmin}/accounts/create` method="POST" enctype="multipart/form-data")
+        .row
+          .col-md-8
+            .form-group.mb-3
+              label.form-label Họ tên
+                span.text-danger  *
+              input.form-control(type="text" name="fullName" required placeholder="Nhập họ tên...")
+
+            .form-group.mb-3
+              label.form-label Email
+                span.text-danger  *
+              input.form-control(type="email" name="email" required placeholder="Nhập email...")
+
+            .form-group.mb-3
+              label.form-label Mật khẩu
+                span.text-danger  *
+              input.form-control(type="password" name="password" required placeholder="Nhập mật khẩu...")
+
+            .form-group.mb-3
+              label.form-label Số điện thoại
+              input.form-control(type="text" name="phone" placeholder="Nhập số điện thoại...")
+
+            .form-group.mb-3
+              label.form-label Nhóm quyền
+              select.form-control(name="role_id")
+                option(value="") -- Chọn nhóm quyền --
+                each role in roles
+                  option(value=role._id)= role.title
+
+            .form-group.mb-3
+              label.form-label Trạng thái
+              select.form-control(name="status")
+                option(value="active") Hoạt động
+                option(value="inactive") Dừng hoạt động
+
+          .col-md-4
+            .form-group.mb-3
+              label.form-label Ảnh đại diện
+              input.form-control(type="file" name="avatar" accept="image/*")
+
+        .form-actions
+          a.btn-cancel(href=`${prefixAdmin}/accounts`) Huỷ
+          button.btn-submit(type="submit")
+            i.fas.fa-save
+            |  Tạo tài khoản

@@ -1,0 +1,68 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+
+block main
+  +pageHeader("Chi tiết tài khoản", account.fullName)
+    a.btn-submit(href=`${prefixAdmin}/accounts/edit/${account._id}`)
+      i.fas.fa-edit
+      |  Chỉnh sửa
+
+  .admin-form-card
+    .detail-layout
+      .detail-main
+        .detail-section
+          h3.detail-section-title Thông tin tài khoản
+          .detail-grid
+            .detail-item
+              .detail-label Họ tên
+              .detail-value= account.fullName
+
+            .detail-item
+              .detail-label Email
+              .detail-value= account.email
+
+            .detail-item
+              .detail-label Số điện thoại
+              .detail-value= account.phone || "Chưa cập nhật"
+
+        .detail-section
+          h3.detail-section-title Nhóm quyền
+          .detail-grid
+            .detail-item
+              .detail-label Nhóm quyền
+              .detail-value
+                if role
+                  span.category-tag= role.title
+                else
+                  span.text-muted Chưa phân quyền
+
+        .detail-section
+          h3.detail-section-title Trạng thái
+          .detail-grid
+            .detail-item
+              .detail-label Trạng thái
+              .detail-value
+                if account.status === "active"
+                  span.status-badge.status-active Hoạt động
+                else
+                  span.status-badge.status-inactive Dừng hoạt động
+
+      .detail-side
+        .detail-section
+          h3.detail-section-title Ảnh đại diện
+          if account.avatar
+            img.detail-thumbnail(
+              src=account.avatar
+              alt=account.fullName
+              style="border-radius: 50%"
+            )
+          else
+            .detail-no-image
+              i.fas.fa-user
+              p Chưa có ảnh
+
+    .form-actions
+      a.btn-cancel(href=`${prefixAdmin}/accounts`) Quay lại
+      a.btn-submit(href=`${prefixAdmin}/accounts/edit/${account._id}`)
+        i.fas.fa-edit
+        |  Chỉnh sửa

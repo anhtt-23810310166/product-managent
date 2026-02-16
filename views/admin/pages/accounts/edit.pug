@@ -1,0 +1,55 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+
+block main
+  +pageHeader("Chỉnh sửa tài khoản", account.fullName)
+
+  .admin-form-card
+    .p-4
+      form(action=`${prefixAdmin}/accounts/edit/${account._id}?_method=PATCH` method="POST" enctype="multipart/form-data")
+        .row
+          .col-md-8
+            .form-group.mb-3
+              label.form-label Họ tên
+                span.text-danger  *
+              input.form-control(type="text" name="fullName" required placeholder="Nhập họ tên..." value=account.fullName)
+
+            .form-group.mb-3
+              label.form-label Email
+                span.text-danger  *
+              input.form-control(type="email" name="email" required placeholder="Nhập email..." value=account.email)
+
+            .form-group.mb-3
+              label.form-label Mật khẩu
+              input.form-control(type="password" name="password" placeholder="Để trống nếu không đổi mật khẩu...")
+
+            .form-group.mb-3
+              label.form-label Số điện thoại
+              input.form-control(type="text" name="phone" placeholder="Nhập số điện thoại..." value=account.phone)
+
+            .form-group.mb-3
+              label.form-label Nhóm quyền
+              select.form-control(name="role_id")
+                option(value="") -- Chọn nhóm quyền --
+                each role in roles
+                  option(value=role._id selected=(account.role_id == role._id.toString()))= role.title
+
+            .form-group.mb-3
+              label.form-label Trạng thái
+              select.form-control(name="status")
+                option(value="active" selected=(account.status === "active")) Hoạt động
+                option(value="inactive" selected=(account.status === "inactive")) Dừng hoạt động
+
+          .col-md-4
+            .form-group.mb-3
+              label.form-label Ảnh đại diện
+              if account.avatar
+                .mb-2
+                  img(src=account.avatar alt=account.fullName style="width: 100%; max-width: 200px; border-radius: 8px;")
+              input.form-control(type="file" name="avatar" accept="image/*")
+
+        .form-actions
+          a.btn-cancel(href=`${prefixAdmin}/accounts`) Huỷ
+          button.btn-submit(type="submit")
+            i.fas.fa-save
+            |  Cập nhật

@@ -8,6 +8,7 @@ block main
     form(action=`${prefixAdmin}/roles/create` method="POST")
       .form-group.mb-3
         label.form-label Tên nhóm quyền
+          span.text-danger  *
         input.form-control(type="text" name="title" required placeholder="Nhập tên nhóm quyền...")
 
       .form-group.mb-3

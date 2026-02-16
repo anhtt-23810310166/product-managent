@@ -1,0 +1,86 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+include ../../mixins/search.pug
+include ../../mixins/filter-status.pug
+include ../../mixins/sort.pug
+include ../../mixins/pagination.pug
+include ../../mixins/batch-actions.pug
+
+block main
+  +pageHeader("Danh sách tài khoản", "Quản lý tài khoản nhân viên hệ thống")
+    a.btn.btn-add-product(href=`${prefixAdmin}/accounts/create`)
+      i.fas.fa-plus.mr-2
+      | Thêm tài khoản
+
+  //- Filter bar
+  .admin-filter-bar.mb-4
+    .row.align-items-center
+      +search(keyword)
+      +filter-status(filterStatus)
+      +sort(sortOptions)
+      .col-md-2
+        .d-flex.gap-2
+          +batch-actions()
+
+  //- Accounts Table
+  .admin-table-wrapper
+    if accounts && accounts.length > 0
+      table.admin-table
+        thead
+          tr
+            th.col-check
+              input.form-check-input(type="checkbox" id="checkAll")
+            th.col-stt STT
+            th.col-img Avatar
+            th Họ tên
+            th Email
+            th Nhóm quyền
+            th.col-status Trạng thái
+        tbody
+          each account, index in accounts
+            tr.animate-in
+              td.col-check
+                input.form-check-input.checkbox-item(type="checkbox" name="id" value=account._id)
+              td.col-stt= pagination.skip + index + 1
+              td.col-img
+                if account.avatar
+                  img.product-thumb(src=account.avatar alt=account.fullName style="border-radius: 50%")
+                else
+                  .product-thumb-placeholder(style="border-radius: 50%")
+                    i.fas.fa-user
+              td
+                .product-title-cell
+                  span.product-name= account.fullName
+                .product-hover-actions
+                  a.hover-action-link.hover-action-edit(href=`${prefixAdmin}/accounts/edit/${account._id}`) Sửa
+                  a.hover-action-link.hover-action-detail(href=`${prefixAdmin}/accounts/detail/${account._id}`) Chi tiết
+                  if account.status === "active"
+                    a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=account._id data-status="active") Dừng hoạt động
+                  else
+                    a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=account._id data-status="inactive") Hoạt động
+                  a.hover-action-link.hover-action-danger(href="javascript:void(0)" data-id=account._id) Xoá
+              td= account.email
+              td
+                if account.role_id && roleMap[account.role_id]
+                  span.category-tag= roleMap[account.role_id]
+                else
+                  span.text-muted --
+              td.col-status
+                if account.status === "active"
+                  span.status-badge.status-active Hoạt động
+                else
+                  span.status-badge.status-inactive Dừng hoạt động
+    else
+      .admin-empty-state
+        i.fas.fa-users
+        h4 Chưa có tài khoản nào
+        p Bắt đầu thêm tài khoản đầu tiên cho hệ thống
+        a.btn.btn-add-product(href=`${prefixAdmin}/accounts/create`)
+          i.fas.fa-plus.mr-2
+          | Thêm tài khoản
+
+  //- Pagination
+  +pagination(pagination)
+
+block append scripts
+  script(src="/admin/js/account.js")
