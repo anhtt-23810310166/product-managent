@@ -13,6 +13,7 @@ if (typeof tinymce !== "undefined") {
             "body { font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.6; }",
         branding: false,
         promotion: false,
+        elementpath: false,
         statusbar: true,
         resize: true,
         placeholder: "Nhập mô tả sản phẩm...",

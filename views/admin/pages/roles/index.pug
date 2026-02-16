@@ -1,7 +1,9 @@
 extends ../../layouts/default.pug
 include ../../mixins/page-header.pug
 include ../../mixins/search.pug
+include ../../mixins/sort.pug
 include ../../mixins/pagination.pug
+include ../../mixins/batch-actions.pug
 
 block main
   +pageHeader("Danh sách nhóm quyền", "Quản lý nhóm quyền hệ thống")
@@ -13,6 +15,16 @@ block main
   .admin-filter-bar.mb-4
     .row.align-items-center
       +search(keyword)
+      +sort(sortOptions)
+      .col-md-2
+        .d-flex.gap-2
+          .batch-action-wrapper
+            button.btn.btn-batch-action#batchActionBtn(type="button" title="Xoá hàng loạt")
+              i.fas.fa-trash-alt
+            .batch-action-dropdown#batchDropdown
+              button.batch-action-item.batch-action-danger(type="button" data-action="delete")
+                i.fas.fa-trash-alt
+                | Xoá
 
   //- Table
   .admin-table-wrapper
@@ -34,8 +46,9 @@ block main
                   span.product-name= role.title
                 .product-hover-actions
                   a.hover-action-link.hover-action-edit(href=`${prefixAdmin}/roles/edit/${role._id}`) Sửa
+                  a.hover-action-link.hover-action-detail(href=`${prefixAdmin}/roles/detail/${role._id}`) Chi tiết
                   a.hover-action-link.hover-action-danger.btn-delete-role(href="javascript:void(0)" data-id=role._id) Xóa
-              td= role.description
+              td!= role.description
     else
       .admin-empty-state
         i.fas.fa-user-shield

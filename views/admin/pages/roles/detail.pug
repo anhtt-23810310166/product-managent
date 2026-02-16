@@ -1,0 +1,41 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+
+block main
+  +pageHeader("Chi tiết nhóm quyền", role.title)
+    a.btn-submit(href=`${prefixAdmin}/roles/edit/${role._id}`)
+      i.fas.fa-edit
+      |  Chỉnh sửa
+
+  .admin-form-card
+    .detail-layout
+      .detail-main
+        .detail-section
+          h3.detail-section-title Thông tin nhóm quyền
+          .detail-grid
+            .detail-item
+              .detail-label Tiêu đề
+              .detail-value= role.title
+
+            .detail-item
+              .detail-label Mô tả
+              .detail-value!= role.description || "Chưa có mô tả"
+
+        .detail-section
+          h3.detail-section-title Danh sách quyền
+          .detail-grid
+            if role.permissions && role.permissions.length > 0
+              .detail-item
+                .detail-value
+                  .role-detail-permissions
+                    each perm in role.permissions
+                      span.role-perm-tag #{perm}
+            else
+              .detail-item
+                .detail-value Chưa được phân quyền
+
+    .form-actions
+      a.btn-cancel(href=`${prefixAdmin}/roles`) Quay lại
+      a.btn-submit(href=`${prefixAdmin}/roles/edit/${role._id}`)
+        i.fas.fa-edit
+        |  Chỉnh sửa

@@ -1,0 +1,56 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+
+block main
+  +pageHeader("Phân quyền", "Thiết lập phân quyền cho từng nhóm")
+
+  form(
+    method="POST"
+    action=`${prefixAdmin}/roles/permissions?_method=PATCH`
+    data-permissions-form
+  )
+    .admin-table-wrapper
+      table.admin-table(table-permissions)
+        thead
+          tr
+            th.permissions-feature-col Tính năng
+            each role in roles
+              th.text-center #{role.title}
+          tr.permissions-checkall-row
+            td.permissions-feature-col
+              span.permissions-label Chọn tất cả
+            each role in roles
+              td.text-center
+                input.check-all(type="checkbox")
+
+        tbody
+          each module, moduleIndex in permissions
+            tr.permissions-module-header
+              td(colspan=`${roles.length + 1}`)
+                strong #{module.label}
+            each perm in module.permissions
+              tr(data-name=`${module.name}_${perm.action}`)
+                td.permissions-feature-col
+                  span.permissions-perm-label #{perm.label}
+                each role in roles
+                  td.text-center
+                    input.permissions-checkbox(
+                      type="checkbox"
+                      value=`${module.name}_${perm.action}`
+                      checked=role.permissions.includes(`${module.name}_${perm.action}`)
+                    )
+            if moduleIndex < permissions.length - 1
+              tr.permissions-spacer
+                td(colspan=`${roles.length + 1}`)
+
+    input(type="hidden" name="permissions" value="")
+
+    .text-end.mt-3
+      button.btn.btn-add-product(type="submit")
+        i.fas.fa-save.me-2
+        | Cập nhật
+
+  div(data-records=JSON.stringify(roles) style="display:none")
+
+block scripts
+  script(src="/admin/js/permissions.js")

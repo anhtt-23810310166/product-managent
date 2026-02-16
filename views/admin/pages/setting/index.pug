@@ -13,7 +13,7 @@ block main
           i.fas.fa-info-circle
         .settings-card-content
           .settings-card-title Thông tin Website
-          .settings-card-desc Thiết lập thông tin website
+          .settings-card-desc Tên, logo, favicon, thông tin liên hệ
 
       a.settings-card(href="#")
         .settings-card-icon.icon-language
@@ -27,14 +27,14 @@ block main
           i.fas.fa-envelope
         .settings-card-content
           .settings-card-title Cấu hình email
-          .settings-card-desc Thiết lập cấu hình email
+          .settings-card-desc SMTP, mẫu email thông báo
 
       a.settings-card(href="#")
         .settings-card-icon.icon-city
           i.fas.fa-city
         .settings-card-content
           .settings-card-title Tỉnh thành
-          .settings-card-desc Quản lý tỉnh thành
+          .settings-card-desc Quản lý tỉnh thành, quận huyện
 
       a.settings-card(href="#")
         .settings-card-icon.icon-contact
@@ -48,21 +48,35 @@ block main
           i.fas.fa-list-alt
         .settings-card-content
           .settings-card-title Danh sách thuộc tính
-          .settings-card-desc Tùy chỉnh các thuộc tính mở rộng của sản phẩm và bài viết
+          .settings-card-desc Thuộc tính mở rộng của sản phẩm và bài viết
 
       a.settings-card(href="#")
         .settings-card-icon.icon-social
           i.fab.fa-facebook
         .settings-card-content
           .settings-card-title Mạng xã hội
-          .settings-card-desc Cấu hình các thông tin liên quan đến các trang mạng xã hội
+          .settings-card-desc Facebook, Zalo, Instagram, TikTok
 
       a.settings-card(href="#")
         .settings-card-icon.icon-embed
           i.fas.fa-code
         .settings-card-content
           .settings-card-title Mã nhúng
-          .settings-card-desc Quản lý mã nhúng
+          .settings-card-desc Google Tag, Facebook Pixel, chat widget
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-seo
+          i.fas.fa-search
+        .settings-card-content
+          .settings-card-title SEO
+          .settings-card-desc Meta title, description, sitemap, robots.txt
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-media
+          i.fas.fa-images
+        .settings-card-content
+          .settings-card-title Quản lý Media
+          .settings-card-desc Cấu hình lưu trữ hình ảnh, file tải lên
 
   //- Section: Danh mục
   .settings-section
@@ -72,15 +86,15 @@ block main
         .settings-card-icon.icon-category
           i.fas.fa-tasks
         .settings-card-content
-          .settings-card-title Thuộc tính áp dụng theo danh mục
-          .settings-card-desc Tùy chỉnh các thuộc tính mở rộng cho từng danh mục sản phẩm
+          .settings-card-title Thuộc tính theo danh mục
+          .settings-card-desc Thuộc tính mở rộng cho từng danh mục sản phẩm
 
       a.settings-card(href="#")
         .settings-card-icon.icon-brand
           i.fas.fa-tag
         .settings-card-content
-          .settings-card-title Thương hiệu áp dụng theo danh mục
-          .settings-card-desc Tùy chỉnh thương hiệu cho từng danh mục sản phẩm
+          .settings-card-title Thương hiệu theo danh mục
+          .settings-card-desc Gán thương hiệu cho từng danh mục
 
   //- Section: Bán hàng
   .settings-section
@@ -91,60 +105,106 @@ block main
           i.fas.fa-box
         .settings-card-content
           .settings-card-title Sản phẩm
-          .settings-card-desc Thiết lập cấu hình sản phẩm
+          .settings-card-desc Đơn vị tính, biến thể, đánh giá
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-inventory
+          i.fas.fa-warehouse
+        .settings-card-content
+          .settings-card-title Kho hàng
+          .settings-card-desc Quản lý kho, tồn kho, nhập xuất
 
       a.settings-card(href="#")
         .settings-card-icon.icon-order
           i.fas.fa-shopping-bag
         .settings-card-content
           .settings-card-title Đơn hàng
-          .settings-card-desc Thiết lập cấu hình đơn hàng
+          .settings-card-desc Trạng thái đơn, quy trình xử lý
 
       a.settings-card(href="#")
         .settings-card-icon.icon-print
           i.fas.fa-print
         .settings-card-content
           .settings-card-title Mẫu in
-          .settings-card-desc Thiết lập cấu hình mẫu in
+          .settings-card-desc Mẫu in đơn hàng, hóa đơn, phiếu giao
 
       a.settings-card(href="#")
         .settings-card-icon.icon-source
           i.fas.fa-clipboard-list
         .settings-card-content
           .settings-card-title Nguồn đơn hàng
-          .settings-card-desc Thêm và quản lý nguồn tạo ra đơn hàng
+          .settings-card-desc Website, Facebook, Zalo, sàn TMĐT
 
       a.settings-card(href="#")
         .settings-card-icon.icon-shipping
           i.fas.fa-truck
         .settings-card-content
           .settings-card-title Vận chuyển
-          .settings-card-desc Cấu hình giá và phương thức vận chuyển
+          .settings-card-desc Phí ship, vùng giao hàng, freeship
 
       a.settings-card(href="#")
         .settings-card-icon.icon-carrier
           i.fas.fa-shipping-fast
         .settings-card-content
           .settings-card-title Hãng vận chuyển
-          .settings-card-desc Thiết lập hãng vận chuyển
+          .settings-card-desc GHN, GHTK, Viettel Post, J&T
 
-  //- Section: Tiền tệ
+      a.settings-card(href="#")
+        .settings-card-icon.icon-tax
+          i.fas.fa-percentage
+        .settings-card-content
+          .settings-card-title Thuế
+          .settings-card-desc VAT, thuế xuất nhập khẩu
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-refund
+          i.fas.fa-undo-alt
+        .settings-card-content
+          .settings-card-title Đổi trả & Hoàn tiền
+          .settings-card-desc Chính sách đổi trả, hoàn tiền
+
+  //- Section: Khuyến mãi
   .settings-section
-    .settings-section-title Tiền tệ
+    .settings-section-title Khuyến mãi
+    .settings-grid
+      a.settings-card(href="#")
+        .settings-card-icon.icon-coupon
+          i.fas.fa-ticket-alt
+        .settings-card-content
+          .settings-card-title Mã giảm giá
+          .settings-card-desc Quản lý coupon, voucher
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-promotion
+          i.fas.fa-gift
+        .settings-card-content
+          .settings-card-title Chương trình khuyến mãi
+          .settings-card-desc Flash sale, combo, mua X tặng Y
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-loyalty
+          i.fas.fa-star
+        .settings-card-content
+          .settings-card-title Tích điểm & Thành viên
+          .settings-card-desc Chương trình loyalty, hạng thành viên
+
+  //- Section: Tiền tệ & Thanh toán
+  .settings-section
+    .settings-section-title Tiền tệ & Thanh toán
     .settings-grid
       a.settings-card(href="#")
         .settings-card-icon.icon-currency
           i.fas.fa-money-bill-wave
         .settings-card-content
           .settings-card-title Tiền tệ
-          .settings-card-desc Thiết lập tiền tệ của hệ thống
+          .settings-card-desc Đơn vị tiền tệ, tỷ giá
 
       a.settings-card(href="#")
         .settings-card-icon.icon-payment
           i.fas.fa-university
         .settings-card-content
           .settings-card-title Cổng thanh toán
-          .settings-card-desc Thiết lập cổng thanh toán
+          .settings-card-desc VNPay, MoMo, ZaloPay, COD
 
   //- Section: Tài khoản
   .settings-section
@@ -155,7 +215,7 @@ block main
           i.fas.fa-users-cog
         .settings-card-content
           .settings-card-title Danh sách tài khoản
-          .settings-card-desc Thiết lập tài khoản
+          .settings-card-desc Quản lý tài khoản nhân viên
 
       a.settings-card(href=`${prefixAdmin}/roles`)
         .settings-card-icon.icon-roles
@@ -164,7 +224,7 @@ block main
           .settings-card-title Nhóm quyền
           .settings-card-desc Thiết lập nhóm quyền
 
-      a.settings-card(href="#")
+      a.settings-card(href=`${prefixAdmin}/roles/permissions`)
         .settings-card-icon.icon-permissions
           i.fas.fa-project-diagram
         .settings-card-content
@@ -187,18 +247,78 @@ block main
           i.fas.fa-terminal
         .settings-card-content
           .settings-card-title Đổi chế độ
-          .settings-card-desc Thay đổi chế độ website
+          .settings-card-desc Bảo trì, development, production
 
       a.settings-card(href="#")
         .settings-card-icon.icon-cache
           i.fas.fa-trash-alt
         .settings-card-content
           .settings-card-title Xóa Cache
-          .settings-card-desc Xóa bỏ nhớ lưu trữ tạm thời của website
+          .settings-card-desc Xóa bộ nhớ đệm của website
 
       a.settings-card(href="#")
         .settings-card-icon.icon-redirect
           i.fas.fa-random
         .settings-card-content
           .settings-card-title Chuyển hướng
-          .settings-card-desc Chuyển hướng đường dẫn website
+          .settings-card-desc Redirect URL 301, 302
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-security
+          i.fas.fa-shield-alt
+        .settings-card-content
+          .settings-card-title Bảo mật
+          .settings-card-desc 2FA, giới hạn đăng nhập, IP whitelist
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-backup
+          i.fas.fa-database
+        .settings-card-content
+          .settings-card-title Sao lưu dữ liệu
+          .settings-card-desc Sao lưu tự động, phục hồi dữ liệu
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-activitylog
+          i.fas.fa-history
+        .settings-card-content
+          .settings-card-title Nhật ký hoạt động
+          .settings-card-desc Lịch sử thao tác của nhân viên
+
+  //- Section: Kết nối
+  .settings-section
+    .settings-section-title Kết nối
+    .settings-grid
+      a.settings-card(href="#")
+        .settings-card-icon.icon-api
+          i.fas.fa-plug
+        .settings-card-content
+          .settings-card-title API
+          .settings-card-desc Quản lý API key, tích hợp bên ngoài
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-webhook
+          i.fas.fa-satellite-dish
+        .settings-card-content
+          .settings-card-title Webhook
+          .settings-card-desc Cấu hình webhook cho hệ thống
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-google
+          i.fab.fa-google
+        .settings-card-content
+          .settings-card-title Google Services
+          .settings-card-desc Analytics, Search Console, Ads
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-notification
+          i.fas.fa-bell
+        .settings-card-content
+          .settings-card-title Thông báo
+          .settings-card-desc Email, SMS, push notification
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-marketplace
+          i.fas.fa-store
+        .settings-card-content
+          .settings-card-title Sàn thương mại điện tử
+          .settings-card-desc Shopee, Lazada, Tiki, Sendo

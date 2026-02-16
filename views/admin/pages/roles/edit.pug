@@ -12,7 +12,7 @@ block main
 
       .form-group.mb-3
         label.form-label Mô tả
-        textarea.form-control(name="description" rows="4" placeholder="Nhập mô tả nhóm quyền...")= role.description
+        textarea.form-control(name="description" rows="4" placeholder="Nhập mô tả nhóm quyền...")!= role.description
 
       .form-group
         button.btn-add-product(type="submit")
