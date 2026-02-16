@@ -190,3 +190,19 @@
     });
   });
 })();
+
+// User Dropdown Toggle
+(function () {
+  var toggle = document.getElementById("userDropdownToggle");
+  var dropdown = toggle ? toggle.closest(".admin-user-dropdown") : null;
+  if (!toggle || !dropdown) return;
+
+  toggle.addEventListener("click", function (e) {
+    e.stopPropagation();
+    dropdown.classList.toggle("open");
+  });
+
+  document.addEventListener("click", function () {
+    dropdown.classList.remove("open");
+  });
+})();

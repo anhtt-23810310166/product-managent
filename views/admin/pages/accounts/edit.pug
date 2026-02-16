@@ -5,51 +5,72 @@ block main
   +pageHeader("Chỉnh sửa tài khoản", account.fullName)
 
   .admin-form-card
-    .p-4
-      form(action=`${prefixAdmin}/accounts/edit/${account._id}?_method=PATCH` method="POST" enctype="multipart/form-data")
-        .row
-          .col-md-8
-            .form-group.mb-3
-              label.form-label Họ tên
-                span.text-danger  *
-              input.form-control(type="text" name="fullName" required placeholder="Nhập họ tên..." value=account.fullName)
+    form(
+      action=`${prefixAdmin}/accounts/edit/${account._id}?_method=PATCH`
+      method="POST"
+      enctype="multipart/form-data"
+    )
+      .form-row
+        .form-col
+          .form-group
+            label.form-label Họ tên
+              span.required *
+            input.form-input(type="text" name="fullName" required placeholder="Nhập họ tên" value=account.fullName)
 
-            .form-group.mb-3
-              label.form-label Email
-                span.text-danger  *
-              input.form-control(type="email" name="email" required placeholder="Nhập email..." value=account.email)
+          .form-group
+            label.form-label Email
+              span.required *
+            input.form-input(type="email" name="email" required placeholder="Nhập email" value=account.email)
 
-            .form-group.mb-3
-              label.form-label Mật khẩu
-              input.form-control(type="password" name="password" placeholder="Để trống nếu không đổi mật khẩu...")
+          .form-group
+            label.form-label Mật khẩu
+            input.form-input(type="password" name="password" placeholder="Để trống nếu không đổi mật khẩu")
 
-            .form-group.mb-3
-              label.form-label Số điện thoại
-              input.form-control(type="text" name="phone" placeholder="Nhập số điện thoại..." value=account.phone)
+          .form-group
+            label.form-label Số điện thoại
+            input.form-input(type="text" name="phone" placeholder="Nhập số điện thoại" value=account.phone)
 
-            .form-group.mb-3
+          .form-row-inline
+            .form-group.form-group-half
               label.form-label Nhóm quyền
-              select.form-control(name="role_id")
-                option(value="") -- Chọn nhóm quyền --
+              select.form-input.form-select(name="role_id")
+                option(value="") ── Chọn nhóm quyền ──
                 each role in roles
                   option(value=role._id selected=(account.role_id == role._id.toString()))= role.title
-
-            .form-group.mb-3
+            .form-group.form-group-half
               label.form-label Trạng thái
-              select.form-control(name="status")
+              select.form-input.form-select(name="status")
                 option(value="active" selected=(account.status === "active")) Hoạt động
                 option(value="inactive" selected=(account.status === "inactive")) Dừng hoạt động
 
-          .col-md-4
-            .form-group.mb-3
-              label.form-label Ảnh đại diện
+        .form-col.form-col-side
+          .form-group
+            label.form-label Ảnh đại diện
+            .upload-area#uploadArea
+              input.upload-input(
+                type="file"
+                name="avatar"
+                id="uploadFile"
+                accept="image/*"
+              )
               if account.avatar
-                .mb-2
-                  img(src=account.avatar alt=account.fullName style="width: 100%; max-width: 200px; border-radius: 8px;")
-              input.form-control(type="file" name="avatar" accept="image/*")
+                .upload-placeholder#uploadPlaceholder(style="display: none")
+                  i.fas.fa-cloud-upload-alt
+                  p Kéo thả hoặc click để chọn ảnh
+                  span.upload-hint Hỗ trợ: JPG, PNG, GIF, WebP (tối đa 5MB)
+                img.upload-preview#uploadPreview(src=account.avatar alt=account.fullName style="display: block")
+              else
+                .upload-placeholder#uploadPlaceholder
+                  i.fas.fa-cloud-upload-alt
+                  p Kéo thả hoặc click để chọn ảnh
+                  span.upload-hint Hỗ trợ: JPG, PNG, GIF, WebP (tối đa 5MB)
+                img.upload-preview#uploadPreview(src="" alt="Preview")
 
-        .form-actions
-          a.btn-cancel(href=`${prefixAdmin}/accounts`) Huỷ
-          button.btn-submit(type="submit")
-            i.fas.fa-save
-            |  Cập nhật
+      .form-actions
+        a.btn-cancel(href=`${prefixAdmin}/accounts`) Huỷ
+        button.btn-submit(type="submit")
+          i.fas.fa-save
+          |  Cập nhật
+
+block append scripts
+  script(src="/admin/js/upload-preview.js")

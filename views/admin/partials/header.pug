@@ -12,4 +12,26 @@ header.admin-header
       span.notification-dot
     button.btn-icon(type="button" title="Tin nhắn")
       i.fas.fa-envelope
-    .admin-avatar(title="Admin") A
+
+    .admin-user-dropdown
+      .admin-user-toggle#userDropdownToggle
+        if user && user.avatar
+          img.admin-user-avatar(src=user.avatar alt=user.fullName)
+        else
+          .admin-avatar= user && user.fullName ? user.fullName.charAt(0).toUpperCase() : "A"
+        span.admin-user-name= user && user.fullName ? user.fullName : "Admin"
+        i.fas.fa-chevron-down.admin-user-arrow
+
+      .admin-user-menu#userDropdownMenu
+        .admin-user-info
+          if user && user.avatar
+            img.admin-user-avatar-lg(src=user.avatar alt=user.fullName)
+          else
+            .admin-avatar-lg= user && user.fullName ? user.fullName.charAt(0).toUpperCase() : "A"
+          .admin-user-details
+            .admin-user-fullname= user && user.fullName ? user.fullName : "Admin"
+            .admin-user-email= user && user.email ? user.email : ""
+        .admin-user-menu-divider
+        a.admin-user-menu-item(href=`${prefixAdmin}/auth/logout`)
+          i.fas.fa-sign-out-alt
+          span Đăng xuất

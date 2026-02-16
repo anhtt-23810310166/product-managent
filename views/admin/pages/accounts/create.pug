@@ -5,49 +5,62 @@ block main
   +pageHeader("Thêm tài khoản", "Tạo tài khoản nhân viên mới")
 
   .admin-form-card
-    .p-4
-      form(action=`${prefixAdmin}/accounts/create` method="POST" enctype="multipart/form-data")
-        .row
-          .col-md-8
-            .form-group.mb-3
-              label.form-label Họ tên
-                span.text-danger  *
-              input.form-control(type="text" name="fullName" required placeholder="Nhập họ tên...")
+    form(action=`${prefixAdmin}/accounts/create` method="POST" enctype="multipart/form-data")
+      .form-row
+        .form-col
+          .form-group
+            label.form-label Họ tên
+              span.required *
+            input.form-input(type="text" name="fullName" required placeholder="Nhập họ tên")
 
-            .form-group.mb-3
-              label.form-label Email
-                span.text-danger  *
-              input.form-control(type="email" name="email" required placeholder="Nhập email...")
+          .form-group
+            label.form-label Email
+              span.required *
+            input.form-input(type="email" name="email" required placeholder="Nhập email")
 
-            .form-group.mb-3
-              label.form-label Mật khẩu
-                span.text-danger  *
-              input.form-control(type="password" name="password" required placeholder="Nhập mật khẩu...")
+          .form-group
+            label.form-label Mật khẩu
+              span.required *
+            input.form-input(type="password" name="password" required placeholder="Nhập mật khẩu")
 
-            .form-group.mb-3
-              label.form-label Số điện thoại
-              input.form-control(type="text" name="phone" placeholder="Nhập số điện thoại...")
+          .form-group
+            label.form-label Số điện thoại
+            input.form-input(type="text" name="phone" placeholder="Nhập số điện thoại")
 
-            .form-group.mb-3
+          .form-row-inline
+            .form-group.form-group-half
               label.form-label Nhóm quyền
-              select.form-control(name="role_id")
-                option(value="") -- Chọn nhóm quyền --
+              select.form-input.form-select(name="role_id")
+                option(value="") ── Chọn nhóm quyền ──
                 each role in roles
                   option(value=role._id)= role.title
-
-            .form-group.mb-3
+            .form-group.form-group-half
               label.form-label Trạng thái
-              select.form-control(name="status")
+              select.form-input.form-select(name="status")
                 option(value="active") Hoạt động
                 option(value="inactive") Dừng hoạt động
 
-          .col-md-4
-            .form-group.mb-3
-              label.form-label Ảnh đại diện
-              input.form-control(type="file" name="avatar" accept="image/*")
+        .form-col.form-col-side
+          .form-group
+            label.form-label Ảnh đại diện
+            .upload-area#uploadArea
+              input.upload-input(
+                type="file"
+                name="avatar"
+                id="uploadFile"
+                accept="image/*"
+              )
+              .upload-placeholder#uploadPlaceholder
+                i.fas.fa-cloud-upload-alt
+                p Kéo thả hoặc click để chọn ảnh
+                span.upload-hint Hỗ trợ: JPG, PNG, GIF, WebP (tối đa 5MB)
+              img.upload-preview#uploadPreview(src="" alt="Preview")
 
-        .form-actions
-          a.btn-cancel(href=`${prefixAdmin}/accounts`) Huỷ
-          button.btn-submit(type="submit")
-            i.fas.fa-save
-            |  Tạo tài khoản
+      .form-actions
+        a.btn-cancel(href=`${prefixAdmin}/accounts`) Huỷ
+        button.btn-submit(type="submit")
+          i.fas.fa-plus
+          |  Tạo tài khoản
+
+block append scripts
+  script(src="/admin/js/upload-preview.js")

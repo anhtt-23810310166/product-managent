@@ -1,0 +1,158 @@
+doctype html
+html
+  head
+    title Đăng nhập - Admin
+    meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css")
+    link(rel="preconnect" href="https://fonts.googleapis.com")
+    link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
+    link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap")
+    style.
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: 'Inter', sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+      }
+      .login-container {
+        width: 100%;
+        max-width: 420px;
+        padding: 20px;
+      }
+      .login-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 40px 35px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+      }
+      .login-header {
+        text-align: center;
+        margin-bottom: 35px;
+      }
+      .login-logo {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px;
+        font-size: 24px;
+        color: white;
+      }
+      .login-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 6px;
+      }
+      .login-subtitle {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.5);
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 8px;
+      }
+      .input-wrapper {
+        position: relative;
+      }
+      .input-wrapper i {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 14px;
+      }
+      .input-wrapper input {
+        width: 100%;
+        padding: 12px 14px 12px 42px;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        color: #fff;
+        font-size: 14px;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.3s ease;
+        outline: none;
+      }
+      .input-wrapper input::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+      }
+      .input-wrapper input:focus {
+        border-color: #667eea;
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+      }
+      .btn-login {
+        width: 100%;
+        padding: 13px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 10px;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        font-family: 'Inter', sans-serif;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 5px;
+      }
+      .btn-login:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.35);
+      }
+      .flash-error {
+        background: rgba(220, 53, 69, 0.15);
+        border: 1px solid rgba(220, 53, 69, 0.3);
+        color: #ff6b7a;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 13px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+  body
+    .login-container
+      .login-card
+        .login-header
+          .login-logo
+            i.fas.fa-shield-alt
+          .login-title Đăng nhập
+          .login-subtitle Quản trị hệ thống
+
+        if messages.error && messages.error.length > 0
+          .flash-error
+            i.fas.fa-exclamation-circle
+            span= messages.error[0]
+
+        form(action=`${prefixAdmin}/auth/login` method="POST")
+          .form-group
+            label Email
+            .input-wrapper
+              i.fas.fa-envelope
+              input(type="email" name="email" placeholder="Nhập email..." required)
+          .form-group
+            label Mật khẩu
+            .input-wrapper
+              i.fas.fa-lock
+              input(type="password" name="password" placeholder="Nhập mật khẩu..." required)
+          button.btn-login(type="submit")
+            i.fas.fa-sign-in-alt
+            |  Đăng nhập
