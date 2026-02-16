@@ -83,3 +83,26 @@ aside.admin-sider#adminSider
         a.sider-menu-link(href="#")
           i.fas.fa-envelope
           span Liên hệ
+
+    .sider-menu-label Cài đặt
+    ul.list-unstyled.mb-0
+      li.sider-menu-item.has-submenu(class=(currentPage === "seo" ? "open" : ""))
+        a.sider-menu-link.submenu-toggle(href="javascript:void(0)")
+          i.fas.fa-search
+          span SEO
+          i.fas.fa-chevron-right.submenu-arrow
+        ul.sider-submenu.list-unstyled
+          li
+            a.sider-submenu-link(href="#") Cài đặt SEO
+          li
+            a.sider-submenu-link(href="#") Sitemap
+
+      li.sider-menu-item
+        a.sider-menu-link(href=`${prefixAdmin}/settings` class=(currentPage === "settings" ? "active" : ""))
+          i.fas.fa-cogs
+          span Cài đặt chung
+
+      li.sider-menu-item
+        a.sider-menu-link(href="#" class=(currentPage === "theme" ? "active" : ""))
+          i.fas.fa-paint-brush
+          span Giao diện

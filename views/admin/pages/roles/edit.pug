@@ -1,0 +1,25 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+
+block main
+  +pageHeader("Chỉnh sửa nhóm quyền", "Cập nhật thông tin nhóm quyền")
+
+  .admin-table-wrapper.p-4
+    form(action=`${prefixAdmin}/roles/edit/${role._id}?_method=PATCH` method="POST")
+      .form-group.mb-3
+        label.form-label Tên nhóm quyền
+        input.form-control(type="text" name="title" value=role.title required placeholder="Nhập tên nhóm quyền...")
+
+      .form-group.mb-3
+        label.form-label Mô tả
+        textarea.form-control(name="description" rows="4" placeholder="Nhập mô tả nhóm quyền...")= role.description
+
+      .form-group
+        button.btn-add-product(type="submit")
+          i.fas.fa-save
+          | Cập nhật
+        a.btn.btn-secondary.ml-2(href=`${prefixAdmin}/roles`) Hủy
+
+block append scripts
+  script(src="/admin/libs/tinymce/tinymce.min.js")
+  script(src="/admin/js/tinymce-init.js")

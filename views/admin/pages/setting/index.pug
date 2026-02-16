@@ -1,0 +1,204 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+
+block main
+  +pageHeader("Cấu hình", "Cài đặt chung hệ thống")
+
+  //- Section: Cài đặt chung
+  .settings-section
+    .settings-section-title Cài đặt chung
+    .settings-grid
+      a.settings-card(href="#")
+        .settings-card-icon.icon-info
+          i.fas.fa-info-circle
+        .settings-card-content
+          .settings-card-title Thông tin Website
+          .settings-card-desc Thiết lập thông tin website
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-language
+          i.fas.fa-language
+        .settings-card-content
+          .settings-card-title Ngôn ngữ
+          .settings-card-desc Thiết lập ngôn ngữ website
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-email
+          i.fas.fa-envelope
+        .settings-card-content
+          .settings-card-title Cấu hình email
+          .settings-card-desc Thiết lập cấu hình email
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-city
+          i.fas.fa-city
+        .settings-card-content
+          .settings-card-title Tỉnh thành
+          .settings-card-desc Quản lý tỉnh thành
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-contact
+          i.fas.fa-address-book
+        .settings-card-content
+          .settings-card-title Form liên hệ
+          .settings-card-desc Quản lý thông tin form liên hệ
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-attributes
+          i.fas.fa-list-alt
+        .settings-card-content
+          .settings-card-title Danh sách thuộc tính
+          .settings-card-desc Tùy chỉnh các thuộc tính mở rộng của sản phẩm và bài viết
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-social
+          i.fab.fa-facebook
+        .settings-card-content
+          .settings-card-title Mạng xã hội
+          .settings-card-desc Cấu hình các thông tin liên quan đến các trang mạng xã hội
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-embed
+          i.fas.fa-code
+        .settings-card-content
+          .settings-card-title Mã nhúng
+          .settings-card-desc Quản lý mã nhúng
+
+  //- Section: Danh mục
+  .settings-section
+    .settings-section-title Danh mục
+    .settings-grid
+      a.settings-card(href="#")
+        .settings-card-icon.icon-category
+          i.fas.fa-tasks
+        .settings-card-content
+          .settings-card-title Thuộc tính áp dụng theo danh mục
+          .settings-card-desc Tùy chỉnh các thuộc tính mở rộng cho từng danh mục sản phẩm
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-brand
+          i.fas.fa-tag
+        .settings-card-content
+          .settings-card-title Thương hiệu áp dụng theo danh mục
+          .settings-card-desc Tùy chỉnh thương hiệu cho từng danh mục sản phẩm
+
+  //- Section: Bán hàng
+  .settings-section
+    .settings-section-title Bán hàng
+    .settings-grid
+      a.settings-card(href="#")
+        .settings-card-icon.icon-product
+          i.fas.fa-box
+        .settings-card-content
+          .settings-card-title Sản phẩm
+          .settings-card-desc Thiết lập cấu hình sản phẩm
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-order
+          i.fas.fa-shopping-bag
+        .settings-card-content
+          .settings-card-title Đơn hàng
+          .settings-card-desc Thiết lập cấu hình đơn hàng
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-print
+          i.fas.fa-print
+        .settings-card-content
+          .settings-card-title Mẫu in
+          .settings-card-desc Thiết lập cấu hình mẫu in
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-source
+          i.fas.fa-clipboard-list
+        .settings-card-content
+          .settings-card-title Nguồn đơn hàng
+          .settings-card-desc Thêm và quản lý nguồn tạo ra đơn hàng
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-shipping
+          i.fas.fa-truck
+        .settings-card-content
+          .settings-card-title Vận chuyển
+          .settings-card-desc Cấu hình giá và phương thức vận chuyển
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-carrier
+          i.fas.fa-shipping-fast
+        .settings-card-content
+          .settings-card-title Hãng vận chuyển
+          .settings-card-desc Thiết lập hãng vận chuyển
+
+  //- Section: Tiền tệ
+  .settings-section
+    .settings-section-title Tiền tệ
+    .settings-grid
+      a.settings-card(href="#")
+        .settings-card-icon.icon-currency
+          i.fas.fa-money-bill-wave
+        .settings-card-content
+          .settings-card-title Tiền tệ
+          .settings-card-desc Thiết lập tiền tệ của hệ thống
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-payment
+          i.fas.fa-university
+        .settings-card-content
+          .settings-card-title Cổng thanh toán
+          .settings-card-desc Thiết lập cổng thanh toán
+
+  //- Section: Tài khoản
+  .settings-section
+    .settings-section-title Tài khoản
+    .settings-grid
+      a.settings-card(href="#")
+        .settings-card-icon.icon-accounts
+          i.fas.fa-users-cog
+        .settings-card-content
+          .settings-card-title Danh sách tài khoản
+          .settings-card-desc Thiết lập tài khoản
+
+      a.settings-card(href=`${prefixAdmin}/roles`)
+        .settings-card-icon.icon-roles
+          i.fas.fa-user-shield
+        .settings-card-content
+          .settings-card-title Nhóm quyền
+          .settings-card-desc Thiết lập nhóm quyền
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-permissions
+          i.fas.fa-project-diagram
+        .settings-card-content
+          .settings-card-title Phân quyền
+          .settings-card-desc Thiết lập phân quyền
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-approval
+          i.fas.fa-check-square
+        .settings-card-content
+          .settings-card-title Duyệt bài viết
+          .settings-card-desc Thiết lập quyền duyệt bài viết
+
+  //- Section: Hệ thống
+  .settings-section
+    .settings-section-title Hệ thống
+    .settings-grid
+      a.settings-card(href="#")
+        .settings-card-icon.icon-devmode
+          i.fas.fa-terminal
+        .settings-card-content
+          .settings-card-title Đổi chế độ
+          .settings-card-desc Thay đổi chế độ website
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-cache
+          i.fas.fa-trash-alt
+        .settings-card-content
+          .settings-card-title Xóa Cache
+          .settings-card-desc Xóa bỏ nhớ lưu trữ tạm thời của website
+
+      a.settings-card(href="#")
+        .settings-card-icon.icon-redirect
+          i.fas.fa-random
+        .settings-card-content
+          .settings-card-title Chuyển hướng
+          .settings-card-desc Chuyển hướng đường dẫn website

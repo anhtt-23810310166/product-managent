@@ -1,0 +1,25 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+
+block main
+  +pageHeader("Thêm nhóm quyền", "Tạo nhóm quyền mới")
+
+  .admin-table-wrapper.p-4
+    form(action=`${prefixAdmin}/roles/create` method="POST")
+      .form-group.mb-3
+        label.form-label Tên nhóm quyền
+        input.form-control(type="text" name="title" required placeholder="Nhập tên nhóm quyền...")
+
+      .form-group.mb-3
+        label.form-label Mô tả
+        textarea.form-control(name="description" rows="4" placeholder="Nhập mô tả nhóm quyền...")
+
+      .form-group
+        button.btn-add-product(type="submit")
+          i.fas.fa-save
+          | Lưu
+        a.btn.btn-secondary.ml-2(href=`${prefixAdmin}/roles`) Hủy
+
+block append scripts
+  script(src="/admin/libs/tinymce/tinymce.min.js")
+  script(src="/admin/js/tinymce-init.js")

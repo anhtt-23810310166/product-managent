@@ -1,0 +1,52 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+include ../../mixins/search.pug
+include ../../mixins/pagination.pug
+
+block main
+  +pageHeader("Danh sách nhóm quyền", "Quản lý nhóm quyền hệ thống")
+    a.btn.btn-add-product(href=`${prefixAdmin}/roles/create`)
+      i.fas.fa-plus.mr-2
+      | Thêm mới
+
+  //- Filter bar
+  .admin-filter-bar.mb-4
+    .row.align-items-center
+      +search(keyword)
+
+  //- Table
+  .admin-table-wrapper
+    if roles && roles.length > 0
+      table.admin-table
+        thead
+          tr
+            th.col-check
+              input.form-check-input(type="checkbox" id="checkAll")
+            th Nhóm quyền
+            th Mô tả ngắn
+        tbody
+          each role in roles
+            tr.animate-in
+              td.col-check
+                input.form-check-input.checkbox-item(type="checkbox" name="id" value=role._id)
+              td.col-title.pb-4
+                .product-title-cell
+                  span.product-name= role.title
+                .product-hover-actions
+                  a.hover-action-link.hover-action-edit(href=`${prefixAdmin}/roles/edit/${role._id}`) Sửa
+                  a.hover-action-link.hover-action-danger.btn-delete-role(href="javascript:void(0)" data-id=role._id) Xóa
+              td= role.description
+    else
+      .admin-empty-state
+        i.fas.fa-user-shield
+        h4 Chưa có nhóm quyền nào
+        p Bắt đầu thêm nhóm quyền đầu tiên
+        a.btn.btn-add-product(href=`${prefixAdmin}/roles/create`)
+          i.fas.fa-plus.mr-2
+          | Thêm mới
+
+  //- Pagination
+  +pagination(pagination)
+
+block append scripts
+  script(src="/admin/js/role.js")
