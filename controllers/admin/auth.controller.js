@@ -1,11 +1,14 @@
 const Account = require("../../models/account.model");
 const md5 = require("md5");
+const systemConfig = require("../../config/system");
+const prefixAdmin = systemConfig.prefixAdmin;
+const createLog = require("../../helpers/activityLog");
 
 // [GET] /admin/auth/login
 module.exports.login = async (req, res) => {
     // If already logged in, redirect to dashboard
     if (req.session.token) {
-        return res.redirect(`${req.app.locals.prefixAdmin}/dashboard`);
+        return res.redirect(`${prefixAdmin}/dashboard`);
     }
 
     res.render("admin/pages/auth/login", {
@@ -41,7 +44,15 @@ module.exports.loginPost = async (req, res) => {
         // Save token to session
         req.session.token = account.token;
 
-        res.redirect(`${req.app.locals.prefixAdmin}/dashboard`);
+        // Ghi log đăng nhập
+        res.locals.user = account;
+        createLog(req, res, {
+            action: "login",
+            module: "auth",
+            description: `Đăng nhập hệ thống`
+        });
+
+        res.redirect(`${prefixAdmin}/dashboard`);
     } catch (error) {
         console.log(error);
         req.flash("error", "Có lỗi xảy ra!");
@@ -51,6 +62,12 @@ module.exports.loginPost = async (req, res) => {
 
 // [GET] /admin/auth/logout
 module.exports.logout = (req, res) => {
+    createLog(req, res, {
+        action: "logout",
+        module: "auth",
+        description: `Đăng xuất hệ thống`
+    });
+
     req.session.token = null;
-    res.redirect(`${req.app.locals.prefixAdmin}/auth/login`);
+    res.redirect(`${prefixAdmin}/auth/login`);
 };

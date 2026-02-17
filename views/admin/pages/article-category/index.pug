@@ -1,0 +1,52 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+include ../../mixins/search.pug
+include ../../mixins/filter-status.pug
+include ../../mixins/sort.pug
+include ../../mixins/batch-actions.pug
+
+include ../../mixins/category-tree.pug
+
+block main
+  +pageHeader("Danh mục bài viết", "Quản lý danh mục bài viết trong hệ thống")
+    a.btn.btn-add-product(href=`${prefixAdmin}/article-category/create`)
+      i.fas.fa-plus.mr-2
+      | Thêm danh mục
+
+  //- Filter bar
+  .admin-filter-bar.mb-4
+    .row.align-items-center
+      +search(keyword)
+      +filter-status(filterStatus)
+      +sort(sortOptions)
+      .col-md-2
+        .d-flex.gap-2
+          +batch-actions()
+
+  //- Categories Table
+  .admin-table-wrapper
+    if categories && categories.length > 0
+      - var rowIndex = 0
+      table.admin-table
+        thead
+          tr
+            th.col-check
+              input.form-check-input(type="checkbox" id="checkAll")
+            th.col-stt-num STT
+            th.col-img Ảnh
+            th.col-title Tên danh mục
+            th.col-position Vị trí
+            th.col-status Trạng thái
+        tbody
+          +categoryTree(categories, 0)
+    else
+      .admin-empty-state
+        i.fas.fa-folder-open
+        h4 Chưa có danh mục nào
+        p Bắt đầu thêm danh mục đầu tiên
+        a.btn.btn-add-product(href=`${prefixAdmin}/article-category/create`)
+          i.fas.fa-plus.mr-2
+          | Thêm danh mục
+
+block append scripts
+  script(src="/admin/js/article-category.js")

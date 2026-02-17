@@ -1,9 +1,11 @@
 const ProductCategory = require("../../models/product-category.model");
 const systemConfig = require("../../config/system");
+const prefixAdmin = systemConfig.prefixAdmin;
 const createTree = require("../../helpers/createTree");
 const filterStatusHelper = require("../../helpers/filterStatus");
 const searchHelper = require("../../helpers/search");
 const sortHelper = require("../../helpers/sort");
+const createLog = require("../../helpers/activityLog");
 
 // Helper: Recursively get all descendant categories
 const getDescendants = async (parentId) => {
@@ -53,6 +55,10 @@ module.exports.index = async (req, res) => {
         res.render("admin/pages/product-category/index", {
             pageTitle: "Danh mục sản phẩm",
             currentPage: "product-category",
+            breadcrumbs: [
+                { title: "Sản phẩm" },
+                { title: "Danh mục" }
+            ],
             categories: tree,
             filterStatus: filterStatus,
             keyword: objectSearch.keyword,
@@ -61,7 +67,7 @@ module.exports.index = async (req, res) => {
     } catch (error) {
         console.log(error);
         req.flash("error", "Có lỗi xảy ra!");
-        res.redirect(`${res.app.locals.prefixAdmin}/dashboard`);
+        res.redirect(`${prefixAdmin}/dashboard`);
     }
 };
 
@@ -73,7 +79,7 @@ module.exports.detail = async (req, res) => {
 
         if (!category) {
             req.flash("error", "Không tìm thấy danh mục!");
-            return res.redirect(`${res.app.locals.prefixAdmin}/product-category`);
+            return res.redirect(`${prefixAdmin}/product-category`);
         }
 
         // Get parent category
@@ -91,6 +97,11 @@ module.exports.detail = async (req, res) => {
         res.render("admin/pages/product-category/detail", {
             pageTitle: `Chi tiết: ${category.title}`,
             currentPage: "product-category",
+            breadcrumbs: [
+                { title: "Sản phẩm" },
+                { title: "Danh mục", link: `${prefixAdmin}/product-category` },
+                { title: category.title }
+            ],
             category: category,
             parentCategory: parentCategory,
             childCategories: childCategories
@@ -98,7 +109,7 @@ module.exports.detail = async (req, res) => {
     } catch (error) {
         console.log(error);
         req.flash("error", "Có lỗi xảy ra!");
-        res.redirect(`${res.app.locals.prefixAdmin}/product-category`);
+        res.redirect(`${prefixAdmin}/product-category`);
     }
 };
 
@@ -111,12 +122,17 @@ module.exports.create = async (req, res) => {
         res.render("admin/pages/product-category/create", {
             pageTitle: "Thêm danh mục",
             currentPage: "product-category",
+            breadcrumbs: [
+                { title: "Sản phẩm" },
+                { title: "Danh mục", link: `${prefixAdmin}/product-category` },
+                { title: "Thêm danh mục" }
+            ],
             categories: tree
         });
     } catch (error) {
         console.log(error);
         req.flash("error", "Có lỗi xảy ra!");
-        res.redirect(`${res.app.locals.prefixAdmin}/product-category`);
+        res.redirect(`${prefixAdmin}/product-category`);
     }
 };
 
@@ -135,12 +151,19 @@ module.exports.createPost = async (req, res) => {
         }
 
         await ProductCategory.create(req.body);
+
+        createLog(req, res, {
+            action: "create",
+            module: "product-category",
+            description: `Thêm danh mục: ${req.body.title}`
+        });
+
         req.flash("success", "Tạo danh mục thành công!");
-        res.redirect(`${res.app.locals.prefixAdmin}/product-category`);
+        res.redirect(`${prefixAdmin}/product-category`);
     } catch (error) {
         console.log(error);
         req.flash("error", "Có lỗi xảy ra!");
-        res.redirect(`${res.app.locals.prefixAdmin}/product-category`);
+        res.redirect(`${prefixAdmin}/product-category`);
     }
 };
 
@@ -152,7 +175,7 @@ module.exports.edit = async (req, res) => {
 
         if (!category) {
             req.flash("error", "Không tìm thấy danh mục!");
-            return res.redirect(`${res.app.locals.prefixAdmin}/product-category`);
+            return res.redirect(`${prefixAdmin}/product-category`);
         }
 
         const categories = await ProductCategory.find({
@@ -164,13 +187,18 @@ module.exports.edit = async (req, res) => {
         res.render("admin/pages/product-category/edit", {
             pageTitle: "Chỉnh sửa danh mục",
             currentPage: "product-category",
+            breadcrumbs: [
+                { title: "Sản phẩm" },
+                { title: "Danh mục", link: `${prefixAdmin}/product-category` },
+                { title: "Chỉnh sửa" }
+            ],
             category: category,
             categories: tree
         });
     } catch (error) {
         console.log(error);
         req.flash("error", "Có lỗi xảy ra!");
-        res.redirect(`${res.app.locals.prefixAdmin}/product-category`);
+        res.redirect(`${prefixAdmin}/product-category`);
     }
 };
 
@@ -189,6 +217,12 @@ module.exports.editPatch = async (req, res) => {
 
         await ProductCategory.updateOne({ _id: id }, req.body);
 
+        createLog(req, res, {
+            action: "edit",
+            module: "product-category",
+            description: `Chỉnh sửa danh mục: ${req.body.title}`
+        });
+
         // If status is updated, cascade to all descendants
         if (req.body.status) {
              const descendants = await getDescendants(id);
@@ -202,11 +236,11 @@ module.exports.editPatch = async (req, res) => {
         }
 
         req.flash("success", "Cập nhật danh mục thành công!");
-        res.redirect(`${res.app.locals.prefixAdmin}/product-category`);
+        res.redirect(`${prefixAdmin}/product-category`);
     } catch (error) {
         console.log(error);
         req.flash("error", "Có lỗi xảy ra!");
-        res.redirect(`${res.app.locals.prefixAdmin}/product-category`);
+        res.redirect(`${prefixAdmin}/product-category`);
     }
 };
 
@@ -217,6 +251,12 @@ module.exports.changeStatus = async (req, res) => {
         const id = req.params.id;
 
         await ProductCategory.updateOne({ _id: id }, { status: status });
+
+        createLog(req, res, {
+            action: "change-status",
+            module: "product-category",
+            description: `Đổi trạng thái danh mục sang ${status === "active" ? "hoạt động" : "dừng hoạt động"}`
+        });
 
         // Cascade status update to all descendant categories
         const descendants = await getDescendants(id);
@@ -333,6 +373,12 @@ module.exports.deleteCategory = async (req, res) => {
         await ProductCategory.updateOne({ _id: id }, {
             deleted: true,
             deletedAt: new Date()
+        });
+
+        createLog(req, res, {
+            action: "delete",
+            module: "product-category",
+            description: `Xoá danh mục (ID: ${id})`
         });
 
         res.json({

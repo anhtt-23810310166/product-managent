@@ -2,6 +2,9 @@ const Role = require("../../models/role.model");
 const searchHelper = require("../../helpers/search");
 const paginationHelper = require("../../helpers/pagination");
 const sortHelper = require("../../helpers/sort");
+const systemConfig = require("../../config/system");
+const prefixAdmin = systemConfig.prefixAdmin;
+const createLog = require("../../helpers/activityLog");
 
 // [GET] /admin/roles
 module.exports.index = async (req, res) => {
@@ -35,6 +38,10 @@ module.exports.index = async (req, res) => {
         res.render("admin/pages/roles/index", {
             pageTitle: "Danh sách nhóm quyền",
             currentPage: "roles",
+            breadcrumbs: [
+                { title: "Cài đặt", link: `${prefixAdmin}/settings` },
+                { title: "Nhóm quyền" }
+            ],
             roles: roles,
             keyword: objectSearch.keyword,
             sortOptions: objectSort.sortOptions,
@@ -51,6 +58,11 @@ module.exports.create = (req, res) => {
     res.render("admin/pages/roles/create", {
         pageTitle: "Thêm nhóm quyền",
         currentPage: "roles",
+        breadcrumbs: [
+            { title: "Cài đặt", link: `${prefixAdmin}/settings` },
+            { title: "Nhóm quyền", link: `${prefixAdmin}/roles` },
+            { title: "Thêm nhóm quyền" }
+        ],
     });
 };
 
@@ -59,8 +71,15 @@ module.exports.createPost = async (req, res) => {
     try {
         const role = new Role(req.body);
         await role.save();
+
+        createLog(req, res, {
+            action: "create",
+            module: "roles",
+            description: `Thêm nhóm quyền: ${role.title}`
+        });
+
         req.flash("success", "Thêm nhóm quyền thành công!");
-        res.redirect(`${res.app.locals.prefixAdmin}/roles`);
+        res.redirect(`${prefixAdmin}/roles`);
     } catch (error) {
         console.log(error);
         req.flash("error", "Thêm nhóm quyền thất bại!");
@@ -74,11 +93,16 @@ module.exports.edit = async (req, res) => {
         const role = await Role.findOne({ _id: req.params.id, deleted: false });
         if (!role) {
             req.flash("error", "Nhóm quyền không tồn tại!");
-            return res.redirect(`${res.app.locals.prefixAdmin}/roles`);
+            return res.redirect(`${prefixAdmin}/roles`);
         }
         res.render("admin/pages/roles/edit", {
             pageTitle: "Chỉnh sửa nhóm quyền",
             currentPage: "roles",
+            breadcrumbs: [
+                { title: "Cài đặt", link: `${prefixAdmin}/settings` },
+                { title: "Nhóm quyền", link: `${prefixAdmin}/roles` },
+                { title: role.title }
+            ],
             role: role,
         });
     } catch (error) {
@@ -91,8 +115,15 @@ module.exports.edit = async (req, res) => {
 module.exports.editPatch = async (req, res) => {
     try {
         await Role.updateOne({ _id: req.params.id }, req.body);
+
+        createLog(req, res, {
+            action: "edit",
+            module: "roles",
+            description: `Chỉnh sửa nhóm quyền: ${req.body.title}`
+        });
+
         req.flash("success", "Cập nhật nhóm quyền thành công!");
-        res.redirect(`${res.app.locals.prefixAdmin}/roles`);
+        res.redirect(`${prefixAdmin}/roles`);
     } catch (error) {
         console.log(error);
         req.flash("error", "Cập nhật nhóm quyền thất bại!");
@@ -106,6 +137,12 @@ module.exports.delete = async (req, res) => {
         const result = await Role.updateOne({ _id: req.params.id }, { deleted: true, deletedAt: new Date() });
 
         if (result.modifiedCount > 0) {
+            createLog(req, res, {
+                action: "delete",
+                module: "roles",
+                description: `Xoá nhóm quyền (ID: ${req.params.id})`
+            });
+
             res.json({
                 code: 200,
                 message: "Xóa nhóm quyền thành công!"
@@ -132,11 +169,16 @@ module.exports.detail = async (req, res) => {
         const role = await Role.findOne({ _id: req.params.id, deleted: false });
         if (!role) {
             req.flash("error", "Nhóm quyền không tồn tại!");
-            return res.redirect(`${res.app.locals.prefixAdmin}/roles`);
+            return res.redirect(`${prefixAdmin}/roles`);
         }
         res.render("admin/pages/roles/detail", {
             pageTitle: "Chi tiết nhóm quyền",
             currentPage: "roles",
+            breadcrumbs: [
+                { title: "Cài đặt", link: `${prefixAdmin}/settings` },
+                { title: "Nhóm quyền", link: `${prefixAdmin}/roles` },
+                { title: role.title }
+            ],
             role: role,
         });
     } catch (error) {
@@ -153,6 +195,10 @@ module.exports.permissions = async (req, res) => {
         res.render("admin/pages/roles/permissions", {
             pageTitle: "Phân quyền",
             currentPage: "settings",
+            breadcrumbs: [
+                { title: "Cài đặt", link: `${prefixAdmin}/settings` },
+                { title: "Phân quyền" }
+            ],
             roles: roles
         });
     } catch (error) {
@@ -174,6 +220,12 @@ module.exports.permissionsPatch = async (req, res) => {
         }
 
         req.flash("success", "Cập nhật phân quyền thành công!");
+
+        createLog(req, res, {
+            action: "permissions",
+            module: "roles",
+            description: `Cập nhật phân quyền cho ${permissions.length} nhóm`
+        });
     } catch (error) {
         console.log(error);
         req.flash("error", "Cập nhật phân quyền thất bại!");

@@ -3,8 +3,17 @@ header.admin-header
     button.sider-toggle-btn#siderToggle(type="button")
       i.fas.fa-bars
     .admin-breadcrumb
-      | Admin &rsaquo;&nbsp;
-      span= pageTitle || "Dashboard"
+      a.breadcrumb-link(href=`${prefixAdmin}/dashboard`) Admin
+      if breadcrumbs && breadcrumbs.length > 0
+        each crumb in breadcrumbs
+          span.breadcrumb-sep &rsaquo;
+          if crumb.link
+            a.breadcrumb-link(href=crumb.link)= crumb.title
+          else
+            span.breadcrumb-current= crumb.title
+      else
+        span.breadcrumb-sep &rsaquo;
+        span.breadcrumb-current= pageTitle || "Dashboard"
 
   .admin-header-right
     button.btn-icon(type="button" title="Thông báo")
@@ -32,6 +41,9 @@ header.admin-header
             .admin-user-fullname= user && user.fullName ? user.fullName : "Admin"
             .admin-user-email= user && user.email ? user.email : ""
         .admin-user-menu-divider
+        a.admin-user-menu-item(href=`${prefixAdmin}/profile`)
+          i.fas.fa-user-edit
+          span Thông tin cá nhân
         a.admin-user-menu-item(href=`${prefixAdmin}/auth/logout`)
           i.fas.fa-sign-out-alt
           span Đăng xuất

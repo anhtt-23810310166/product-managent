@@ -1,0 +1,80 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+include ../../mixins/category-options.pug
+
+block main
+  +pageHeader("Thêm bài viết mới", "Điền thông tin để tạo bài viết")
+
+  .admin-form-card
+    form(
+      action=`${prefixAdmin}/articles/create`
+      method="POST"
+      enctype="multipart/form-data"
+    )
+      .form-row
+        .form-col
+          .form-group
+            label.form-label Tiêu đề bài viết
+              span.required *
+            input.form-input(
+              type="text"
+              name="title"
+              placeholder="Nhập tiêu đề bài viết"
+              required
+            )
+
+          .form-group
+            label.form-label Danh mục
+            select.form-input.form-select(name="article_category_id")
+              option(value="") ── Chọn danh mục ──
+              if categories
+                +categoryOptions(categories, 1)
+
+          .form-group
+            label.form-label Nội dung
+            textarea.form-input.form-textarea(
+              name="description"
+              placeholder="Nhập nội dung bài viết"
+              rows="8"
+            )
+
+          .form-row-inline
+            .form-group.form-group-half
+              label.form-label Vị trí
+              input.form-input(
+                type="text"
+                name="position"
+                placeholder="Tự động"
+              )
+            .form-group.form-group-half
+              label.form-label Trạng thái
+              select.form-input.form-select(name="status")
+                option(value="active") Hoạt động
+                option(value="inactive") Dừng hoạt động
+
+        .form-col.form-col-side
+          .form-group
+            label.form-label Ảnh thumbnail
+            .upload-area#uploadArea
+              input.upload-input(
+                type="file"
+                name="thumbnail"
+                id="uploadFile"
+                accept="image/*"
+              )
+              .upload-placeholder#uploadPlaceholder
+                i.fas.fa-cloud-upload-alt
+                p Kéo thả hoặc click để chọn ảnh
+                span.upload-hint Hỗ trợ: JPG, PNG, GIF, WebP (tối đa 5MB)
+              img.upload-preview#uploadPreview(src="" alt="Preview")
+
+      .form-actions
+        a.btn-cancel(href=`${prefixAdmin}/articles`) Huỷ
+        button.btn-submit(type="submit")
+          i.fas.fa-plus
+          |  Tạo bài viết
+
+block append scripts
+  script(src="/admin/js/upload-preview.js")
+  script(src="/admin/libs/tinymce/tinymce.min.js")
+  script(src="/admin/js/tinymce-init.js")

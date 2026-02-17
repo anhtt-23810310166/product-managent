@@ -1,0 +1,97 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+include ../../mixins/pagination.pug
+
+block main
+  +pageHeader("Nhật ký hoạt động", "Lịch sử thao tác của nhân viên trên hệ thống")
+
+  //- Filter bar
+  .admin-filter-bar.mb-4
+    .row.align-items-center
+      .col-md-3.mb-2.mb-md-0
+        .admin-search-box
+          i.fas.fa-search
+          input.form-control#searchKeyword(type="text" placeholder="Tìm nhân viên..." value=keyword)
+
+      .col-md-3.mb-2.mb-md-0
+        select.form-control.admin-select#filterModule
+          option(value="" selected=(currentModule === "")) -- Tất cả module --
+          each label, key in moduleLabels
+            option(value=key selected=(currentModule === key))= label
+
+      .col-md-3.mb-2.mb-md-0
+        select.form-control.admin-select#filterAction
+          option(value="" selected=(currentAction === "")) -- Tất cả hành động --
+          each label, key in actionLabels
+            option(value=key selected=(currentAction === key))= label
+
+      .col-md-3
+        .d-flex.gap-2
+          button.btn.btn-add-product#btnFilter
+            i.fas.fa-filter.me-1
+            | Lọc
+          if keyword || currentModule || currentAction
+            a.btn.btn-outline-secondary(href=`${prefixAdmin}/activity-logs`)
+              i.fas.fa-times.me-1
+              | Xoá lọc
+
+  //- Log Table
+  .admin-table-wrapper
+    if logs && logs.length > 0
+      table.admin-table
+        thead
+          tr
+            th.col-stt STT
+            th(style="min-width: 155px") Thời gian
+            th(style="min-width: 140px") Nhân viên
+            th(style="min-width: 110px") Module
+            th(style="min-width: 120px") Hành động
+            th Mô tả
+            th(style="min-width: 110px") IP
+
+        tbody
+          each log, index in logs
+            tr.animate-in
+              td.col-stt= pagination.skip + index + 1
+              td.log-time= log.createdAtFormatted
+              td.log-user
+                i.fas.fa-user-circle.me-1
+                = log.accountFullName
+              td
+                span.log-module-badge(class=`module-${log.module}`)= moduleLabels[log.module] || log.module
+              td
+                span.log-action-badge(class=`action-${log.action}`)= actionLabels[log.action] || log.action
+              td.log-description= log.description
+              td.log-ip= log.ip
+    else
+      .admin-empty-state
+        i.fas.fa-clipboard-list
+        h4 Chưa có nhật ký nào
+        p Nhật ký sẽ tự động ghi lại khi có thao tác trên hệ thống
+
+  //- Pagination
+  +pagination(pagination)
+
+block append scripts
+  script.
+    // Filter
+    const btnFilter = document.querySelector("#btnFilter");
+    if (btnFilter) {
+      btnFilter.addEventListener("click", () => {
+        const moduleVal = document.querySelector("#filterModule").value;
+        const actionVal = document.querySelector("#filterAction").value;
+        const keyword = document.querySelector("#searchKeyword").value.trim();
+
+        const params = new URLSearchParams();
+        if (moduleVal) params.set("module", moduleVal);
+        if (actionVal) params.set("action", actionVal);
+        if (keyword) params.set("keyword", keyword);
+
+        window.location.href = window.location.pathname + "?" + params.toString();
+      });
+
+      // Enter key to search
+      document.querySelector("#searchKeyword").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") btnFilter.click();
+      });
+    }

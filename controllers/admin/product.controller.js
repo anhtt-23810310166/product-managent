@@ -5,6 +5,9 @@ const filterStatusHelper = require("../../helpers/filterStatus");
 const searchHelper = require("../../helpers/search");
 const sortHelper = require("../../helpers/sort");
 const paginationHelper = require("../../helpers/pagination");
+const systemConfig = require("../../config/system");
+const prefixAdmin = systemConfig.prefixAdmin;
+const createLog = require("../../helpers/activityLog");
 
 // [GET] /admin/products
 module.exports.index = async (req, res) => {
@@ -47,6 +50,10 @@ module.exports.index = async (req, res) => {
     res.render("admin/pages/products/index", {
         pageTitle: "Danh sách sản phẩm",
         currentPage: "products",
+        breadcrumbs: [
+            { title: "Sản phẩm" },
+            { title: "Danh sách" }
+        ],
         products: products,
         filterStatus: filterStatus,
         keyword: objectSearch.keyword,
@@ -64,6 +71,10 @@ module.exports.create = async (req, res) => {
     res.render("admin/pages/products/create", {
         pageTitle: "Thêm sản phẩm mới",
         currentPage: "product-create",
+        breadcrumbs: [
+            { title: "Sản phẩm" },
+            { title: "Thêm sản phẩm" }
+        ],
         categories: tree
     });
 }
@@ -89,8 +100,14 @@ module.exports.createPost = async (req, res) => {
         const product = new Product(req.body);
         await product.save();
 
+        createLog(req, res, {
+            action: "create",
+            module: "products",
+            description: `Thêm sản phẩm: ${product.title}`
+        });
+
         req.flash("success", "Thêm sản phẩm thành công!");
-        res.redirect(`${res.app.locals.prefixAdmin}/products`);
+        res.redirect(`${prefixAdmin}/products`);
     } catch (error) {
         req.flash("error", "Có lỗi xảy ra!");
         res.redirect("back");
@@ -103,7 +120,7 @@ module.exports.edit = async (req, res) => {
         const product = await Product.findOne({ _id: req.params.id, deleted: false });
         if (!product) {
             req.flash("error", "Sản phẩm không tồn tại!");
-            return res.redirect(`${res.app.locals.prefixAdmin}/products`);
+            return res.redirect(`${prefixAdmin}/products`);
         }
 
         const categories = await ProductCategory.find({ deleted: false }).sort({ position: "asc" });
@@ -112,12 +129,16 @@ module.exports.edit = async (req, res) => {
         res.render("admin/pages/products/edit", {
             pageTitle: "Chỉnh sửa sản phẩm",
             currentPage: "products",
+            breadcrumbs: [
+                { title: "Sản phẩm", link: `${prefixAdmin}/products` },
+                { title: "Chỉnh sửa" }
+            ],
             product: product,
             categories: tree
         });
     } catch (error) {
         req.flash("error", "Có lỗi xảy ra!");
-        res.redirect(`${res.app.locals.prefixAdmin}/products`);
+        res.redirect(`${prefixAdmin}/products`);
     }
 }
 
@@ -127,7 +148,7 @@ module.exports.editPatch = async (req, res) => {
         const product = await Product.findById(req.params.id);
         if (!product) {
             req.flash("error", "Sản phẩm không tồn tại!");
-            return res.redirect(`${res.app.locals.prefixAdmin}/products`);
+            return res.redirect(`${prefixAdmin}/products`);
         }
 
         product.title = req.body.title;
@@ -144,8 +165,14 @@ module.exports.editPatch = async (req, res) => {
 
         await product.save();
 
+        createLog(req, res, {
+            action: "edit",
+            module: "products",
+            description: `Chỉnh sửa sản phẩm: ${product.title}`
+        });
+
         req.flash("success", "Cập nhật sản phẩm thành công!");
-        res.redirect(`${res.app.locals.prefixAdmin}/products`);
+        res.redirect(`${prefixAdmin}/products`);
     } catch (error) {
         req.flash("error", "Có lỗi xảy ra!");
         res.redirect("back");
@@ -158,7 +185,7 @@ module.exports.detail = async (req, res) => {
         const product = await Product.findOne({ _id: req.params.id, deleted: false });
         if (!product) {
             req.flash("error", "Sản phẩm không tồn tại!");
-            return res.redirect(`${res.app.locals.prefixAdmin}/products`);
+            return res.redirect(`${prefixAdmin}/products`);
         }
 
         // Get category
@@ -170,12 +197,16 @@ module.exports.detail = async (req, res) => {
         res.render("admin/pages/products/detail", {
             pageTitle: "Chi tiết sản phẩm",
             currentPage: "products",
+            breadcrumbs: [
+                { title: "Sản phẩm", link: `${prefixAdmin}/products` },
+                { title: "Chi tiết" }
+            ],
             product: product,
             category: category
         });
     } catch (error) {
         req.flash("error", "Có lỗi xảy ra!");
-        res.redirect(`${res.app.locals.prefixAdmin}/products`);
+        res.redirect(`${prefixAdmin}/products`);
     }
 }
 
@@ -188,6 +219,12 @@ module.exports.changeStatus = async (req, res) => {
         const result = await Product.updateOne({ _id: id }, { status: status });
 
         if (result.modifiedCount > 0) {
+            createLog(req, res, {
+                action: "change-status",
+                module: "products",
+                description: `Đổi trạng thái sản phẩm sang ${status === "active" ? "hoạt động" : "dừng hoạt động"}`
+            });
+
             res.json({
                 code: 200,
                 message: "Cập nhật trạng thái thành công!"
@@ -252,7 +289,15 @@ module.exports.changeMulti = async (req, res) => {
                 });
         }
 
-        
+
+        if (count > 0) {
+            createLog(req, res, {
+                action: "change-multi",
+                module: "products",
+                description: `Thao tác hàng loạt [${type}] trên ${count} sản phẩm`
+            });
+        }
+
         res.json({
             code: 200,
             message: count > 0 ? "Cập nhật thành công!" : "Không có thay đổi nào!",
@@ -273,6 +318,12 @@ module.exports.deleteProduct = async (req, res) => {
         const result = await Product.updateOne({ _id: id }, { deleted: true, deletedAt: new Date() });
         
         if (result.modifiedCount > 0) {
+            createLog(req, res, {
+                action: "delete",
+                module: "products",
+                description: `Xoá sản phẩm (ID: ${id})`
+            });
+
             res.json({
                 code: 200,
                 message: "Xoá sản phẩm thành công!"

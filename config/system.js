@@ -1,6 +1,6 @@
-module.exports = (app) => {
-    const PATH_ADMIN = "/admin";
+const PATH_ADMIN = "/admin";
 
+const systemConfig = (app) => {
     app.locals.prefixAdmin = PATH_ADMIN;
 
     app.locals.permissions = [
@@ -27,6 +27,28 @@ module.exports = (app) => {
             ]
         },
         {
+            label: "Bài viết",
+            name: "articles",
+            permissions: [
+                { label: "Xem", action: "view" },
+                { label: "Thêm mới", action: "create" },
+                { label: "Chỉnh sửa", action: "edit" },
+                { label: "Xóa", action: "delete" },
+                { label: "Đổi trạng thái", action: "change-status" }
+            ]
+        },
+        {
+            label: "Danh mục bài viết",
+            name: "article-category",
+            permissions: [
+                { label: "Xem", action: "view" },
+                { label: "Thêm mới", action: "create" },
+                { label: "Chỉnh sửa", action: "edit" },
+                { label: "Xóa", action: "delete" },
+                { label: "Đổi trạng thái", action: "change-status" }
+            ]
+        },
+        {
             label: "Nhóm quyền",
             name: "roles",
             permissions: [
@@ -36,6 +58,20 @@ module.exports = (app) => {
                 { label: "Xóa", action: "delete" },
                 { label: "Phân quyền", action: "permissions" }
             ]
+        },
+        {
+            label: "Tài khoản",
+            name: "accounts",
+            permissions: [
+                { label: "Xem", action: "view" },
+                { label: "Thêm mới", action: "create" },
+                { label: "Chỉnh sửa", action: "edit" },
+                { label: "Xóa", action: "delete" },
+                { label: "Đổi trạng thái", action: "change-status" }
+            ]
         }
     ];
 };
+
+systemConfig.prefixAdmin = PATH_ADMIN;
+module.exports = systemConfig;

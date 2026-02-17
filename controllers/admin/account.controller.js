@@ -5,6 +5,9 @@ const searchHelper = require("../../helpers/search");
 const filterStatusHelper = require("../../helpers/filterStatus");
 const sortHelper = require("../../helpers/sort");
 const paginationHelper = require("../../helpers/pagination");
+const systemConfig = require("../../config/system");
+const prefixAdmin = systemConfig.prefixAdmin;
+const createLog = require("../../helpers/activityLog");
 
 // Generate random token
 const generateToken = (length = 20) => {
@@ -32,8 +35,8 @@ module.exports.index = async (req, res) => {
 
         // Filter Status
         const objectFilter = filterStatusHelper(req.query);
-        if (objectFilter.status) {
-            find.status = objectFilter.status;
+        if (req.query.status) {
+            find.status = req.query.status;
         }
 
         // Sort
@@ -65,6 +68,10 @@ module.exports.index = async (req, res) => {
         res.render("admin/pages/accounts/index", {
             pageTitle: "Danh sách tài khoản",
             currentPage: "accounts",
+            breadcrumbs: [
+                { title: "Cài đặt", link: `${prefixAdmin}/settings` },
+                { title: "Danh sách tài khoản" }
+            ],
             accounts: accounts,
             roleMap: roleMap,
             keyword: objectSearch.keyword,
@@ -86,6 +93,11 @@ module.exports.create = async (req, res) => {
         res.render("admin/pages/accounts/create", {
             pageTitle: "Thêm tài khoản",
             currentPage: "accounts",
+            breadcrumbs: [
+                { title: "Cài đặt", link: `${prefixAdmin}/settings` },
+                { title: "Tài khoản", link: `${prefixAdmin}/accounts` },
+                { title: "Thêm tài khoản" }
+            ],
             roles: roles
         });
     } catch (error) {
@@ -117,8 +129,14 @@ module.exports.createPost = async (req, res) => {
         const account = new Account(req.body);
         await account.save();
 
+        createLog(req, res, {
+            action: "create",
+            module: "accounts",
+            description: `Thêm tài khoản: ${account.fullName} (${account.email})`
+        });
+
         req.flash("success", "Tạo tài khoản thành công!");
-        res.redirect(`/${res.locals.prefixAdmin}/accounts`);
+        res.redirect(`${prefixAdmin}/accounts`);
     } catch (error) {
         console.log(error);
         req.flash("error", "Có lỗi xảy ra!");
@@ -144,6 +162,11 @@ module.exports.edit = async (req, res) => {
         res.render("admin/pages/accounts/edit", {
             pageTitle: "Chỉnh sửa tài khoản",
             currentPage: "accounts",
+            breadcrumbs: [
+                { title: "Cài đặt", link: `${prefixAdmin}/settings` },
+                { title: "Tài khoản", link: `${prefixAdmin}/accounts` },
+                { title: account.fullName }
+            ],
             account: account,
             roles: roles
         });
@@ -180,6 +203,12 @@ module.exports.editPatch = async (req, res) => {
 
         await Account.updateOne({ _id: req.params.id }, req.body);
 
+        createLog(req, res, {
+            action: "edit",
+            module: "accounts",
+            description: `Chỉnh sửa tài khoản: ${req.body.fullName}`
+        });
+
         req.flash("success", "Cập nhật tài khoản thành công!");
         res.redirect("back");
     } catch (error) {
@@ -211,6 +240,11 @@ module.exports.detail = async (req, res) => {
         res.render("admin/pages/accounts/detail", {
             pageTitle: "Chi tiết tài khoản",
             currentPage: "accounts",
+            breadcrumbs: [
+                { title: "Cài đặt", link: `${prefixAdmin}/settings` },
+                { title: "Tài khoản", link: `${prefixAdmin}/accounts` },
+                { title: account.fullName }
+            ],
             account: account,
             role: role
         });
@@ -229,6 +263,12 @@ module.exports.changeStatus = async (req, res) => {
         const result = await Account.updateOne({ _id: id }, { status: status });
 
         if (result.modifiedCount > 0) {
+            createLog(req, res, {
+                action: "change-status",
+                module: "accounts",
+                description: `Đổi trạng thái tài khoản sang ${status === "active" ? "hoạt động" : "khoá"}`
+            });
+
             res.json({
                 code: 200,
                 message: "Cập nhật trạng thái thành công!"
@@ -306,6 +346,12 @@ module.exports.deleteAccount = async (req, res) => {
         );
 
         if (result.modifiedCount > 0) {
+            createLog(req, res, {
+                action: "delete",
+                module: "accounts",
+                description: `Xoá tài khoản (ID: ${id})`
+            });
+
             res.json({
                 code: 200,
                 message: "Xoá tài khoản thành công!"

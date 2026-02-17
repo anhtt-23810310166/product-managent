@@ -12,18 +12,21 @@ aside.admin-sider#adminSider
 
     .sider-menu-label Bài viết
     ul.list-unstyled.mb-0
-      li.sider-menu-item.has-submenu
-        a.sider-menu-link.submenu-toggle(href="javascript:void(0)")
-          i.fas.fa-newspaper
-          span Bài viết
-          i.fas.fa-chevron-right.submenu-arrow
-        ul.sider-submenu.list-unstyled
-          li
-            a.sider-submenu-link(href="#") Thêm bài viết
-          li
-            a.sider-submenu-link(href="#") Danh sách
-          li
-            a.sider-submenu-link(href="#") Danh mục
+      if userPermissions && (userPermissions.includes("articles_view") || userPermissions.includes("article-category_view"))
+        li.sider-menu-item.has-submenu(class=(currentPage === "articles" || currentPage === "article-create" || currentPage === "article-category" ? "open" : ""))
+          a.sider-menu-link.submenu-toggle(href="javascript:void(0)")
+            i.fas.fa-newspaper
+            span Bài viết
+            i.fas.fa-chevron-right.submenu-arrow
+          ul.sider-submenu.list-unstyled
+            if userPermissions && userPermissions.includes("articles_view")
+              li
+                a.sider-submenu-link(href=`${prefixAdmin}/articles/create` class=(currentPage === "article-create" ? "active" : "")) Thêm bài viết
+              li
+                a.sider-submenu-link(href=`${prefixAdmin}/articles` class=(currentPage === "articles" ? "active" : "")) Danh sách
+            if userPermissions && userPermissions.includes("article-category_view")
+              li
+                a.sider-submenu-link(href=`${prefixAdmin}/article-category` class=(currentPage === "article-category" ? "active" : "")) Danh mục
 
       li.sider-menu-item
         a.sider-menu-link(href="#")
@@ -32,18 +35,21 @@ aside.admin-sider#adminSider
 
     .sider-menu-label Bán hàng
     ul.list-unstyled.mb-0
-      li.sider-menu-item.has-submenu(class=(currentPage === "products" || currentPage === "product-create" || currentPage === "product-category" ? "open" : ""))
-        a.sider-menu-link.submenu-toggle(href="javascript:void(0)")
-          i.fas.fa-box
-          span Sản phẩm
-          i.fas.fa-chevron-right.submenu-arrow
-        ul.sider-submenu.list-unstyled
-          li
-            a.sider-submenu-link(href=`${prefixAdmin}/products/create` class=(currentPage === "product-create" ? "active" : "")) Thêm sản phẩm
-          li
-            a.sider-submenu-link(href=`${prefixAdmin}/products` class=(currentPage === "products" ? "active" : "")) Danh sách
-          li
-            a.sider-submenu-link(href=`${prefixAdmin}/product-category` class=(currentPage === "product-category" ? "active" : "")) Danh mục
+      if userPermissions && (userPermissions.includes("products_view") || userPermissions.includes("product-category_view"))
+        li.sider-menu-item.has-submenu(class=(currentPage === "products" || currentPage === "product-create" || currentPage === "product-category" ? "open" : ""))
+          a.sider-menu-link.submenu-toggle(href="javascript:void(0)")
+            i.fas.fa-box
+            span Sản phẩm
+            i.fas.fa-chevron-right.submenu-arrow
+          ul.sider-submenu.list-unstyled
+            if userPermissions && userPermissions.includes("products_view")
+              li
+                a.sider-submenu-link(href=`${prefixAdmin}/products/create` class=(currentPage === "product-create" ? "active" : "")) Thêm sản phẩm
+              li
+                a.sider-submenu-link(href=`${prefixAdmin}/products` class=(currentPage === "products" ? "active" : "")) Danh sách
+            if userPermissions && userPermissions.includes("product-category_view")
+              li
+                a.sider-submenu-link(href=`${prefixAdmin}/product-category` class=(currentPage === "product-category" ? "active" : "")) Danh mục
 
       li.sider-menu-item.has-submenu
         a.sider-menu-link.submenu-toggle(href="javascript:void(0)")
@@ -107,3 +113,5 @@ aside.admin-sider#adminSider
         a.sider-menu-link(href="#" class=(currentPage === "theme" ? "active" : ""))
           i.fas.fa-paint-brush
           span Giao diện
+
+

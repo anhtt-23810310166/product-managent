@@ -774,15 +774,12 @@ body.admin-page {
   display: flex;
   visibility: hidden;
   opacity: 0;
-  position: absolute;
-  left: 16px;
-  bottom: 4px;
+  margin-top: 4px;
   font-size: 0.75rem;
   gap: 10px;
   align-items: center;
   transition: opacity 0.15s ease, visibility 0.15s ease;
   white-space: nowrap;
-  z-index: 5;
 }
 
 .admin-table tbody tr:hover .product-hover-actions {
@@ -2426,3 +2423,85 @@ body.admin-page {
   width: 18px;
   text-align: center;
 }
+
+/* ===== Dynamic Breadcrumb ===== */
+.admin-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  font-size: 13px;
+}
+
+.breadcrumb-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.breadcrumb-link:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.breadcrumb-sep {
+  color: var(--text-muted);
+  margin: 0 6px;
+  font-size: 12px;
+}
+
+.breadcrumb-current {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* ===== Activity Log Styles ===== */
+.log-time {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.log-user {
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.log-description {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.log-ip {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-family: monospace;
+}
+
+.log-module-badge,
+.log-action-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Module badges */
+.module-products { background: #e8f1ff; color: #3e97ff; }
+.module-product-category { background: #fff3e0; color: #f57c00; }
+.module-accounts { background: #e8f5e9; color: #43a047; }
+.module-roles { background: #f3e5f5; color: #8e24aa; }
+.module-auth { background: #fce4ec; color: #e53935; }
+
+/* Action badges */
+.action-create { background: var(--success-bg); color: var(--success); }
+.action-edit { background: #e8f1ff; color: var(--accent); }
+.action-delete { background: var(--danger-bg); color: var(--danger); }
+.action-change-status { background: var(--warning-bg); color: #d69a00; }
+.action-change-multi { background: #f3e5f5; color: #8e24aa; }
+.action-login { background: #e0f2f1; color: #00897b; }
+.action-logout { background: #efebe9; color: #6d4c41; }
+.action-permissions { background: #ede7f6; color: #5e35b1; }
+

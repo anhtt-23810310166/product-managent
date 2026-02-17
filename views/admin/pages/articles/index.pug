@@ -1,0 +1,86 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+include ../../mixins/search.pug
+include ../../mixins/filter-status.pug
+include ../../mixins/sort.pug
+include ../../mixins/pagination.pug
+include ../../mixins/batch-actions.pug
+
+block main
+  +pageHeader("Danh sách bài viết", "Quản lý tất cả bài viết trong hệ thống")
+    a.btn.btn-add-product(href=`${prefixAdmin}/articles/create`)
+      i.fas.fa-plus.mr-2
+      | Thêm bài viết
+
+  //- Filter bar
+  .admin-filter-bar.mb-4
+    .row.align-items-center
+      +search(keyword)
+      +filter-status(filterStatus)
+      +sort(sortOptions)
+      .col-md-2
+        .d-flex.gap-2
+          +batch-actions()
+
+  //- Articles Table
+  .admin-table-wrapper
+    if articles && articles.length > 0
+      table.admin-table
+        thead
+          tr
+            th.col-check
+              input.form-check-input(type="checkbox" id="checkAll")
+            th.col-stt STT
+            th.col-img Hình ảnh
+            th.col-title Tiêu đề
+            th.col-category Danh mục
+            th.col-position Vị trí
+            th.col-status Trạng thái
+        tbody
+          each article, index in articles
+            tr.animate-in
+              td.col-check
+                input.form-check-input.checkbox-item(type="checkbox" name="id" value=article._id)
+              td.col-stt= pagination.skip + index + 1
+              td.col-img
+                if article.thumbnail
+                  img.product-thumb(src=article.thumbnail alt=article.title)
+                else
+                  .product-thumb-placeholder
+                    i.fas.fa-image
+              td.col-title
+                .product-title-cell
+                  span.product-name= article.title
+                .product-hover-actions
+                  a.hover-action-link.hover-action-edit(href=`${prefixAdmin}/articles/edit/${article._id}`) Sửa
+                  if article.status === "active"
+                    a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=article._id data-status="active") Dừng hoạt động
+                  else
+                    a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=article._id data-status="inactive") Hoạt động
+                  a.hover-action-link.hover-action-danger(href="javascript:void(0)" data-id=article._id) Xoá
+              td.col-category
+                if article.article_category_id && categoryMap[article.article_category_id]
+                  span.category-tag= categoryMap[article.article_category_id]
+                else
+                  span.text-muted --
+              td.col-position
+                input.position-input(type="number" value=article.position data-id=article._id min="1")
+              td.col-status
+                if article.status === "active"
+                  span.status-badge.status-active Hoạt động
+                else
+                  span.status-badge.status-inactive Dừng hoạt động
+    else
+      .admin-empty-state
+        i.fas.fa-newspaper
+        h4 Chưa có bài viết nào
+        p Bắt đầu thêm bài viết đầu tiên
+        a.btn.btn-add-product(href=`${prefixAdmin}/articles/create`)
+          i.fas.fa-plus.mr-2
+          | Thêm bài viết
+
+  //- Pagination
+  +pagination(pagination)
+
+block append scripts
+  script(src="/admin/js/article.js")
