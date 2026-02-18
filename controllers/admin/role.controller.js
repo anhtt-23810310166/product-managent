@@ -114,6 +114,9 @@ module.exports.edit = async (req, res) => {
 // [PATCH] /admin/roles/edit/:id
 module.exports.editPatch = async (req, res) => {
     try {
+        const returnUrl = req.body.returnUrl;
+        delete req.body.returnUrl;
+
         await Role.updateOne({ _id: req.params.id }, req.body);
 
         createLog(req, res, {
@@ -123,7 +126,7 @@ module.exports.editPatch = async (req, res) => {
         });
 
         req.flash("success", "Cập nhật nhóm quyền thành công!");
-        res.redirect(`${prefixAdmin}/roles`);
+        res.redirect(req.body.returnUrl || `${prefixAdmin}/roles`);
     } catch (error) {
         console.log(error);
         req.flash("error", "Cập nhật nhóm quyền thất bại!");

@@ -8,9 +8,10 @@ include ../../mixins/batch-actions.pug
 
 block main
   +pageHeader("Danh sách sản phẩm", "Quản lý tất cả sản phẩm trong hệ thống")
-    a.btn.btn-add-product(href=`${prefixAdmin}/products/create`)
-      i.fas.fa-plus.mr-2
-      | Thêm sản phẩm
+    if userPermissions && userPermissions.includes("products_create")
+      a.btn.btn-add-product(href=`${prefixAdmin}/products/create`)
+        i.fas.fa-plus.mr-2
+        | Thêm sản phẩm
 
   //- Filter bar
   .admin-filter-bar.mb-4
@@ -20,7 +21,8 @@ block main
       +sort(sortOptions)
       .col-md-2
         .d-flex.gap-2
-          +batch-actions()
+          if userPermissions && (userPermissions.includes("products_edit") || userPermissions.includes("products_delete") || userPermissions.includes("products_change-status"))
+            +batch-actions()
 
   //- Products Table
   .admin-table-wrapper
@@ -28,8 +30,9 @@ block main
       table.admin-table
         thead
           tr
-            th.col-check
-              input.form-check-input(type="checkbox" id="checkAll")
+            if userPermissions && (userPermissions.includes("products_edit") || userPermissions.includes("products_delete") || userPermissions.includes("products_change-status"))
+              th.col-check
+                input.form-check-input(type="checkbox" id="checkAll")
             th.col-stt STT
             th.col-img Hình ảnh
             th.col-title Tên sản phẩm
@@ -41,8 +44,9 @@ block main
         tbody
           each product, index in products
             tr.animate-in
-              td.col-check
-                input.form-check-input.checkbox-item(type="checkbox" name="id" value=product._id)
+              if userPermissions && (userPermissions.includes("products_edit") || userPermissions.includes("products_delete") || userPermissions.includes("products_change-status"))
+                td.col-check
+                  input.form-check-input.checkbox-item(type="checkbox" name="id" value=product._id)
               td.col-stt= pagination.skip + index + 1
               td.col-img
                 if product.thumbnail
@@ -53,14 +57,19 @@ block main
               td.col-title
                 .product-title-cell
                   span.product-name= product.title
+                  if product.featured
+                    span.badge-featured Nổi bật
                 .product-hover-actions
-                  a.hover-action-link.hover-action-edit(href=`${prefixAdmin}/products/edit/${product._id}`) Sửa
+                  if userPermissions && userPermissions.includes("products_edit")
+                    a.hover-action-link.hover-action-edit(href=`${prefixAdmin}/products/edit/${product._id}`) Sửa
                   a.hover-action-link.hover-action-detail(href=`${prefixAdmin}/products/detail/${product._id}`) Chi tiết
-                  if product.status === "active"
-                    a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=product._id data-status="active") Dừng hoạt động
-                  else
-                    a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=product._id data-status="inactive") Hoạt động
-                  a.hover-action-link.hover-action-danger(href="javascript:void(0)" data-id=product._id) Xoá
+                  if userPermissions && userPermissions.includes("products_change-status")
+                    if product.status === "active"
+                      a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=product._id data-status="active") Dừng hoạt động
+                    else
+                      a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=product._id data-status="inactive") Hoạt động
+                  if userPermissions && userPermissions.includes("products_delete")
+                    a.hover-action-link.hover-action-danger(href="javascript:void(0)" data-id=product._id) Xoá
               td.col-price
                 if product.discountPercentage > 0
                   span.price-text= `${product.price.toLocaleString()} / ${(Math.round(product.price * (1 - product.discountPercentage / 100) / 1000) * 1000).toLocaleString()}`
@@ -85,9 +94,10 @@ block main
         i.fas.fa-box-open
         h4 Chưa có sản phẩm nào
         p Bắt đầu thêm sản phẩm đầu tiên cho cửa hàng của bạn
-        a.btn.btn-add-product(href=`${prefixAdmin}/products/create`)
-          i.fas.fa-plus.mr-2
-          | Thêm sản phẩm
+        if userPermissions && userPermissions.includes("products_create")
+          a.btn.btn-add-product(href=`${prefixAdmin}/products/create`)
+            i.fas.fa-plus.mr-2
+            | Thêm sản phẩm
 
   //- Pagination
   +pagination(pagination)

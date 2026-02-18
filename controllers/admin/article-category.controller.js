@@ -115,7 +115,7 @@ module.exports.edit = async (req, res) => {
         const categoryTree = createTree(categories);
 
         res.render("admin/pages/article-category/edit", {
-            pageTitle: "Chỉnh sửa danh mục",
+            pageTitle: "Chỉnh sửa danh mục bài viết",
             currentPage: "article-category",
             breadcrumbs: [
                 { title: "Bài viết" },
@@ -123,7 +123,8 @@ module.exports.edit = async (req, res) => {
                 { title: "Chỉnh sửa" }
             ],
             category: category,
-            categories: categoryTree
+            categories: categoryTree,
+            returnUrl: req.headers.referer || `${prefixAdmin}/article-category`
         });
     } catch (error) {
         console.log(error);
@@ -135,6 +136,9 @@ module.exports.edit = async (req, res) => {
 // [PATCH] /admin/article-category/edit/:id
 module.exports.editPatch = async (req, res) => {
     try {
+        const returnUrl = req.body.returnUrl;
+        delete req.body.returnUrl;
+
         if (req.file) {
             req.body.thumbnail = req.file.path;
         }
@@ -152,7 +156,7 @@ module.exports.editPatch = async (req, res) => {
         });
 
         req.flash("success", "Cập nhật danh mục thành công!");
-        res.redirect(`${prefixAdmin}/article-category`);
+        res.redirect(returnUrl || `${prefixAdmin}/article-category`);
     } catch (error) {
         console.log(error);
         req.flash("error", "Cập nhật thất bại!");

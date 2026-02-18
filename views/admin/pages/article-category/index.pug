@@ -9,9 +9,10 @@ include ../../mixins/category-tree.pug
 
 block main
   +pageHeader("Danh mục bài viết", "Quản lý danh mục bài viết trong hệ thống")
-    a.btn.btn-add-product(href=`${prefixAdmin}/article-category/create`)
-      i.fas.fa-plus.mr-2
-      | Thêm danh mục
+    if userPermissions && userPermissions.includes("article-category_create")
+      a.btn.btn-add-product(href=`${prefixAdmin}/article-category/create`)
+        i.fas.fa-plus.mr-2
+        | Thêm danh mục
 
   //- Filter bar
   .admin-filter-bar.mb-4
@@ -21,7 +22,8 @@ block main
       +sort(sortOptions)
       .col-md-2
         .d-flex.gap-2
-          +batch-actions()
+          if userPermissions && (userPermissions.includes("article-category_edit") || userPermissions.includes("article-category_delete") || userPermissions.includes("article-category_change-status"))
+            +batch-actions()
 
   //- Categories Table
   .admin-table-wrapper
@@ -30,23 +32,25 @@ block main
       table.admin-table
         thead
           tr
-            th.col-check
-              input.form-check-input(type="checkbox" id="checkAll")
+            if userPermissions && (userPermissions.includes("article-category_edit") || userPermissions.includes("article-category_delete") || userPermissions.includes("article-category_change-status"))
+              th.col-check
+                input.form-check-input(type="checkbox" id="checkAll")
             th.col-stt-num STT
             th.col-img Ảnh
             th.col-title Tên danh mục
             th.col-position Vị trí
             th.col-status Trạng thái
         tbody
-          +categoryTree(categories, 0)
+          +categoryTree(categories, 0, "article-category")
     else
       .admin-empty-state
         i.fas.fa-folder-open
         h4 Chưa có danh mục nào
         p Bắt đầu thêm danh mục đầu tiên
-        a.btn.btn-add-product(href=`${prefixAdmin}/article-category/create`)
-          i.fas.fa-plus.mr-2
-          | Thêm danh mục
+        if userPermissions && userPermissions.includes("article-category_create")
+          a.btn.btn-add-product(href=`${prefixAdmin}/article-category/create`)
+            i.fas.fa-plus.mr-2
+            | Thêm danh mục
 
 block append scripts
   script(src="/admin/js/article-category.js")

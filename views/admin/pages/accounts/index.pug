@@ -8,9 +8,10 @@ include ../../mixins/batch-actions.pug
 
 block main
   +pageHeader("Danh sách tài khoản", "Quản lý tài khoản nhân viên hệ thống")
-    a.btn.btn-add-product(href=`${prefixAdmin}/accounts/create`)
-      i.fas.fa-plus.mr-2
-      | Thêm tài khoản
+    if userPermissions && userPermissions.includes("accounts_create")
+      a.btn.btn-add-product(href=`${prefixAdmin}/accounts/create`)
+        i.fas.fa-plus.mr-2
+        | Thêm tài khoản
 
   //- Filter bar
   .admin-filter-bar.mb-4
@@ -20,7 +21,8 @@ block main
       +sort(sortOptions)
       .col-md-2
         .d-flex.gap-2
-          +batch-actions()
+          if userPermissions && (userPermissions.includes("accounts_edit") || userPermissions.includes("accounts_delete") || userPermissions.includes("accounts_change-status"))
+            +batch-actions()
 
   //- Accounts Table
   .admin-table-wrapper
@@ -28,8 +30,9 @@ block main
       table.admin-table
         thead
           tr
-            th.col-check
-              input.form-check-input(type="checkbox" id="checkAll")
+            if userPermissions && (userPermissions.includes("accounts_edit") || userPermissions.includes("accounts_delete") || userPermissions.includes("accounts_change-status"))
+              th.col-check
+                input.form-check-input(type="checkbox" id="checkAll")
             th.col-stt STT
             th.col-img Avatar
             th Họ tên
@@ -39,8 +42,9 @@ block main
         tbody
           each account, index in accounts
             tr.animate-in
-              td.col-check
-                input.form-check-input.checkbox-item(type="checkbox" name="id" value=account._id)
+              if userPermissions && (userPermissions.includes("accounts_edit") || userPermissions.includes("accounts_delete") || userPermissions.includes("accounts_change-status"))
+                td.col-check
+                  input.form-check-input.checkbox-item(type="checkbox" name="id" value=account._id)
               td.col-stt= pagination.skip + index + 1
               td.col-img
                 if account.avatar
@@ -52,13 +56,16 @@ block main
                 .product-title-cell
                   span.product-name= account.fullName
                 .product-hover-actions
-                  a.hover-action-link.hover-action-edit(href=`${prefixAdmin}/accounts/edit/${account._id}`) Sửa
+                  if userPermissions && userPermissions.includes("accounts_edit")
+                    a.hover-action-link.hover-action-edit(href=`${prefixAdmin}/accounts/edit/${account._id}`) Sửa
                   a.hover-action-link.hover-action-detail(href=`${prefixAdmin}/accounts/detail/${account._id}`) Chi tiết
-                  if account.status === "active"
-                    a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=account._id data-status="active") Dừng hoạt động
-                  else
-                    a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=account._id data-status="inactive") Hoạt động
-                  a.hover-action-link.hover-action-danger(href="javascript:void(0)" data-id=account._id) Xoá
+                  if userPermissions && userPermissions.includes("accounts_change-status")
+                    if account.status === "active"
+                      a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=account._id data-status="active") Dừng hoạt động
+                    else
+                      a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=account._id data-status="inactive") Hoạt động
+                  if userPermissions && userPermissions.includes("accounts_delete")
+                    a.hover-action-link.hover-action-danger(href="javascript:void(0)" data-id=account._id) Xoá
               td= account.email
               td
                 if account.role_id && roleMap[account.role_id]
@@ -75,12 +82,14 @@ block main
         i.fas.fa-users
         h4 Chưa có tài khoản nào
         p Bắt đầu thêm tài khoản đầu tiên cho hệ thống
-        a.btn.btn-add-product(href=`${prefixAdmin}/accounts/create`)
-          i.fas.fa-plus.mr-2
-          | Thêm tài khoản
+        if userPermissions && userPermissions.includes("accounts_create")
+          a.btn.btn-add-product(href=`${prefixAdmin}/accounts/create`)
+            i.fas.fa-plus.mr-2
+            | Thêm tài khoản
 
   //- Pagination
   +pagination(pagination)
 
 block append scripts
   script(src="/admin/js/account.js")
+

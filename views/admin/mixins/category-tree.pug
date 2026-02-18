@@ -1,9 +1,10 @@
-mixin categoryTree(categories, level)
+mixin categoryTree(categories, level, permPrefix)
   each category, index in categories
     - rowIndex++
     tr.animate-in
-      td.col-check
-        input.form-check-input.checkbox-item(type="checkbox" name="id" value=category._id)
+      if userPermissions && (userPermissions.includes(permPrefix + "_edit") || userPermissions.includes(permPrefix + "_delete") || userPermissions.includes(permPrefix + "_change-status"))
+        td.col-check
+          input.form-check-input.checkbox-item(type="checkbox" name="id" value=category._id)
       td.col-stt-num= rowIndex
       td.col-img
         if category.thumbnail
@@ -18,13 +19,16 @@ mixin categoryTree(categories, level)
               | #{("── ").repeat(level)}
             span.product-name= category.title
         .product-hover-actions
-          a.hover-action-link.hover-action-detail(href=`${prefixAdmin}/product-category/detail/${category._id}`) Chi tiết
-          a.hover-action-link.hover-action-edit(href=`${prefixAdmin}/product-category/edit/${category._id}`) Sửa
-          if category.status === "active"
-            a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=category._id data-status="active") Dừng hoạt động
-          else
-            a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=category._id data-status="inactive") Hoạt động
-          a.hover-action-link.hover-action-danger(href="javascript:void(0)" data-id=category._id) Xoá
+          a.hover-action-link.hover-action-detail(href=`${prefixAdmin}/${permPrefix}/detail/${category._id}`) Chi tiết
+          if userPermissions && userPermissions.includes(permPrefix + "_edit")
+            a.hover-action-link.hover-action-edit(href=`${prefixAdmin}/${permPrefix}/edit/${category._id}`) Sửa
+          if userPermissions && userPermissions.includes(permPrefix + "_change-status")
+            if category.status === "active"
+              a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=category._id data-status="active") Dừng hoạt động
+            else
+              a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=category._id data-status="inactive") Hoạt động
+          if userPermissions && userPermissions.includes(permPrefix + "_delete")
+            a.hover-action-link.hover-action-danger(href="javascript:void(0)" data-id=category._id) Xoá
       td.col-position
         input.position-input(type="number" value=category.position data-id=category._id min="1")
       td.col-status
@@ -33,4 +37,5 @@ mixin categoryTree(categories, level)
         else
           span.status-badge.status-inactive Dừng hoạt động
     if category.children && category.children.length > 0
-      +categoryTree(category.children, level + 1)
+      +categoryTree(category.children, level + 1, permPrefix)
+

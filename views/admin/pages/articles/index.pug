@@ -8,9 +8,10 @@ include ../../mixins/batch-actions.pug
 
 block main
   +pageHeader("Danh sách bài viết", "Quản lý tất cả bài viết trong hệ thống")
-    a.btn.btn-add-product(href=`${prefixAdmin}/articles/create`)
-      i.fas.fa-plus.mr-2
-      | Thêm bài viết
+    if userPermissions && userPermissions.includes("articles_create")
+      a.btn.btn-add-product(href=`${prefixAdmin}/articles/create`)
+        i.fas.fa-plus.mr-2
+        | Thêm bài viết
 
   //- Filter bar
   .admin-filter-bar.mb-4
@@ -20,7 +21,8 @@ block main
       +sort(sortOptions)
       .col-md-2
         .d-flex.gap-2
-          +batch-actions()
+          if userPermissions && (userPermissions.includes("articles_edit") || userPermissions.includes("articles_delete") || userPermissions.includes("articles_change-status"))
+            +batch-actions()
 
   //- Articles Table
   .admin-table-wrapper
@@ -28,8 +30,9 @@ block main
       table.admin-table
         thead
           tr
-            th.col-check
-              input.form-check-input(type="checkbox" id="checkAll")
+            if userPermissions && (userPermissions.includes("articles_edit") || userPermissions.includes("articles_delete") || userPermissions.includes("articles_change-status"))
+              th.col-check
+                input.form-check-input(type="checkbox" id="checkAll")
             th.col-stt STT
             th.col-img Hình ảnh
             th.col-title Tiêu đề
@@ -39,8 +42,9 @@ block main
         tbody
           each article, index in articles
             tr.animate-in
-              td.col-check
-                input.form-check-input.checkbox-item(type="checkbox" name="id" value=article._id)
+              if userPermissions && (userPermissions.includes("articles_edit") || userPermissions.includes("articles_delete") || userPermissions.includes("articles_change-status"))
+                td.col-check
+                  input.form-check-input.checkbox-item(type="checkbox" name="id" value=article._id)
               td.col-stt= pagination.skip + index + 1
               td.col-img
                 if article.thumbnail
@@ -52,12 +56,15 @@ block main
                 .product-title-cell
                   span.product-name= article.title
                 .product-hover-actions
-                  a.hover-action-link.hover-action-edit(href=`${prefixAdmin}/articles/edit/${article._id}`) Sửa
-                  if article.status === "active"
-                    a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=article._id data-status="active") Dừng hoạt động
-                  else
-                    a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=article._id data-status="inactive") Hoạt động
-                  a.hover-action-link.hover-action-danger(href="javascript:void(0)" data-id=article._id) Xoá
+                  if userPermissions && userPermissions.includes("articles_edit")
+                    a.hover-action-link.hover-action-edit(href=`${prefixAdmin}/articles/edit/${article._id}`) Sửa
+                  if userPermissions && userPermissions.includes("articles_change-status")
+                    if article.status === "active"
+                      a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=article._id data-status="active") Dừng hoạt động
+                    else
+                      a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=article._id data-status="inactive") Hoạt động
+                  if userPermissions && userPermissions.includes("articles_delete")
+                    a.hover-action-link.hover-action-danger(href="javascript:void(0)" data-id=article._id) Xoá
               td.col-category
                 if article.article_category_id && categoryMap[article.article_category_id]
                   span.category-tag= categoryMap[article.article_category_id]
@@ -75,12 +82,14 @@ block main
         i.fas.fa-newspaper
         h4 Chưa có bài viết nào
         p Bắt đầu thêm bài viết đầu tiên
-        a.btn.btn-add-product(href=`${prefixAdmin}/articles/create`)
-          i.fas.fa-plus.mr-2
-          | Thêm bài viết
+        if userPermissions && userPermissions.includes("articles_create")
+          a.btn.btn-add-product(href=`${prefixAdmin}/articles/create`)
+            i.fas.fa-plus.mr-2
+            | Thêm bài viết
 
   //- Pagination
   +pagination(pagination)
 
 block append scripts
   script(src="/admin/js/article.js")
+

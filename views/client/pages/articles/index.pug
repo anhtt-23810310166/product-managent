@@ -1,0 +1,50 @@
+extends ../../layouts/default
+include ../../mixins/category-sidebar.pug
+
+block main
+  .container.py-4
+    .row
+      //- Sidebar danh mục
+      .col-lg-3.col-md-4.mb-4
+        +categorySidebar("Danh mục bài viết", "Tất cả bài viết", "/articles", articleCategories, currentCategory)
+
+      //- Nội dung chính
+      .col-lg-9.col-md-8
+        .d-flex.justify-content-between.align-items-center.mb-3
+          .page-header-left
+            h2.page-title= currentCategory ? currentCategory.title : 'Tất cả bài viết'
+          if currentCategory
+            a.btn-clear-filter(href="/articles")
+              i.fas.fa-times.mr-1
+              | Bỏ lọc
+
+        if articles && articles.length > 0
+          .article-list
+            each article in articles
+              a.article-card(href=`/articles/${article.slug}`)
+                .article-card-inner
+                  if article.thumbnail
+                    .article-card-img
+                      img(src=article.thumbnail alt=article.title)
+                  else
+                    .article-card-img.article-card-img-placeholder
+                      i.fas.fa-newspaper
+                  .article-card-body
+                    h3.article-card-title= article.title
+                    if article.description
+                      p.article-card-desc= article.description
+                    .article-card-meta
+                      if article.createdAt
+                        span.article-card-date
+                          i.far.fa-clock.mr-1
+                          = article.createdAt.toLocaleDateString('vi-VN')
+        else
+          .text-center.py-5
+            .empty-state
+              i.fas.fa-newspaper.fa-4x.text-muted.mb-3
+              h4.text-muted Không có bài viết nào
+              if currentCategory
+                p.text-muted Danh mục này chưa có bài viết
+                a.btn.btn-outline-secondary(href="/articles") Xem tất cả bài viết
+              else
+                p.text-muted Hiện tại chưa có bài viết nào để hiển thị

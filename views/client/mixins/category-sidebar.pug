@@ -1,0 +1,36 @@
+//- =============================================
+//- Category Sidebar Mixin
+//- Dùng cho sidebar danh mục products & articles
+//- =============================================
+
+//- Params:
+//-   headerTitle: "Danh mục sản phẩm" / "Danh mục bài viết"
+//-   allLabel: "Tất cả sản phẩm" / "Tất cả bài viết"
+//-   baseUrl: "/products" / "/articles"
+//-   categories: mảng danh mục (tree)
+//-   currentCategory: danh mục đang chọn (hoặc null)
+
+mixin categorySidebar(headerTitle, allLabel, baseUrl, categories, currentCategory)
+  .category-sidebar
+    .category-sidebar-header
+      i.fas.fa-list.mr-2
+      = headerTitle
+    ul.category-sidebar-list
+      li
+        a.category-sidebar-link(href=baseUrl class=(!currentCategory ? 'active' : ''))
+          = allLabel
+      if categories && categories.length > 0
+        each cat in categories
+          li
+            a.category-sidebar-link(
+              href=`${baseUrl}?category=${cat.slug}`
+              class=(currentCategory && currentCategory.slug === cat.slug ? 'active' : '')
+            )= cat.title
+            if cat.children && cat.children.length > 0
+              ul.category-sidebar-sub
+                each child in cat.children
+                  li
+                    a.category-sidebar-link(
+                      href=`${baseUrl}?category=${child.slug}`
+                      class=(currentCategory && currentCategory.slug === child.slug ? 'active' : '')
+                    )= child.title

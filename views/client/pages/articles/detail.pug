@@ -1,0 +1,52 @@
+extends ../../layouts/default
+
+block main
+  .container.py-4
+    //- Breadcrumb
+    .article-breadcrumb
+      nav
+        ol.breadcrumb
+          li.breadcrumb-item
+            a(href="/") Trang chủ
+          li.breadcrumb-item
+            a(href="/articles") Bài viết
+          li.breadcrumb-item.active= article.title
+
+    .row
+      .col-lg-8.col-md-8
+        .article-detail-card
+          if article.thumbnail
+            .article-detail-img
+              img(src=article.thumbnail alt=article.title)
+          .article-detail-body
+            h1.article-detail-title= article.title
+            .article-detail-meta
+              if article.createdAt
+                span.article-detail-date
+                  i.far.fa-clock.mr-1
+                  = article.createdAt.toLocaleDateString('vi-VN')
+            hr.article-detail-divider
+            .article-detail-content!= article.description
+
+      //- Sidebar: bài viết liên quan
+      .col-lg-4.col-md-4
+        if relatedArticles && relatedArticles.length > 0
+          .article-related
+            h3.article-related-title Bài viết liên quan
+            each related in relatedArticles
+              a.article-related-item(href=`/articles/${related.slug}`)
+                if related.thumbnail
+                  .article-related-img
+                    img(src=related.thumbnail alt=related.title)
+                else
+                  .article-related-img.article-related-img-placeholder
+                    i.fas.fa-newspaper
+                .article-related-info
+                  h4.article-related-name= related.title
+                  if related.createdAt
+                    span.article-related-date= related.createdAt.toLocaleDateString('vi-VN')
+
+        .article-sidebar-nav
+          a.btn-back-list(href="/articles")
+            i.fas.fa-arrow-left.mr-2
+            | Quay lại danh sách

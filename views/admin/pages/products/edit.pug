@@ -11,6 +11,7 @@ block main
       method="POST"
       enctype="multipart/form-data"
     )
+      input(type="hidden" name="returnUrl" value=returnUrl)
       .form-row
         .form-col
           .form-group
@@ -88,6 +89,11 @@ block main
                 value="inactive"
                 selected=(product.status === "inactive")
               ) Dừng hoạt động
+
+          .form-group
+            .form-check
+              input.form-check-input(type="checkbox" name="featured" id="featured" value="true" checked=product.featured)
+              label.form-check-label(for="featured") Sản phẩm nổi bật
 
         .form-col.form-col-side
           .form-group

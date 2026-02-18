@@ -7,9 +7,10 @@ include ../../mixins/batch-actions.pug
 
 block main
   +pageHeader("Danh sách nhóm quyền", "Quản lý nhóm quyền hệ thống")
-    a.btn.btn-add-product(href=`${prefixAdmin}/roles/create`)
-      i.fas.fa-plus.mr-2
-      | Thêm mới
+    if userPermissions && userPermissions.includes("roles_create")
+      a.btn.btn-add-product(href=`${prefixAdmin}/roles/create`)
+        i.fas.fa-plus.mr-2
+        | Thêm mới
 
   //- Filter bar
   .admin-filter-bar.mb-4
@@ -18,13 +19,14 @@ block main
       +sort(sortOptions)
       .col-md-2
         .d-flex.gap-2
-          .batch-action-wrapper
-            button.btn.btn-batch-action#batchActionBtn(type="button" title="Xoá hàng loạt")
-              i.fas.fa-trash-alt
-            .batch-action-dropdown#batchDropdown
-              button.batch-action-item.batch-action-danger(type="button" data-action="delete")
+          if userPermissions && userPermissions.includes("roles_delete")
+            .batch-action-wrapper
+              button.btn.btn-batch-action#batchActionBtn(type="button" title="Xoá hàng loạt")
                 i.fas.fa-trash-alt
-                | Xoá
+              .batch-action-dropdown#batchDropdown
+                button.batch-action-item.batch-action-danger(type="button" data-action="delete")
+                  i.fas.fa-trash-alt
+                  | Xoá
 
   //- Table
   .admin-table-wrapper
@@ -32,34 +34,40 @@ block main
       table.admin-table
         thead
           tr
-            th.col-check
-              input.form-check-input(type="checkbox" id="checkAll")
+            if userPermissions && userPermissions.includes("roles_delete")
+              th.col-check
+                input.form-check-input(type="checkbox" id="checkAll")
             th Nhóm quyền
             th Mô tả ngắn
         tbody
           each role in roles
             tr.animate-in
-              td.col-check
-                input.form-check-input.checkbox-item(type="checkbox" name="id" value=role._id)
+              if userPermissions && userPermissions.includes("roles_delete")
+                td.col-check
+                  input.form-check-input.checkbox-item(type="checkbox" name="id" value=role._id)
               td.col-title.pb-4
                 .product-title-cell
                   span.product-name= role.title
                 .product-hover-actions
-                  a.hover-action-link.hover-action-edit(href=`${prefixAdmin}/roles/edit/${role._id}`) Sửa
+                  if userPermissions && userPermissions.includes("roles_edit")
+                    a.hover-action-link.hover-action-edit(href=`${prefixAdmin}/roles/edit/${role._id}`) Sửa
                   a.hover-action-link.hover-action-detail(href=`${prefixAdmin}/roles/detail/${role._id}`) Chi tiết
-                  a.hover-action-link.hover-action-danger.btn-delete-role(href="javascript:void(0)" data-id=role._id) Xóa
+                  if userPermissions && userPermissions.includes("roles_delete")
+                    a.hover-action-link.hover-action-danger.btn-delete-role(href="javascript:void(0)" data-id=role._id) Xóa
               td!= role.description
     else
       .admin-empty-state
         i.fas.fa-user-shield
         h4 Chưa có nhóm quyền nào
         p Bắt đầu thêm nhóm quyền đầu tiên
-        a.btn.btn-add-product(href=`${prefixAdmin}/roles/create`)
-          i.fas.fa-plus.mr-2
-          | Thêm mới
+        if userPermissions && userPermissions.includes("roles_create")
+          a.btn.btn-add-product(href=`${prefixAdmin}/roles/create`)
+            i.fas.fa-plus.mr-2
+            | Thêm mới
 
   //- Pagination
   +pagination(pagination)
 
 block append scripts
   script(src="/admin/js/role.js")
+

@@ -18,6 +18,10 @@ const productSchema = new mongoose.Schema({
     stock: Number,
     thumbnail: String,
     status: String,
+    featured: {
+        type: Boolean,
+        default: false
+    },
     position: Number,
     deleted: {
         type: Boolean,

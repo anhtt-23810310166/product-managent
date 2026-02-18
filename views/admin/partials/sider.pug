@@ -10,69 +10,74 @@ aside.admin-sider#adminSider
           i.fas.fa-th-large
           span Tổng quan
 
-    .sider-menu-label Bài viết
-    ul.list-unstyled.mb-0
-      if userPermissions && (userPermissions.includes("articles_view") || userPermissions.includes("article-category_view"))
+    //- ===== Bài viết =====
+    if userPermissions && (userPermissions.includes("articles_view") || userPermissions.includes("article-category_view"))
+      .sider-menu-label Bài viết
+      ul.list-unstyled.mb-0
         li.sider-menu-item.has-submenu(class=(currentPage === "articles" || currentPage === "article-create" || currentPage === "article-category" ? "open" : ""))
           a.sider-menu-link.submenu-toggle(href="javascript:void(0)")
             i.fas.fa-newspaper
             span Bài viết
             i.fas.fa-chevron-right.submenu-arrow
           ul.sider-submenu.list-unstyled
-            if userPermissions && userPermissions.includes("articles_view")
+            if userPermissions.includes("articles_create")
               li
                 a.sider-submenu-link(href=`${prefixAdmin}/articles/create` class=(currentPage === "article-create" ? "active" : "")) Thêm bài viết
+            if userPermissions.includes("articles_view")
               li
                 a.sider-submenu-link(href=`${prefixAdmin}/articles` class=(currentPage === "articles" ? "active" : "")) Danh sách
-            if userPermissions && userPermissions.includes("article-category_view")
+            if userPermissions.includes("article-category_view")
               li
                 a.sider-submenu-link(href=`${prefixAdmin}/article-category` class=(currentPage === "article-category" ? "active" : "")) Danh mục
 
-      li.sider-menu-item
-        a.sider-menu-link(href="#")
-          i.fas.fa-photo-video
-          span Media
+        li.sider-menu-item
+          a.sider-menu-link(href="#")
+            i.fas.fa-photo-video
+            span Media
 
-    .sider-menu-label Bán hàng
-    ul.list-unstyled.mb-0
-      if userPermissions && (userPermissions.includes("products_view") || userPermissions.includes("product-category_view"))
+    //- ===== Bán hàng =====
+    if userPermissions && (userPermissions.includes("products_view") || userPermissions.includes("product-category_view"))
+      .sider-menu-label Bán hàng
+      ul.list-unstyled.mb-0
         li.sider-menu-item.has-submenu(class=(currentPage === "products" || currentPage === "product-create" || currentPage === "product-category" ? "open" : ""))
           a.sider-menu-link.submenu-toggle(href="javascript:void(0)")
             i.fas.fa-box
             span Sản phẩm
             i.fas.fa-chevron-right.submenu-arrow
           ul.sider-submenu.list-unstyled
-            if userPermissions && userPermissions.includes("products_view")
+            if userPermissions.includes("products_create")
               li
                 a.sider-submenu-link(href=`${prefixAdmin}/products/create` class=(currentPage === "product-create" ? "active" : "")) Thêm sản phẩm
+            if userPermissions.includes("products_view")
               li
                 a.sider-submenu-link(href=`${prefixAdmin}/products` class=(currentPage === "products" ? "active" : "")) Danh sách
-            if userPermissions && userPermissions.includes("product-category_view")
+            if userPermissions.includes("product-category_view")
               li
                 a.sider-submenu-link(href=`${prefixAdmin}/product-category` class=(currentPage === "product-category" ? "active" : "")) Danh mục
 
-      li.sider-menu-item.has-submenu
-        a.sider-menu-link.submenu-toggle(href="javascript:void(0)")
-          i.fas.fa-shopping-cart
-          span Đơn hàng
-          i.fas.fa-chevron-right.submenu-arrow
-        ul.sider-submenu.list-unstyled
-          li
-            a.sider-submenu-link(href="#") Danh sách
-          li
-            a.sider-submenu-link(href="#") Trạng thái
+        li.sider-menu-item.has-submenu
+          a.sider-menu-link.submenu-toggle(href="javascript:void(0)")
+            i.fas.fa-shopping-cart
+            span Đơn hàng
+            i.fas.fa-chevron-right.submenu-arrow
+          ul.sider-submenu.list-unstyled
+            li
+              a.sider-submenu-link(href="#") Danh sách
+            li
+              a.sider-submenu-link(href="#") Trạng thái
 
-      li.sider-menu-item.has-submenu
-        a.sider-menu-link.submenu-toggle(href="javascript:void(0)")
-          i.fas.fa-chart-bar
-          span Báo cáo
-          i.fas.fa-chevron-right.submenu-arrow
-        ul.sider-submenu.list-unstyled
-          li
-            a.sider-submenu-link(href="#") Doanh thu
-          li
-            a.sider-submenu-link(href="#") Thống kê
+        li.sider-menu-item.has-submenu
+          a.sider-menu-link.submenu-toggle(href="javascript:void(0)")
+            i.fas.fa-chart-bar
+            span Báo cáo
+            i.fas.fa-chevron-right.submenu-arrow
+          ul.sider-submenu.list-unstyled
+            li
+              a.sider-submenu-link(href="#") Doanh thu
+            li
+              a.sider-submenu-link(href="#") Thống kê
 
+    //- ===== Khách hàng =====
     .sider-menu-label Khách hàng
     ul.list-unstyled.mb-0
       li.sider-menu-item
@@ -90,7 +95,22 @@ aside.admin-sider#adminSider
           i.fas.fa-envelope
           span Liên hệ
 
+    //- ===== Hệ thống (Nhóm quyền + Tài khoản) =====
+    if userPermissions && (userPermissions.includes("roles_view") || userPermissions.includes("accounts_view"))
+      .sider-menu-label Hệ thống
+      ul.list-unstyled.mb-0
+        if userPermissions.includes("roles_view")
+          li.sider-menu-item
+            a.sider-menu-link(href=`${prefixAdmin}/roles` class=(currentPage === "roles" ? "active" : ""))
+              i.fas.fa-user-shield
+              span Nhóm quyền
+        if userPermissions.includes("accounts_view")
+          li.sider-menu-item
+            a.sider-menu-link(href=`${prefixAdmin}/accounts` class=(currentPage === "accounts" ? "active" : ""))
+              i.fas.fa-user-cog
+              span Tài khoản
 
+    //- ===== Cài đặt =====
     .sider-menu-label Cài đặt
     ul.list-unstyled.mb-0
       li.sider-menu-item.has-submenu(class=(currentPage === "seo" ? "open" : ""))
@@ -113,5 +133,3 @@ aside.admin-sider#adminSider
         a.sider-menu-link(href="#" class=(currentPage === "theme" ? "active" : ""))
           i.fas.fa-paint-brush
           span Giao diện
-
-

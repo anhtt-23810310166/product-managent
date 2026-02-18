@@ -168,7 +168,8 @@ module.exports.edit = async (req, res) => {
                 { title: account.fullName }
             ],
             account: account,
-            roles: roles
+            roles: roles,
+            returnUrl: req.headers.referer || `${prefixAdmin}/accounts`
         });
     } catch (error) {
         console.log(error);
@@ -210,7 +211,9 @@ module.exports.editPatch = async (req, res) => {
         });
 
         req.flash("success", "Cập nhật tài khoản thành công!");
-        res.redirect("back");
+        const returnUrl = req.body.returnUrl;
+        delete req.body.returnUrl;
+        res.redirect(returnUrl || `${prefixAdmin}/accounts`);
     } catch (error) {
         console.log(error);
         req.flash("error", "Có lỗi xảy ra!");

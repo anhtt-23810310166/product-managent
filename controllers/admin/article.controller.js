@@ -138,7 +138,8 @@ module.exports.edit = async (req, res) => {
             currentPage: "articles",
             breadcrumbs: [{ title: "Bài viết", link: `${prefixAdmin}/articles` }, { title: "Chỉnh sửa" }],
             article: article,
-            categories: categoryTree
+            categories: categoryTree,
+            returnUrl: req.headers.referer || `${prefixAdmin}/articles`
         });
     } catch (error) {
         console.log(error);
@@ -150,6 +151,9 @@ module.exports.edit = async (req, res) => {
 // [PATCH] /admin/articles/edit/:id
 module.exports.editPatch = async (req, res) => {
     try {
+        const returnUrl = req.body.returnUrl;
+        delete req.body.returnUrl;
+
         if (req.file) {
             req.body.thumbnail = req.file.path;
         }
@@ -167,7 +171,7 @@ module.exports.editPatch = async (req, res) => {
         });
 
         req.flash("success", "Cập nhật bài viết thành công!");
-        res.redirect(`${prefixAdmin}/articles`);
+        res.redirect(returnUrl || `${prefixAdmin}/articles`);
     } catch (error) {
         console.log(error);
         req.flash("error", "Cập nhật thất bại!");

@@ -134,7 +134,8 @@ module.exports.edit = async (req, res) => {
                 { title: "Chỉnh sửa" }
             ],
             product: product,
-            categories: tree
+            categories: tree,
+            returnUrl: req.headers.referer || `${prefixAdmin}/products`
         });
     } catch (error) {
         req.flash("error", "Có lỗi xảy ra!");
@@ -152,12 +153,14 @@ module.exports.editPatch = async (req, res) => {
         }
 
         product.title = req.body.title;
+        product.product_category_id = req.body.product_category_id || "";
         product.description = req.body.description;
         product.price = parseInt(req.body.price) || 0;
         product.discountPercentage = parseInt(req.body.discountPercentage) || 0;
         product.stock = parseInt(req.body.stock) || 0;
         product.position = parseInt(req.body.position) || 0;
         product.status = req.body.status;
+        product.featured = req.body.featured === "true" ? true : false;
 
         if (req.file) {
             product.thumbnail = req.file.path;
@@ -172,7 +175,7 @@ module.exports.editPatch = async (req, res) => {
         });
 
         req.flash("success", "Cập nhật sản phẩm thành công!");
-        res.redirect(`${prefixAdmin}/products`);
+        res.redirect(req.body.returnUrl || `${prefixAdmin}/products`);
     } catch (error) {
         req.flash("error", "Có lỗi xảy ra!");
         res.redirect("back");

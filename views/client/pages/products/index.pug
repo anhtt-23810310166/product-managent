@@ -1,55 +1,59 @@
 extends ../../layouts/default
+include ../../mixins/category-sidebar.pug
 
 block main
   .container.py-4
-    //- Page header
-    .d-flex.justify-content-between.align-items-center.mb-4
-      .page-header-left
-        h2.page-title Danh sách sản phẩm
+    .row
+      //- Sidebar danh mục
+      .col-lg-3.col-md-4.mb-4
+        +categorySidebar("Danh mục sản phẩm", "Tất cả sản phẩm", "/products", productCategories, currentCategory)
 
-    //- Product grid
-    if products && products.length > 0
-      .row
-        each product in products
-          .col-lg-3.col-md-4.col-sm-6.mb-4
-            .card.product-card.h-100.shadow-sm
-              //- Product thumbnail
-              a.product-detail-link(href=`/products/detail/${product.slug}` style="text-decoration: none;")
-                if product.thumbnail
-                  .product-img-wrapper
-                    img.card-img-top.product-img(src=product.thumbnail alt=product.title)
-                else
-                  .product-img-wrapper
-                    .product-img-placeholder
-                      i.fas.fa-image.fa-3x.text-muted
+      //- Nội dung chính
+      .col-lg-9.col-md-8
+        .d-flex.justify-content-between.align-items-center.mb-3
+          .page-header-left
+            h2.page-title= currentCategory ? currentCategory.title : 'Tất cả sản phẩm'
+          if currentCategory
+            a.btn-clear-filter(href="/products")
+              i.fas.fa-times.mr-1
+              | Bỏ lọc
 
-                if product.discountPercentage && product.discountPercentage > 0
-                  span.badge.badge-danger.product-discount-badge
-                    | -#{product.discountPercentage}%
-
-              .card-body.d-flex.flex-column
-                a.card-title.product-title(href=`/products/detail/${product.slug}`)= product.title
-
-                .mt-auto
-                  //- Price section
-                  .product-price-section.mb-2
-                    if product.discountPercentage && product.discountPercentage > 0
-                      - var discountedPrice = Math.round(product.price * (1 - product.discountPercentage / 100) / 1000) * 1000
-                      span.product-price-current= discountedPrice.toLocaleString() + ' ₫'
-                      span.product-price-original.ml-2= product.price.toLocaleString() + ' ₫'
+        if products && products.length > 0
+          .row
+            each product in products
+              .col-lg-4.col-md-6.col-sm-6.mb-4
+                .card.product-card.h-100.shadow-sm
+                  a.product-detail-link(href=`/products/detail/${product.slug}` style="text-decoration: none;")
+                    if product.thumbnail
+                      .product-img-wrapper
+                        img.card-img-top.product-img(src=product.thumbnail alt=product.title)
                     else
-                      span.product-price-current= product.price ? product.price.toLocaleString() + ' ₫' : 'Liên hệ'
+                      .product-img-wrapper
+                        .product-img-placeholder
+                          i.fas.fa-image.fa-3x.text-muted
 
+                    if product.discountPercentage && product.discountPercentage > 0
+                      span.badge.badge-danger.product-discount-badge
+                        | -#{product.discountPercentage}%
 
+                  .card-body.d-flex.flex-column
+                    a.card-title.product-title(href=`/products/detail/${product.slug}`)= product.title
 
-
-
-
-    else
-      //- Empty state
-      .text-center.py-5
-        .empty-state
-          i.fas.fa-box-open.fa-4x.text-muted.mb-3
-          h4.text-muted Chưa có sản phẩm nào
-          p.text-muted Hiện tại chưa có sản phẩm nào để hiển thị.
-
+                    .mt-auto
+                      .product-price-section.mb-2
+                        if product.discountPercentage && product.discountPercentage > 0
+                          - var discountedPrice = Math.round(product.price * (1 - product.discountPercentage / 100) / 1000) * 1000
+                          span.product-price-current= discountedPrice.toLocaleString() + ' ₫'
+                          span.product-price-original.ml-2= product.price.toLocaleString() + ' ₫'
+                        else
+                          span.product-price-current= product.price ? product.price.toLocaleString() + ' ₫' : 'Liên hệ'
+        else
+          .text-center.py-5
+            .empty-state
+              i.fas.fa-box-open.fa-4x.text-muted.mb-3
+              h4.text-muted Không có sản phẩm nào
+              if currentCategory
+                p.text-muted Danh mục này chưa có sản phẩm
+                a.btn.btn-outline-secondary(href="/products") Xem tất cả sản phẩm
+              else
+                p.text-muted Hiện tại chưa có sản phẩm nào để hiển thị

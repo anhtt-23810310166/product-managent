@@ -6,6 +6,7 @@ block main
 
   .admin-table-wrapper.p-4
     form(action=`${prefixAdmin}/roles/edit/${role._id}?_method=PATCH` method="POST")
+      input(type="hidden" name="returnUrl" value=returnUrl)
       .form-group.mb-3
         label.form-label Tên nhóm quyền
           span.text-danger  *

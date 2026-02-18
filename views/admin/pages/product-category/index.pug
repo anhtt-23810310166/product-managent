@@ -10,9 +10,10 @@ include ../../mixins/category-tree.pug
 
 block main
   +pageHeader("Danh mục sản phẩm", "Quản lý danh mục sản phẩm trong hệ thống")
-    a.btn.btn-add-product(href=`${prefixAdmin}/product-category/create`)
-      i.fas.fa-plus.mr-2
-      | Thêm danh mục
+    if userPermissions && userPermissions.includes("product-category_create")
+      a.btn.btn-add-product(href=`${prefixAdmin}/product-category/create`)
+        i.fas.fa-plus.mr-2
+        | Thêm danh mục
 
   //- Filter bar
   .admin-filter-bar.mb-4
@@ -22,7 +23,8 @@ block main
       +sort(sortOptions)
       .col-md-2
         .d-flex.gap-2
-          +batch-actions()
+          if userPermissions && (userPermissions.includes("product-category_edit") || userPermissions.includes("product-category_delete") || userPermissions.includes("product-category_change-status"))
+            +batch-actions()
 
   //- Categories Table
   .admin-table-wrapper
@@ -31,24 +33,25 @@ block main
       table.admin-table
         thead
           tr
-            th.col-check
-              input.form-check-input(type="checkbox" id="checkAll")
+            if userPermissions && (userPermissions.includes("product-category_edit") || userPermissions.includes("product-category_delete") || userPermissions.includes("product-category_change-status"))
+              th.col-check
+                input.form-check-input(type="checkbox" id="checkAll")
             th.col-stt-num STT
             th.col-img Ảnh
             th.col-title Tên danh mục
             th.col-position Vị trí
             th.col-status Trạng thái
         tbody
-          +categoryTree(categories, 0)
+          +categoryTree(categories, 0, "product-category")
     else
       .admin-empty-state
         i.fas.fa-folder-open
         h4 Chưa có danh mục nào
         p Bắt đầu thêm danh mục đầu tiên cho cửa hàng
-        a.btn.btn-add-product(href=`${prefixAdmin}/product-category/create`)
-          i.fas.fa-plus.mr-2
-          | Thêm danh mục
-
+        if userPermissions && userPermissions.includes("product-category_create")
+          a.btn.btn-add-product(href=`${prefixAdmin}/product-category/create`)
+            i.fas.fa-plus.mr-2
+            | Thêm danh mục
 
 
 block append scripts

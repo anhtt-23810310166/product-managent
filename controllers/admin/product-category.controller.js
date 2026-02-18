@@ -138,6 +138,10 @@ module.exports.create = async (req, res) => {
 
 // [POST] /admin/product-category/create
 module.exports.createPost = async (req, res) => {
+    if (!res.locals.role.permissions.includes("product_category_create")) {
+        req.flash("error", "Bạn không có quyền thực hiện hành động này!");
+        return res.redirect(`${prefixAdmin}/product-category`);
+    }
     try {
         if (req.body.position === "" || req.body.position === undefined) {
             const count = await ProductCategory.countDocuments();
@@ -193,7 +197,8 @@ module.exports.edit = async (req, res) => {
                 { title: "Chỉnh sửa" }
             ],
             category: category,
-            categories: tree
+            categories: tree,
+            returnUrl: req.headers.referer || `${prefixAdmin}/product-category`
         });
     } catch (error) {
         console.log(error);
@@ -206,6 +211,8 @@ module.exports.edit = async (req, res) => {
 module.exports.editPatch = async (req, res) => {
     try {
         const id = req.params.id;
+        const returnUrl = req.body.returnUrl;
+        delete req.body.returnUrl;
 
         if (req.body.position !== undefined && req.body.position !== "") {
             req.body.position = parseInt(req.body.position);
@@ -236,7 +243,7 @@ module.exports.editPatch = async (req, res) => {
         }
 
         req.flash("success", "Cập nhật danh mục thành công!");
-        res.redirect(`${prefixAdmin}/product-category`);
+        res.redirect(returnUrl || `${prefixAdmin}/product-category`);
     } catch (error) {
         console.log(error);
         req.flash("error", "Có lỗi xảy ra!");

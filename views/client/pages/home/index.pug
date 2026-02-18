@@ -1,4 +1,102 @@
 extends ../../layouts/default
 
 block main
-    h1= message
+  //- ===== Hero Banner =====
+  .home-hero
+    .container
+      .home-hero-inner
+        .home-hero-text
+          h1.home-hero-title Chào mừng đến cửa hàng
+          p.home-hero-desc Khám phá hàng ngàn sản phẩm chất lượng với giá tốt nhất
+          a.home-hero-btn(href="/products")
+            | Mua sắm ngay
+            i.fas.fa-arrow-right.ml-2
+
+  .container
+
+    //- ===== Danh mục sản phẩm =====
+    if productCategories && productCategories.length > 0
+      .home-section
+        .home-section-header
+          h2.home-section-title
+            | Danh mục
+          a.home-section-link(href="/products") Xem tất cả
+            i.fas.fa-chevron-right.ml-1
+        .home-categories
+          each cat in productCategories
+            a.home-category-item(href=`/products?category=${cat.slug}`)
+              if cat.thumbnail
+                .home-category-img
+                  img(src=cat.thumbnail alt=cat.title)
+              else
+                .home-category-img
+                  i.fas.fa-th-large
+              span.home-category-name= cat.title
+
+    //- ===== Sản phẩm nổi bật =====
+    if featuredProducts && featuredProducts.length > 0
+      .home-section
+        .home-section-header
+          h2.home-section-title
+            | Sản phẩm nổi bật
+        .home-product-grid
+          each product in featuredProducts
+            +productCard(product)
+
+    //- ===== Sản phẩm mới nhất =====
+    if newestProducts && newestProducts.length > 0
+      .home-section
+        .home-section-header
+          h2.home-section-title
+            | Sản phẩm mới nhất
+          a.home-section-link(href="/products") Xem tất cả
+            i.fas.fa-chevron-right.ml-1
+        .home-product-grid
+          each product in newestProducts
+            +productCard(product)
+
+    //- ===== Bài viết nổi bật =====
+    if featuredArticles && featuredArticles.length > 0
+      .home-section
+        .home-section-header
+          h2.home-section-title
+            | Bài viết nổi bật
+          a.home-section-link(href="/articles") Xem tất cả
+            i.fas.fa-chevron-right.ml-1
+        .home-article-grid
+          each article in featuredArticles
+            a.home-article-card(href=`/articles/${article.slug}`)
+              if article.thumbnail
+                .home-article-img
+                  img(src=article.thumbnail alt=article.title)
+              else
+                .home-article-img.home-article-img-placeholder
+                  i.fas.fa-newspaper
+              .home-article-body
+                h3.home-article-title= article.title
+                if article.createdAt
+                  span.home-article-date
+                    i.far.fa-clock.mr-1
+                    = article.createdAt.toLocaleDateString('vi-VN')
+
+//- ===== Product Card Mixin =====
+mixin productCard(product)
+  .home-product-card
+    a.home-product-link(href=`/products/detail/${product.slug}`)
+      .home-product-img
+        if product.thumbnail
+          img(src=product.thumbnail alt=product.title)
+        else
+          .home-product-img-placeholder
+            i.fas.fa-image
+        if product.discountPercentage && product.discountPercentage > 0
+          span.home-product-discount= `-${product.discountPercentage}%`
+      .home-product-info
+        h3.home-product-name= product.title
+        .home-product-price
+          if product.discountPercentage && product.discountPercentage > 0
+            - var discountedPrice = Math.round(product.price * (1 - product.discountPercentage / 100) / 1000) * 1000
+            span.home-price-current= discountedPrice.toLocaleString('vi-VN') + '₫'
+            span.home-price-original= product.price.toLocaleString('vi-VN') + '₫'
+          else
+            span.home-price-current= product.price ? product.price.toLocaleString('vi-VN') + '₫' : 'Liên hệ'

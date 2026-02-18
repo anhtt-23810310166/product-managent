@@ -1,9 +1,9 @@
-const Product = require("../../models/product.model");
-const ProductCategory = require("../../models/product-category.model");
+const Article = require("../../models/article.model");
+const ArticleCategory = require("../../models/article-category.model");
 
 // Helper: lấy tất cả ID con cháu của 1 category
 const getDescendantIds = async (parentId) => {
-    const children = await ProductCategory.find({
+    const children = await ArticleCategory.find({
         parent_id: parentId,
         status: "active",
         deleted: false
@@ -16,7 +16,7 @@ const getDescendantIds = async (parentId) => {
     return ids;
 };
 
-// [GET] /products
+// [GET] /articles
 module.exports.index = async (req, res) => {
     try {
         const find = {
@@ -28,7 +28,7 @@ module.exports.index = async (req, res) => {
 
         // Lọc theo danh mục
         if (req.query.category) {
-            const category = await ProductCategory.findOne({
+            const category = await ArticleCategory.findOne({
                 slug: req.query.category,
                 status: "active",
                 deleted: false
@@ -36,61 +36,62 @@ module.exports.index = async (req, res) => {
 
             if (category) {
                 currentCategory = category;
+                // Lấy tất cả ID con cháu
                 const descendantIds = await getDescendantIds(category.id);
                 const allCategoryIds = [category.id, ...descendantIds];
-                find.product_category_id = { $in: allCategoryIds };
+                find.article_category_id = { $in: allCategoryIds };
             }
         }
 
-        const products = await Product.find(find)
-            .sort({ position: "desc" });
+        const articles = await Article.find(find)
+            .sort({ position: "desc", createdAt: -1 });
 
-        res.render("client/pages/products/index", {
-            title: currentCategory ? currentCategory.title : "Sản phẩm",
-            products,
+        res.render("client/pages/articles/index", {
+            title: currentCategory ? currentCategory.title : "Bài viết",
+            articles,
             currentCategory
         });
     } catch (error) {
         console.log(error);
-        res.render("client/pages/products/index", {
-            title: "Sản phẩm",
-            products: [],
+        res.render("client/pages/articles/index", {
+            title: "Bài viết",
+            articles: [],
             currentCategory: null
         });
     }
-}
+};
 
-// [GET] /products/detail/:slug
+// [GET] /articles/:slug
 module.exports.detail = async (req, res) => {
     try {
-        const product = await Product.findOne({
+        const article = await Article.findOne({
             slug: req.params.slug,
             status: "active",
             deleted: false
         });
 
-        if (!product) {
-            return res.redirect("/products");
+        if (!article) {
+            return res.redirect("/articles");
         }
 
-        // If product has a category, check if that category is active
-        if (product.product_category_id) {
-            const category = await ProductCategory.findOne({
-                _id: product.product_category_id,
+        // Bài viết liên quan (cùng danh mục)
+        let relatedArticles = [];
+        if (article.article_category_id) {
+            relatedArticles = await Article.find({
+                article_category_id: article.article_category_id,
+                _id: { $ne: article._id },
                 status: "active",
                 deleted: false
-            });
-
-            if (!category) {
-                return res.redirect("/products"); // Category is inactive -> hide product
-            }
+            }).sort({ createdAt: -1 }).limit(4);
         }
 
-        res.render("client/pages/products/detail", {
-            title: product.title,
-            product: product
+        res.render("client/pages/articles/detail", {
+            title: article.title,
+            article,
+            relatedArticles
         });
     } catch (error) {
-        res.redirect("/products");
+        console.log(error);
+        res.redirect("/articles");
     }
-}
+};

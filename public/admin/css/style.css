@@ -769,6 +769,16 @@ body.admin-page {
   white-space: nowrap;
 }
 
+.badge-featured {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-light);
+  padding: 2px 8px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
 /* Product Hover Actions */
 .product-hover-actions {
   display: flex;
