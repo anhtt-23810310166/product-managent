@@ -1,0 +1,73 @@
+extends ../../layouts/default
+
+block main
+  .container.py-4
+    h2.page-title
+      i.fas.fa-shopping-cart.mr-2
+      | Giỏ hàng của bạn
+
+    if cartItems && cartItems.length > 0
+      .cart-wrapper
+        //- Cart Header
+        .cart-header
+          .cart-col.cart-col-product Sản Phẩm
+          .cart-col.cart-col-price Đơn Giá
+          .cart-col.cart-col-quantity Số Lượng
+          .cart-col.cart-col-total Số Tiền
+          .cart-col.cart-col-action Thao Tác
+
+        //- Cart Items
+        each item in cartItems
+          .cart-item(data-product-id=item.product._id)
+            .cart-col.cart-col-product
+              .cart-product-info
+                a.cart-product-img(href=`/products/detail/${item.product.slug}`)
+                  if item.product.thumbnail
+                    img(src=item.product.thumbnail alt=item.product.title)
+                  else
+                    .cart-img-placeholder
+                      i.fas.fa-image
+                .cart-product-detail
+                  a.cart-product-name(href=`/products/detail/${item.product.slug}`)= item.product.title
+                  if item.product.discountPercentage && item.product.discountPercentage > 0
+                    span.cart-discount-tag -#{item.product.discountPercentage}%
+
+            .cart-col.cart-col-price
+              span.cart-unit-price= item.unitPrice.toLocaleString() + ' ₫'
+              if item.product.discountPercentage && item.product.discountPercentage > 0
+                span.cart-original-price= item.product.price.toLocaleString() + ' ₫'
+
+            .cart-col.cart-col-quantity
+              .quantity-control
+                button.quantity-btn.quantity-minus(type="button" data-product-id=item.product._id) −
+                input.quantity-input(type="number" value=item.quantity min="1" data-product-id=item.product._id)
+                button.quantity-btn.quantity-plus(type="button" data-product-id=item.product._id) +
+
+            .cart-col.cart-col-total
+              span.cart-item-total= item.itemTotal.toLocaleString() + ' ₫'
+
+            .cart-col.cart-col-action
+              button.cart-remove-btn(type="button" data-product-id=item.product._id title="Xóa")
+                i.fas.fa-trash-alt
+
+        //- Cart Footer
+        .cart-footer
+          .cart-footer-left
+            span.cart-count Tổng (#{cartItems.length} sản phẩm):
+          .cart-footer-right
+            span.cart-total-label Tổng thanh toán:
+            span.cart-total-price#cartTotalPrice= cartTotal.toLocaleString() + ' ₫'
+
+        .cart-actions
+          a.btn-continue-shopping(href="/products")
+            i.fas.fa-arrow-left.mr-2
+            | Tiếp tục mua sắm
+
+    else
+      .cart-empty
+        i.fas.fa-cart-arrow-down.fa-4x
+        h4 Giỏ hàng của bạn còn trống
+        p Hãy thêm sản phẩm vào giỏ hàng nhé!
+        a.btn-continue-shopping(href="/products")
+          i.fas.fa-shopping-bag.mr-2
+          | Mua sắm ngay

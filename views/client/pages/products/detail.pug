@@ -65,6 +65,26 @@ block main
               //- Divider
               hr.product-detail-divider
 
+              //- Thêm vào giỏ hàng
+              if product.stock > 0
+                form.add-to-cart-form(action=`/cart/add/${product._id}` method="POST")
+                  .add-to-cart-section
+                    label.add-to-cart-label Số Lượng
+                    .quantity-control
+                      button.quantity-btn.quantity-minus(type="button") −
+                      input.quantity-input(type="number" name="quantity" value="1" min="1" max=product.stock)
+                      button.quantity-btn.quantity-plus(type="button") +
+                    span.stock-hint #{product.stock} sản phẩm có sẵn
+                  .add-to-cart-actions
+                    button.btn-add-to-cart(type="submit")
+                      i.fas.fa-cart-plus.mr-2
+                      | Thêm Vào Giỏ Hàng
+              else
+                .add-to-cart-actions
+                  button.btn-add-to-cart.disabled(disabled)
+                    i.fas.fa-ban.mr-2
+                    | Hết hàng
+
               //- Description
               if product.description
                 .product-detail-desc

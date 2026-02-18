@@ -25,3 +25,9 @@ nav.navbar.navbar-expand-lg.navbar-dark.shadow-sm
 
         //- Menu Bài viết (Shopee-style mega dropdown)
         +navShopeeMega("Bài viết", "fas fa-newspaper", "/articles", articleCategories, "/articles", "category")
+
+        //- Mini Cart
+        li.nav-item
+          a.nav-link.mini-cart-link(href="/cart")
+            i.fas.fa-shopping-cart
+            span.mini-cart-badge#miniCartBadge= cartTotalQuantity || 0

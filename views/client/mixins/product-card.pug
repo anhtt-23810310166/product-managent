@@ -1,0 +1,31 @@
+//- =============================================
+//- Product Card Mixin
+//- Dùng chung cho home page, product list, v.v.
+//- =============================================
+
+mixin productCard(product)
+  .home-product-card
+    a.home-product-link(href=`/products/detail/${product.slug}`)
+      .home-product-img
+        if product.thumbnail
+          img(src=product.thumbnail alt=product.title)
+        else
+          .home-product-img-placeholder
+            i.fas.fa-image
+        if product.discountPercentage && product.discountPercentage > 0
+          span.home-product-discount= `-${product.discountPercentage}%`
+      .home-product-info
+        h3.home-product-name= product.title
+        .home-product-price
+          if product.discountPercentage && product.discountPercentage > 0
+            - var discountedPrice = Math.round(product.price * (1 - product.discountPercentage / 100) / 1000) * 1000
+            span.home-price-current= discountedPrice.toLocaleString('vi-VN') + '₫'
+            span.home-price-original= product.price.toLocaleString('vi-VN') + '₫'
+          else
+            span.home-price-current= product.price ? product.price.toLocaleString('vi-VN') + '₫' : 'Liên hệ'
+    if product.stock > 0
+      form.home-product-cart-form(action=`/cart/add/${product._id}` method="POST")
+        input(type="hidden" name="quantity" value="1")
+        button.home-product-cart-btn(type="submit" title="Thêm vào giỏ hàng")
+          i.fas.fa-cart-plus.mr-1
+          | Thêm vào giỏ

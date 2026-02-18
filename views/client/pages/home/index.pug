@@ -1,4 +1,5 @@
 extends ../../layouts/default
+include ../../mixins/product-card.pug
 
 block main
   //- ===== Hero Banner =====
@@ -39,6 +40,8 @@ block main
         .home-section-header
           h2.home-section-title
             | Sản phẩm nổi bật
+          a.home-section-link(href="/products") Xem tất cả
+            i.fas.fa-chevron-right.ml-1
         .home-product-grid
           each product in featuredProducts
             +productCard(product)
@@ -78,25 +81,3 @@ block main
                   span.home-article-date
                     i.far.fa-clock.mr-1
                     = article.createdAt.toLocaleDateString('vi-VN')
-
-//- ===== Product Card Mixin =====
-mixin productCard(product)
-  .home-product-card
-    a.home-product-link(href=`/products/detail/${product.slug}`)
-      .home-product-img
-        if product.thumbnail
-          img(src=product.thumbnail alt=product.title)
-        else
-          .home-product-img-placeholder
-            i.fas.fa-image
-        if product.discountPercentage && product.discountPercentage > 0
-          span.home-product-discount= `-${product.discountPercentage}%`
-      .home-product-info
-        h3.home-product-name= product.title
-        .home-product-price
-          if product.discountPercentage && product.discountPercentage > 0
-            - var discountedPrice = Math.round(product.price * (1 - product.discountPercentage / 100) / 1000) * 1000
-            span.home-price-current= discountedPrice.toLocaleString('vi-VN') + '₫'
-            span.home-price-original= product.price.toLocaleString('vi-VN') + '₫'
-          else
-            span.home-price-current= product.price ? product.price.toLocaleString('vi-VN') + '₫' : 'Liên hệ'
