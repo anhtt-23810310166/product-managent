@@ -7,6 +7,13 @@ nav.navbar.navbar-expand-lg.navbar-dark.shadow-sm
     button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarNav")
       span.navbar-toggler-icon
     #navbarNav.collapse.navbar-collapse
+      //- Thanh tìm kiếm Shopee-style
+      form.navbar-search-form(action="/products" method="GET")
+        .navbar-search-wrap
+          input.navbar-search-input(type="text" name="keyword" placeholder="Tìm kiếm sản phẩm..." autocomplete="off")
+          button.navbar-search-btn(type="submit")
+            i.fas.fa-search
+
       ul.navbar-nav.ml-auto
         li.nav-item
           a.nav-link(href="/")

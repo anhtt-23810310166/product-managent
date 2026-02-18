@@ -1341,6 +1341,12 @@ body.admin-page {
   margin-left: 3px;
 }
 
+.form-check-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
 .form-input {
   width: 100%;
   padding: 9px 14px;

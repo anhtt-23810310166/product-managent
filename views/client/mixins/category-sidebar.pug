@@ -21,7 +21,13 @@ mixin categorySidebar(headerTitle, allLabel, baseUrl, categories, currentCategor
           = allLabel
       if categories && categories.length > 0
         each cat in categories
-          li
+          //- Kiểm tra xem danh mục con có đang active không
+          - var hasActiveChild = false
+          if cat.children && cat.children.length > 0 && currentCategory
+            each child in cat.children
+              if currentCategory.slug === child.slug
+                - hasActiveChild = true
+          li(class=(hasActiveChild ? 'has-active-child' : ''))
             a.category-sidebar-link(
               href=`${baseUrl}?category=${cat.slug}`
               class=(currentCategory && currentCategory.slug === cat.slug ? 'active' : '')

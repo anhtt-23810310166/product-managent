@@ -25,6 +25,7 @@ module.exports.index = async (req, res) => {
         };
 
         let currentCategory = null;
+        const keyword = req.query.keyword || "";
 
         // Lọc theo danh mục
         if (req.query.category) {
@@ -42,20 +43,28 @@ module.exports.index = async (req, res) => {
             }
         }
 
+        // Tìm kiếm theo từ khóa (kế thừa pattern từ admin search)
+        if (keyword.trim()) {
+            const keywordRegex = new RegExp(keyword.trim(), "i");
+            find.title = keywordRegex;
+        }
+
         const products = await Product.find(find)
             .sort({ position: "desc" });
 
         res.render("client/pages/products/index", {
-            title: currentCategory ? currentCategory.title : "Sản phẩm",
+            title: keyword ? `Tìm kiếm: ${keyword}` : (currentCategory ? currentCategory.title : "Sản phẩm"),
             products,
-            currentCategory
+            currentCategory,
+            keyword
         });
     } catch (error) {
         console.log(error);
         res.render("client/pages/products/index", {
             title: "Sản phẩm",
             products: [],
-            currentCategory: null
+            currentCategory: null,
+            keyword: ""
         });
     }
 }

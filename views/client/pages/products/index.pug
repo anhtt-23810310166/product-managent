@@ -12,11 +12,19 @@ block main
       .col-lg-9.col-md-8
         .d-flex.justify-content-between.align-items-center.mb-3
           .page-header-left
-            h2.page-title= currentCategory ? currentCategory.title : 'Tất cả sản phẩm'
-          if currentCategory
-            a.btn-clear-filter(href="/products")
-              i.fas.fa-times.mr-1
-              | Bỏ lọc
+            if keyword
+              h2.page-title Kết quả tìm kiếm: "#{keyword}"
+            else
+              h2.page-title= currentCategory ? currentCategory.title : 'Tất cả sản phẩm'
+          .page-header-right.d-flex.align-items-center
+            if keyword
+              a.btn-clear-filter.mr-2(href="/products")
+                i.fas.fa-times.mr-1
+                | Xóa tìm kiếm
+            if currentCategory
+              a.btn-clear-filter(href=keyword ? `/products?keyword=${keyword}` : '/products')
+                i.fas.fa-times.mr-1
+                | Bỏ lọc
 
         if products && products.length > 0
           .row
