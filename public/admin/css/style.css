@@ -2000,6 +2000,13 @@ body.admin-page {
 .icon-loyalty { background: #fef9c3; color: #ca8a04; }
 .icon-activitylog { background: #e0f2fe; color: #0284c7; }
 .icon-marketplace { background: #ffedd5; color: #ea580c; }
+.icon-2fa { background: #ede9fe; color: #6d28d9; }
+.icon-login-limit { background: #fef2f2; color: #b91c1c; }
+.icon-ip-whitelist { background: #e0f2fe; color: #0369a1; }
+.icon-captcha { background: #f0fdf4; color: #15803d; }
+.icon-ssl { background: #dcfce7; color: #16a34a; }
+.icon-password-policy { background: #fef3c7; color: #b45309; }
+.icon-session { background: #e0e7ff; color: #4338ca; }
 
 /* Settings Responsive */
 @media (max-width: 1200px) {

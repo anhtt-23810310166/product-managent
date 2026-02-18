@@ -73,6 +73,175 @@ body {
   border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
+/* ===== Shopee-Style Mega Menu ===== */
+
+/* Nav item container */
+.nav-shopee-dropdown {
+  position: relative;
+}
+
+/* Mega panel (the dropdown itself) */
+.shopee-mega-panel {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0; /* Align to right edge of nav item, grows leftward */
+  z-index: 1000;
+  background: var(--shopee-white);
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  animation: shopeeFadeIn 0.15s ease;
+}
+
+.nav-shopee-dropdown:hover > .shopee-mega-panel {
+  display: block;
+}
+
+@keyframes shopeeFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Inner wrapper: creates positioning context for right panel */
+.shopee-mega-inner {
+  position: relative;
+  /* Removed min-height to allow shrinking */
+}
+
+/* Left Column: Parent Categories
+   .shopee-cat-row uses position: static (default) so .shopee-cat-children
+   positions relative to .shopee-mega-inner, not the row */
+
+.shopee-cat-link {
+  display: flex;
+  align-items: center;
+  width: 220px;
+  padding: 10px 16px;
+  color: var(--shopee-text);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: all 0.15s ease;
+  border-left: 3px solid transparent;
+}
+
+.shopee-cat-link:hover {
+  text-decoration: none;
+}
+
+.shopee-cat-row:hover .shopee-cat-link {
+  background: var(--shopee-orange-light);
+  color: var(--shopee-orange);
+  border-left-color: var(--shopee-orange);
+}
+
+.shopee-cat-title {
+  flex: 1;
+}
+
+.shopee-cat-arrow {
+  font-size: 0.55rem;
+  margin-left: 8px;
+  color: var(--shopee-text-light);
+  transition: color 0.15s ease;
+}
+
+.shopee-cat-row:hover .shopee-cat-arrow {
+  color: var(--shopee-orange);
+}
+
+/* ---- Right Column: Children Panel ---- */
+.shopee-cat-children {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 220px;
+  min-width: 420px;
+  min-height: 100%; /* Match parent height at minimum */
+  height: auto; /* Allow expanding if children content is taller */
+  background: #fafafa;
+  border-left: 1px solid var(--shopee-border);
+  padding: 16px 20px;
+  /* No overflow-y: auto; allow box to grow */
+  white-space: normal;
+}
+
+.shopee-cat-row:hover .shopee-cat-children {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 12px 20px;
+}
+
+/* Child group (L2 category heading + its L3+ items) */
+.shopee-child-group {
+  flex: 0 0 auto;
+  min-width: 120px;
+  max-width: 180px;
+}
+
+.shopee-child-heading {
+  display: block;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--shopee-text);
+  text-decoration: none;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--shopee-border);
+}
+
+.shopee-child-heading:hover {
+  color: var(--shopee-orange);
+  text-decoration: none;
+}
+
+/* Deep child items (L3+) */
+.shopee-child-items {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.shopee-child-item {
+  font-size: 0.8rem;
+  color: var(--shopee-text-light);
+  text-decoration: none;
+  padding: 3px 0;
+  transition: color 0.15s ease;
+}
+
+.shopee-child-item:hover {
+  color: var(--shopee-orange);
+  text-decoration: none;
+}
+
+/* ---- Responsive: collapse mega on small screens ---- */
+@media (max-width: 991.98px) {
+  .shopee-mega-panel {
+    position: static;
+    width: 100%;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .shopee-mega-inner {
+    min-height: auto;
+  }
+
+  .shopee-cat-link {
+    width: 100%;
+  }
+
+  .shopee-cat-children {
+    position: static;
+    min-width: auto;
+    border-left: none;
+    border-top: 1px solid var(--shopee-border);
+    padding: 8px 12px;
+  }
+}
+
+
 /* ===== Footer ===== */
 .site-footer {
   background: #fbfbfb !important;
@@ -204,6 +373,8 @@ body {
   color: var(--shopee-text);
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   margin-bottom: 8px;
@@ -221,6 +392,8 @@ body {
   font-size: 0.8rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   line-height: 1.5;

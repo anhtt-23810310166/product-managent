@@ -1,0 +1,49 @@
+//- =============================================
+//- Shopee-Style Mega Menu Mixins
+//- =============================================
+
+//- Mixin: Hiển thị danh mục con sâu (đệ quy) dạng link
+mixin shopeeDeepItems(items, baseUrl, paramName)
+  each item in items
+    a.shopee-child-item(href=`${baseUrl}?${paramName}=${item.slug}`)= item.title
+    if item.children && item.children.length > 0
+      +shopeeDeepItems(item.children, baseUrl, paramName)
+
+//- Mixin: Mega dropdown Shopee-style
+//- Layout: Cột trái = danh mục cha | Cột phải = danh mục con (hiện khi hover cha)
+//-
+//- Params:
+//-   label: tên hiển thị ("Sản phẩm")
+//-   icon: icon class ("fas fa-box")
+//-   link: URL khi click ("/products")
+//-   categories: mảng danh mục cha-con (tree)
+//-   baseUrl: URL gốc cho query param
+//-   paramName: tên query param ("category")
+
+mixin navShopeeMega(label, icon, link, categories, baseUrl, paramName)
+  if categories && categories.length > 0
+    li.nav-item.nav-shopee-dropdown
+      a.nav-link(href=link)
+        i(class=icon).mr-1
+        = label
+      .shopee-mega-panel
+        .shopee-mega-inner
+          each cat in categories
+            .shopee-cat-row
+              a.shopee-cat-link(href=`${baseUrl}?${paramName}=${cat.slug}`)
+                span.shopee-cat-title= cat.title
+                if cat.children && cat.children.length > 0
+                  i.fas.fa-chevron-right.shopee-cat-arrow
+              if cat.children && cat.children.length > 0
+                .shopee-cat-children
+                  each child in cat.children
+                    .shopee-child-group
+                      a.shopee-child-heading(href=`${baseUrl}?${paramName}=${child.slug}`)= child.title
+                      if child.children && child.children.length > 0
+                        .shopee-child-items
+                          +shopeeDeepItems(child.children, baseUrl, paramName)
+  else
+    li.nav-item
+      a.nav-link(href=link)
+        i(class=icon).mr-1
+        = label

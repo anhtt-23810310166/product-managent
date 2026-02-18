@@ -1,4 +1,6 @@
-nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.shadow-sm
+include ../mixins/menu-category.pug
+
+nav.navbar.navbar-expand-lg.navbar-dark.shadow-sm
   .container
     a.navbar-brand.d-flex.align-items-center(href="/")
       img(src="/images/logo.svg" alt="Logo" width="48" height="48")
@@ -10,7 +12,9 @@ nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.shadow-sm
           a.nav-link(href="/")
             i.fas.fa-home.mr-1
             | Trang chủ
-        li.nav-item
-          a.nav-link(href="/products")
-            i.fas.fa-box.mr-1
-            | Sản phẩm
+
+        //- Menu Sản phẩm (Shopee-style mega dropdown)
+        +navShopeeMega("Sản phẩm", "fas fa-box", "/products", productCategories, "/products", "category")
+
+        //- Menu Bài viết (Shopee-style mega dropdown)
+        +navShopeeMega("Bài viết", "fas fa-newspaper", "/articles", articleCategories, "/articles", "category")
