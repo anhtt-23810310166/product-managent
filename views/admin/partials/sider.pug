@@ -55,16 +55,11 @@ aside.admin-sider#adminSider
               li
                 a.sider-submenu-link(href=`${prefixAdmin}/product-category` class=(currentPage === "product-category" ? "active" : "")) Danh mục
 
-        li.sider-menu-item.has-submenu
-          a.sider-menu-link.submenu-toggle(href="javascript:void(0)")
-            i.fas.fa-shopping-cart
-            span Đơn hàng
-            i.fas.fa-chevron-right.submenu-arrow
-          ul.sider-submenu.list-unstyled
-            li
-              a.sider-submenu-link(href="#") Danh sách
-            li
-              a.sider-submenu-link(href="#") Trạng thái
+        if userPermissions && userPermissions.includes("orders_view")
+          li.sider-menu-item(class=(currentPage === "orders" ? "open" : ""))
+            a.sider-menu-link(href=`${prefixAdmin}/orders` class=(currentPage === "orders" ? "active" : ""))
+              i.fas.fa-shopping-cart
+              span Đơn hàng
 
         li.sider-menu-item.has-submenu
           a.sider-menu-link.submenu-toggle(href="javascript:void(0)")

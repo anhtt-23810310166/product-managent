@@ -1,4 +1,5 @@
 const Product = require("../../models/product.model");
+const Order = require("../../models/order.model");
 const {
     getDiscountedPrice,
     getCartTotalQuantity,
@@ -166,5 +167,122 @@ module.exports.remove = async (req, res) => {
     } catch (error) {
         console.log("Remove from cart error:", error);
         res.json({ success: false, message: "Lỗi xóa sản phẩm" });
+    }
+};
+
+// [GET] /cart/checkout
+module.exports.checkout = async (req, res) => {
+    try {
+        const cart = req.session.cart || [];
+
+        if (cart.length === 0) {
+            return res.redirect("/cart");
+        }
+
+        const productIds = cart.map(item => item.productId);
+        const products = await Product.find({
+            _id: { $in: productIds },
+            deleted: false
+        });
+
+        const cartItems = [];
+        let cartTotal = 0;
+
+        for (const item of cart) {
+            const product = products.find(p => p.id === item.productId);
+            if (product) {
+                const unitPrice = getDiscountedPrice(product);
+                const itemTotal = unitPrice * item.quantity;
+                cartTotal += itemTotal;
+                cartItems.push({ product, quantity: item.quantity, unitPrice, itemTotal });
+            }
+        }
+
+        res.render("client/pages/cart/checkout", {
+            title: "Thanh toán",
+            cartItems,
+            cartTotal
+        });
+    } catch (error) {
+        console.log("Checkout error:", error);
+        res.redirect("/cart");
+    }
+};
+
+// [POST] /cart/checkout
+module.exports.checkoutPost = async (req, res) => {
+    try {
+        const cart = req.session.cart || [];
+
+        if (cart.length === 0) {
+            req.flash("error", "Giỏ hàng trống!");
+            return res.redirect("/cart");
+        }
+
+        const { customerName, customerPhone, customerAddress, customerNote } = req.body;
+
+        if (!customerName || !customerPhone || !customerAddress) {
+            req.flash("error", "Vui lòng điền đầy đủ thông tin!");
+            return res.redirect("/cart/checkout");
+        }
+
+        // Lấy thông tin sản phẩm
+        const productIds = cart.map(item => item.productId);
+        const products = await Product.find({
+            _id: { $in: productIds },
+            deleted: false
+        });
+
+        const items = [];
+        let totalAmount = 0;
+
+        for (const cartItem of cart) {
+            const product = products.find(p => p.id === cartItem.productId);
+            if (product) {
+                const unitPrice = getDiscountedPrice(product);
+                const itemTotal = unitPrice * cartItem.quantity;
+                totalAmount += itemTotal;
+
+                items.push({
+                    productId: product._id,
+                    title: product.title,
+                    thumbnail: product.thumbnail,
+                    price: product.price,
+                    discountPercentage: product.discountPercentage || 0,
+                    unitPrice,
+                    quantity: cartItem.quantity,
+                    itemTotal
+                });
+
+                // Trừ stock
+                await Product.updateOne(
+                    { _id: product._id },
+                    { $inc: { stock: -cartItem.quantity } }
+                );
+            }
+        }
+
+        // Tạo đơn hàng
+        const order = new Order({
+            customerName,
+            customerPhone,
+            customerAddress,
+            customerNote: customerNote || "",
+            items,
+            totalAmount
+        });
+        await order.save();
+
+        // Xóa giỏ hàng
+        req.session.cart = [];
+
+        res.render("client/pages/cart/checkout-success", {
+            title: "Đặt hàng thành công",
+            order
+        });
+    } catch (error) {
+        console.log("Checkout post error:", error);
+        req.flash("error", "Có lỗi xảy ra, vui lòng thử lại!");
+        res.redirect("/cart/checkout");
     }
 };

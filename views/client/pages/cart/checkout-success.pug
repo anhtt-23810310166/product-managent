@@ -1,0 +1,29 @@
+extends ../../layouts/default
+
+block main
+  .container.py-4
+    .checkout-success
+      .checkout-success-icon
+        i.fas.fa-check-circle
+      h2.checkout-success-title Đặt hàng thành công!
+      p.checkout-success-desc Cảm ơn bạn đã mua hàng. Đơn hàng của bạn đang được xử lý.
+
+      if order
+        .checkout-success-info
+          .checkout-info-row
+            span.info-label Mã đơn hàng:
+            span.info-value ##{order._id.toString().slice(-8).toUpperCase()}
+          .checkout-info-row
+            span.info-label Tổng thanh toán:
+            span.info-value.info-price= order.totalAmount.toLocaleString() + ' ₫'
+          .checkout-info-row
+            span.info-label Giao đến:
+            span.info-value= order.customerAddress
+
+      .checkout-success-actions
+        a.btn-continue-shopping(href="/products")
+          i.fas.fa-shopping-bag.mr-2
+          | Tiếp tục mua sắm
+        a.btn-back-home(href="/")
+          i.fas.fa-home.mr-2
+          | Về trang chủ

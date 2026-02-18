@@ -1,0 +1,59 @@
+extends ../../layouts/default
+
+block main
+  .container.py-4
+    h2.page-title
+      i.fas.fa-clipboard-list.mr-2
+      | Thanh toán
+
+    .row
+      .col-lg-7
+        .checkout-section
+          h4.checkout-section-title
+            i.fas.fa-user.mr-2
+            | Thông tin giao hàng
+
+          form.checkout-form(action="/cart/checkout" method="POST")
+            .form-group
+              label.checkout-label(for="customerName") Họ và tên *
+              input.checkout-input#customerName(type="text" name="customerName" required placeholder="Nhập họ và tên")
+
+            .form-group
+              label.checkout-label(for="customerPhone") Số điện thoại *
+              input.checkout-input#customerPhone(type="tel" name="customerPhone" required placeholder="Nhập số điện thoại")
+
+            .form-group
+              label.checkout-label(for="customerAddress") Địa chỉ giao hàng *
+              textarea.checkout-input#customerAddress(name="customerAddress" rows="3" required placeholder="Nhập địa chỉ giao hàng")
+
+            .form-group
+              label.checkout-label(for="customerNote") Ghi chú
+              textarea.checkout-input#customerNote(name="customerNote" rows="2" placeholder="Ghi chú thêm (tùy chọn)")
+
+            button.btn-checkout-submit(type="submit")
+              i.fas.fa-check-circle.mr-2
+              | Đặt hàng
+
+      .col-lg-5
+        .checkout-section
+          h4.checkout-section-title
+            i.fas.fa-shopping-bag.mr-2
+            | Đơn hàng của bạn (#{cartItems.length} sản phẩm)
+
+          .checkout-items
+            each item in cartItems
+              .checkout-item
+                .checkout-item-img
+                  if item.product.thumbnail
+                    img(src=item.product.thumbnail alt=item.product.title)
+                  else
+                    .checkout-item-placeholder
+                      i.fas.fa-image
+                .checkout-item-info
+                  .checkout-item-name= item.product.title
+                  .checkout-item-qty x#{item.quantity}
+                .checkout-item-price= item.itemTotal.toLocaleString() + ' ₫'
+
+          .checkout-total
+            span.checkout-total-label Tổng thanh toán:
+            span.checkout-total-price= cartTotal.toLocaleString() + ' ₫'

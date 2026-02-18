@@ -1,0 +1,64 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+include ../../mixins/search.pug
+include ../../mixins/sort.pug
+include ../../mixins/pagination.pug
+
+block main
+  +pageHeader("Quản lý đơn hàng", "Quản lý tất cả đơn hàng trong hệ thống")
+
+  //- Filter bar
+  .admin-filter-bar.mb-4
+    .row.align-items-center
+      +search(keyword)
+
+      //- Order Status Filter
+      .col-md-4
+        .order-status-filter
+          each item in orderStatuses
+            a.order-status-btn(
+              href=item.status ? `${prefixAdmin}/orders?status=${item.status}` : `${prefixAdmin}/orders`
+              class=item.active ? "active" : ""
+              class=item.class
+            )= item.name
+
+      +sort(sortOptions)
+
+  //- Orders Table
+  .admin-table-wrapper
+    if orders && orders.length > 0
+      table.admin-table
+        thead
+          tr
+            th.col-stt STT
+            th.col-order-id Mã đơn
+            th.col-customer Khách hàng
+            th.col-items Số SP
+            th.col-total Tổng tiền
+            th.col-status Trạng thái
+            th.col-date Ngày tạo
+        tbody
+          each order, index in orders
+            tr.animate-in
+              td.col-stt= pagination.skip + index + 1
+              td.col-order-id
+                a.order-id-link(href=`${prefixAdmin}/orders/detail/${order._id}`)
+                  | ##{order._id.toString().slice(-8).toUpperCase()}
+              td.col-customer
+                .order-customer-info
+                  span.order-customer-name= order.customerName
+                  span.order-customer-phone= order.customerPhone
+              td.col-items= order.items.length
+              td.col-total
+                span.order-total-price= order.totalAmount.toLocaleString() + ' ₫'
+              td.col-status
+                span.status-badge(class=statusMap[order.status] ? statusMap[order.status].class : "")= statusMap[order.status] ? statusMap[order.status].label : order.status
+              td.col-date= order.createdAt.toLocaleDateString('vi-VN')
+    else
+      .admin-empty-state
+        i.fas.fa-clipboard-list
+        h4 Chưa có đơn hàng nào
+        p Đơn hàng sẽ hiển thị khi khách hàng đặt hàng
+
+  //- Pagination
+  +pagination(pagination)

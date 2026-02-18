@@ -1,0 +1,127 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+
+block main
+  +pageHeader(`Đơn hàng #${order._id.toString().slice(-8).toUpperCase()}`, "Chi tiết đơn hàng")
+    a.btn.btn-back-list(href=`${prefixAdmin}/orders`)
+      i.fas.fa-arrow-left.mr-2
+      | Quay lại
+
+  .row
+    //- Thông tin khách hàng
+    .col-lg-4.mb-4
+      .order-detail-card
+        .order-detail-card-header
+          i.fas.fa-user.mr-2
+          | Thông tin khách hàng
+        .order-detail-card-body
+          .order-info-row
+            span.info-label Họ tên:
+            span.info-value= order.customerName
+          .order-info-row
+            span.info-label Điện thoại:
+            span.info-value= order.customerPhone
+          .order-info-row
+            span.info-label Địa chỉ:
+            span.info-value= order.customerAddress
+          if order.customerNote
+            .order-info-row
+              span.info-label Ghi chú:
+              span.info-value= order.customerNote
+
+    //- Trạng thái đơn hàng
+    .col-lg-4.mb-4
+      .order-detail-card
+        .order-detail-card-header
+          i.fas.fa-info-circle.mr-2
+          | Trạng thái đơn hàng
+        .order-detail-card-body
+          .order-status-current
+            span.status-badge.status-lg(class=statusMap[order.status] ? statusMap[order.status].class : "")= statusMap[order.status] ? statusMap[order.status].label : order.status
+
+          if userPermissions && userPermissions.includes("orders_change-status")
+            .order-status-actions
+              if order.status === "pending"
+                form(action=`${prefixAdmin}/orders/change-status/confirmed/${order._id}?_method=PATCH` method="POST")
+                  button.btn-status-action.btn-confirmed(type="submit")
+                    i.fas.fa-check.mr-1
+                    | Xác nhận
+                form(action=`${prefixAdmin}/orders/change-status/cancelled/${order._id}?_method=PATCH` method="POST")
+                  button.btn-status-action.btn-cancelled(type="submit")
+                    i.fas.fa-times.mr-1
+                    | Hủy đơn
+
+              if order.status === "confirmed"
+                form(action=`${prefixAdmin}/orders/change-status/shipping/${order._id}?_method=PATCH` method="POST")
+                  button.btn-status-action.btn-shipping(type="submit")
+                    i.fas.fa-truck.mr-1
+                    | Giao hàng
+
+              if order.status === "shipping"
+                form(action=`${prefixAdmin}/orders/change-status/delivered/${order._id}?_method=PATCH` method="POST")
+                  button.btn-status-action.btn-delivered(type="submit")
+                    i.fas.fa-check-double.mr-1
+                    | Đã giao
+
+          .order-info-row.mt-3
+            span.info-label Ngày đặt:
+            span.info-value= order.createdAt.toLocaleDateString('vi-VN') + ' ' + order.createdAt.toLocaleTimeString('vi-VN')
+
+    //- Tổng quan
+    .col-lg-4.mb-4
+      .order-detail-card
+        .order-detail-card-header
+          i.fas.fa-receipt.mr-2
+          | Tổng quan
+        .order-detail-card-body
+          .order-info-row
+            span.info-label Số sản phẩm:
+            span.info-value= order.items.length
+          .order-info-row
+            span.info-label Tổng số lượng:
+            span.info-value= order.items.reduce((sum, item) => sum + item.quantity, 0)
+          .order-summary-total
+            span.info-label Tổng thanh toán:
+            span.order-total-big= order.totalAmount.toLocaleString() + ' ₫'
+
+  //- Danh sách sản phẩm
+  .order-detail-card.mb-4
+    .order-detail-card-header
+      i.fas.fa-box.mr-2
+      | Danh sách sản phẩm
+    .admin-table-wrapper
+      table.admin-table
+        thead
+          tr
+            th.col-stt STT
+            th.col-img Hình ảnh
+            th.col-title Sản phẩm
+            th.col-price Đơn giá
+            th.col-qty Số lượng
+            th.col-item-total Thành tiền
+        tbody
+          each item, index in order.items
+            tr
+              td.col-stt= index + 1
+              td.col-img
+                if item.thumbnail
+                  img.product-thumb(src=item.thumbnail alt=item.title)
+                else
+                  .product-thumb-placeholder
+                    i.fas.fa-image
+              td.col-title
+                span.product-name= item.title
+                if item.discountPercentage > 0
+                  span.badge-discount -#{item.discountPercentage}%
+              td.col-price= item.unitPrice.toLocaleString() + ' ₫'
+              td.col-qty= item.quantity
+              td.col-item-total
+                span.order-item-total= item.itemTotal.toLocaleString() + ' ₫'
+
+  //- Xóa đơn hàng
+  if userPermissions && userPermissions.includes("orders_delete")
+    .order-danger-zone
+      form(action=`${prefixAdmin}/orders/delete/${order._id}?_method=DELETE` method="POST")
+        button.btn-danger-delete(type="submit" onclick="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này?')")
+          i.fas.fa-trash-alt.mr-2
+          | Xóa đơn hàng
