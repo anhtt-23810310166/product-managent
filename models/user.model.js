@@ -12,6 +12,8 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: "active"
         },
+        otpPassword: String,
+        otpPasswordTimeExpire: Date,
         deleted: {
             type: Boolean,
             default: false
