@@ -28,10 +28,44 @@ module.exports.cartMiddleware = async (req, res, next) => {
             }
         }
 
-        // Gắn userId vào cart nếu user đã đăng nhập
-        if (res.locals.clientUser && req.cart.userId !== res.locals.clientUser.id) {
-            req.cart.userId = res.locals.clientUser.id;
-            await req.cart.save();
+        // Gắn userId vào cart + merge giỏ hàng cũ nếu user đã đăng nhập
+        if (res.locals.clientUser) {
+            const userId = res.locals.clientUser.id;
+
+            if (req.cart.userId !== userId) {
+                // Tìm giỏ hàng cũ của user (từ lần đăng nhập trước)
+                const oldCart = await Cart.findOne({
+                    userId: userId,
+                    _id: { $ne: req.cart._id }
+                });
+
+                if (oldCart && oldCart.items.length > 0) {
+                    // Merge items từ giỏ cũ vào giỏ hiện tại
+                    for (const oldItem of oldCart.items) {
+                        const existingItem = req.cart.items.find(
+                            item => item.productId === oldItem.productId
+                        );
+
+                        if (existingItem) {
+                            // Sản phẩm đã có → cộng số lượng
+                            existingItem.quantity += oldItem.quantity;
+                        } else {
+                            // Sản phẩm mới → thêm vào
+                            req.cart.items.push({
+                                productId: oldItem.productId,
+                                quantity: oldItem.quantity
+                            });
+                        }
+                    }
+
+                    // Xóa giỏ hàng cũ
+                    await Cart.deleteOne({ _id: oldCart._id });
+                }
+
+                // Gắn userId vào giỏ hiện tại
+                req.cart.userId = userId;
+                await req.cart.save();
+            }
         }
 
         // Tính tổng số lượng sản phẩm cho icon giỏ hàng trên header

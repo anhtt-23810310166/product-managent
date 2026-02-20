@@ -261,6 +261,7 @@ module.exports.checkoutPost = async (req, res) => {
 
         // Tạo đơn hàng
         const order = new Order({
+            userId: res.locals.clientUser ? res.locals.clientUser.id : "",
             customerName,
             customerPhone,
             customerAddress,

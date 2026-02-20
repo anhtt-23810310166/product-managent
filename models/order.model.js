@@ -1,6 +1,12 @@
 const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
+    // User đặt hàng (nếu đã đăng nhập)
+    userId: {
+        type: String,
+        default: ""
+    },
+
     // Thông tin khách hàng
     customerName: {
         type: String,
