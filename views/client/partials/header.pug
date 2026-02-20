@@ -39,6 +39,10 @@ nav.navbar.navbar-expand-lg.navbar-dark.shadow-sm
               i.fas.fa-user-circle.mr-1
               span= clientUser.fullName
             .dropdown-menu.dropdown-menu-right.user-dropdown-menu(aria-labelledby="userDropdown")
+              a.dropdown-item(href="/user/info")
+                i.fas.fa-id-card.mr-2
+                | Thông tin tài khoản
+              .dropdown-divider
               a.dropdown-item(href="/user/logout")
                 i.fas.fa-sign-out-alt.mr-2
                 | Đăng xuất

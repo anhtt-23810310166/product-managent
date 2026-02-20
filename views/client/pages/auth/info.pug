@@ -1,0 +1,56 @@
+extends ../../layouts/default.pug
+
+block main
+  .auth-page
+    .container
+      .user-info-card
+        .user-info-header
+          h2.user-info-title
+            i.fas.fa-user-circle.mr-2
+            | Thông tin tài khoản
+
+        .user-info-body
+          form(action="/user/info" method="POST" enctype="multipart/form-data")
+            .row
+              //- Avatar
+              .col-md-4.text-center.mb-4
+                .user-avatar-section
+                  if clientUser.avatar
+                    img.user-avatar-img(src=clientUser.avatar alt="Avatar")
+                  else
+                    .user-avatar-placeholder
+                      i.fas.fa-user
+                  label.user-avatar-upload(for="avatarInput")
+                    i.fas.fa-camera.mr-1
+                    | Đổi ảnh
+                  input#avatarInput(type="file" name="avatar" accept="image/*" hidden)
+
+              //- Thông tin
+              .col-md-8
+                .auth-form-group
+                  label Họ tên
+                  .auth-input-wrapper
+                    i.fas.fa-user
+                    input(type="text" name="fullName" value=clientUser.fullName placeholder="Nhập họ tên..." required)
+
+                .auth-form-group
+                  label Email
+                  .auth-input-wrapper.input-disabled
+                    i.fas.fa-envelope
+                    input(type="email" value=clientUser.email disabled)
+
+                .auth-form-group
+                  label Số điện thoại
+                  .auth-input-wrapper
+                    i.fas.fa-phone
+                    input(type="text" name="phone" value=clientUser.phone || "" placeholder="Nhập số điện thoại...")
+
+                .auth-form-group
+                  label Ngày tham gia
+                  .auth-input-wrapper.input-disabled
+                    i.fas.fa-calendar
+                    input(type="text" value=clientUser.createdAt.toLocaleDateString("vi-VN") disabled)
+
+                button.auth-btn(type="submit")
+                  i.fas.fa-save.mr-1
+                  | Lưu thay đổi

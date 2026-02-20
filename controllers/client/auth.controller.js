@@ -222,3 +222,35 @@ module.exports.resetPasswordPost = async (req, res) => {
     res.redirect("/user/login");
 };
 
+// [GET] /user/info
+module.exports.info = async (req, res) => {
+    res.render("client/pages/auth/info", {
+        pageTitle: "Thông tin tài khoản"
+    });
+};
+
+// [POST] /user/info
+module.exports.infoPost = async (req, res) => {
+    try {
+        const updateData = {
+            fullName: req.body.fullName,
+            phone: req.body.phone
+        };
+
+        if (req.file) {
+            updateData.avatar = req.file.path;
+        }
+
+        await User.updateOne(
+            { token: req.session.userToken },
+            updateData
+        );
+
+        req.flash("success", "Cập nhật thông tin thành công!");
+        res.redirect("back");
+    } catch (error) {
+        console.log(error);
+        req.flash("error", "Có lỗi xảy ra!");
+        res.redirect("back");
+    }
+};
