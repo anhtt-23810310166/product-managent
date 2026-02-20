@@ -47,7 +47,7 @@ module.exports.requirePermission = (permission) => {
         }
 
         req.flash("error", "Bạn không có quyền truy cập trang này!");
-        return res.redirect(`${prefixAdmin}/dashboard`);
+        return res.redirect("back");
     };
 };
 

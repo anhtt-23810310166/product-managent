@@ -1,3 +1,61 @@
+// ===== Toast Notification Helper =====
+function showToast(message, type) {
+  type = type || "success";
+  var container = document.getElementById("toastContainer");
+  if (!container) return;
+
+  var iconClass = type === "success" ? "fa-check-circle"
+    : type === "error" ? "fa-exclamation-circle"
+    : "fa-info-circle";
+
+  var toast = document.createElement("div");
+  toast.className = "toast-notification toast-" + type;
+  toast.innerHTML =
+    '<i class="fas ' + iconClass + ' toast-icon"></i>' +
+    '<span class="toast-message">' + message + '</span>' +
+    '<button class="toast-close" type="button">&times;</button>';
+
+  container.appendChild(toast);
+
+  // Trigger animation
+  setTimeout(function () { toast.classList.add("show"); }, 10);
+
+  // Close button
+  toast.querySelector(".toast-close").addEventListener("click", function () {
+    toast.classList.remove("show");
+    toast.classList.add("hide");
+    setTimeout(function () { toast.remove(); }, 400);
+  });
+
+  // Auto dismiss after 3s
+  setTimeout(function () {
+    toast.classList.remove("show");
+    toast.classList.add("hide");
+    setTimeout(function () { toast.remove(); }, 400);
+  }, 3000);
+}
+
+// ===== Auto-dismiss server-rendered toasts =====
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".toast-notification.show").forEach(function (toast) {
+    // Close button
+    var closeBtn = toast.querySelector(".toast-close");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", function () {
+        toast.classList.remove("show");
+        toast.classList.add("hide");
+        setTimeout(function () { toast.remove(); }, 400);
+      });
+    }
+    // Auto dismiss after 3s
+    setTimeout(function () {
+      toast.classList.remove("show");
+      toast.classList.add("hide");
+      setTimeout(function () { toast.remove(); }, 400);
+    }, 3000);
+  });
+});
+
 // ===== Quantity Controls (dùng chung cho detail + cart) =====
 document.addEventListener("DOMContentLoaded", function () {
   // Quantity +/- buttons
@@ -68,9 +126,15 @@ document.addEventListener("DOMContentLoaded", function () {
             if (totalEl) totalEl.textContent = formatPrice(data.cartTotal);
             // Update badge
             updateBadge(data.cartTotalQuantity);
+
+          } else {
+            showToast(data.message || "Lỗi cập nhật", "error");
           }
         })
-        .catch(function (err) { console.error("Update error:", err); });
+        .catch(function (err) {
+          console.error("Update error:", err);
+          showToast("Lỗi kết nối!", "error");
+        });
     });
   });
 
@@ -99,13 +163,21 @@ document.addEventListener("DOMContentLoaded", function () {
             // Update badge
             updateBadge(data.cartTotalQuantity);
 
+            // Toast
+            showToast("Đã xóa sản phẩm khỏi giỏ hàng!", "success");
+
             // If cart is empty, reload to show empty state
             if (data.cartTotalQuantity === 0) {
-              window.location.reload();
+              setTimeout(function () { window.location.reload(); }, 1000);
             }
+          } else {
+            showToast(data.message || "Lỗi xóa sản phẩm", "error");
           }
         })
-        .catch(function (err) { console.error("Remove error:", err); });
+        .catch(function (err) {
+          console.error("Remove error:", err);
+          showToast("Lỗi kết nối!", "error");
+        });
     });
   });
 });

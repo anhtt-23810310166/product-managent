@@ -80,9 +80,9 @@ block main
           .order-info-row
             span.info-label Tổng số lượng:
             span.info-value= order.items.reduce((sum, item) => sum + item.quantity, 0)
-          .order-summary-total
+          .order-info-row
             span.info-label Tổng thanh toán:
-            span.order-total-big= order.totalAmount.toLocaleString() + ' ₫'
+            span.info-value.text-danger.font-weight-bold= order.totalAmount.toLocaleString() + ' ₫'
 
   //- Danh sách sản phẩm
   .order-detail-card.mb-4

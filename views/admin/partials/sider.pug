@@ -90,21 +90,6 @@ aside.admin-sider#adminSider
           i.fas.fa-envelope
           span Liên hệ
 
-    //- ===== Hệ thống (Nhóm quyền + Tài khoản) =====
-    if userPermissions && (userPermissions.includes("roles_view") || userPermissions.includes("accounts_view"))
-      .sider-menu-label Hệ thống
-      ul.list-unstyled.mb-0
-        if userPermissions.includes("roles_view")
-          li.sider-menu-item
-            a.sider-menu-link(href=`${prefixAdmin}/roles` class=(currentPage === "roles" ? "active" : ""))
-              i.fas.fa-user-shield
-              span Nhóm quyền
-        if userPermissions.includes("accounts_view")
-          li.sider-menu-item
-            a.sider-menu-link(href=`${prefixAdmin}/accounts` class=(currentPage === "accounts" ? "active" : ""))
-              i.fas.fa-user-cog
-              span Tài khoản
-
     //- ===== Cài đặt =====
     .sider-menu-label Cài đặt
     ul.list-unstyled.mb-0

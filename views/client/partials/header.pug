@@ -31,3 +31,24 @@ nav.navbar.navbar-expand-lg.navbar-dark.shadow-sm
           a.nav-link.mini-cart-link(href="/cart")
             i.fas.fa-shopping-cart
             span.mini-cart-badge#miniCartBadge= cartTotalQuantity || 0
+
+        //- User Auth
+        if clientUser
+          li.nav-item.dropdown.user-dropdown
+            a.nav-link.dropdown-toggle.user-dropdown-toggle(href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
+              i.fas.fa-user-circle.mr-1
+              span= clientUser.fullName
+            .dropdown-menu.dropdown-menu-right.user-dropdown-menu(aria-labelledby="userDropdown")
+              a.dropdown-item(href="/user/logout")
+                i.fas.fa-sign-out-alt.mr-2
+                | Đăng xuất
+        else
+          li.nav-item.auth-nav-item
+            a.nav-link(href="/user/login")
+              i.fas.fa-sign-in-alt.mr-1
+              | Đăng nhập
+          li.nav-item.auth-nav-item
+            a.nav-link.auth-register-link(href="/user/register")
+              i.fas.fa-user-plus.mr-1
+              | Đăng ký
+

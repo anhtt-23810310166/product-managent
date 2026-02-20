@@ -88,7 +88,6 @@ body.admin-page {
 .admin-sider-brand img {
   width: 32px;
   height: 32px;
-  filter: brightness(0) invert(1);
 }
 
 .admin-sider-brand span {
@@ -111,7 +110,7 @@ body.admin-page {
 
 .admin-sider-nav::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .sider-menu-label {
@@ -404,7 +403,7 @@ body.admin-page {
 /* ===== Dashboard / Stat Cards ===== */
 .stat-card {
   background: var(--card-bg);
-  border-radius: var(--card-radius);
+  border-radius: 4px;
   padding: 22px;
   border: 1px solid var(--border-color);
   box-shadow: none;
@@ -420,7 +419,7 @@ body.admin-page {
   left: 0;
   width: 3px;
   height: 100%;
-  border-radius: 3px 0 0 3px;
+  border-radius: 4px;
 }
 
 .stat-card.card-primary::before {
@@ -513,7 +512,7 @@ body.admin-page {
 /* ===== Filter Bar ===== */
 .admin-filter-bar {
   background: var(--card-bg);
-  border-radius: var(--card-radius);
+  border-radius: 4px;
   padding: 16px 18px;
   border: 1px solid var(--border-color);
 }
@@ -619,7 +618,7 @@ body.admin-page {
   color: var(--text-secondary);
   font-size: 0.82rem;
   font-weight: 500;
-  border-radius: 3px;
+  border-radius: 4px;
   cursor: pointer;
   transition: var(--transition);
   text-align: left;
@@ -648,7 +647,7 @@ body.admin-page {
 /* ===== Admin Table ===== */
 .admin-table-wrapper {
   background: var(--card-bg);
-  border-radius: var(--card-radius);
+  border-radius: 4px;
   overflow: hidden;
   border: 1px solid var(--border-color);
 }
@@ -706,7 +705,7 @@ body.admin-page {
   margin-top: 2px;
   vertical-align: middle;
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .col-stt {
@@ -765,7 +764,7 @@ body.admin-page {
   color: var(--danger);
   background: var(--danger-bg);
   padding: 2px 8px;
-  border-radius: 3px;
+  border-radius: 4px;
   white-space: nowrap;
 }
 
@@ -775,7 +774,7 @@ body.admin-page {
   color: var(--accent);
   background: var(--accent-light);
   padding: 2px 8px;
-  border-radius: 3px;
+  border-radius: 4px;
   white-space: nowrap;
 }
 
@@ -878,7 +877,7 @@ body.admin-page {
   justify-content: center;
   min-width: 32px;
   padding: 4px 10px;
-  border-radius: 3px;
+  border-radius: 4px;
   font-size: 0.78rem;
   font-weight: 600;
 }
@@ -923,7 +922,7 @@ body.admin-page {
   display: inline-flex;
   align-items: center;
   padding: 5px 12px;
-  border-radius: 3px;
+  border-radius: 4px;
   font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
@@ -955,7 +954,7 @@ body.admin-page {
 .btn-action {
   width: 32px;
   height: 32px;
-  border-radius: 3px;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1002,7 +1001,7 @@ body.admin-page {
   text-align: center;
   padding: 56px 24px;
   background: var(--card-bg);
-  border-radius: var(--card-radius);
+  border-radius: 4px;
   border: 1px solid var(--border-color);
 }
 
@@ -1241,7 +1240,7 @@ body.admin-page {
   align-items: center;
   gap: 10px;
   padding: 12px 16px;
-  border-radius: 6px;
+  border-radius: 4px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
   font-size: 0.85rem;
   font-weight: 500;
@@ -1306,7 +1305,7 @@ body.admin-page {
 /* ===== Product Form ===== */
 .admin-form-card {
   background: var(--card-bg);
-  border-radius: var(--card-radius);
+  border-radius: 4px;
   border: 1px solid var(--border-color);
   padding: 28px;
 }
@@ -1397,7 +1396,7 @@ body.admin-page {
 .upload-area {
   position: relative;
   border: 2px dashed var(--border-color);
-  border-radius: 6px;
+  border-radius: 4px;
   padding: 24px;
   text-align: center;
   cursor: pointer;
@@ -1574,7 +1573,7 @@ body.admin-page {
 
 .detail-thumbnail {
   width: 100%;
-  border-radius: 6px;
+  border-radius: 4px;
   border: 1px solid var(--border-color);
   object-fit: cover;
 }
@@ -1588,7 +1587,7 @@ body.admin-page {
   justify-content: center;
   background: var(--content-bg);
   border: 2px dashed var(--border-color);
-  border-radius: 6px;
+  border-radius: 4px;
   color: var(--text-muted);
 }
 
@@ -1634,7 +1633,7 @@ body.admin-page {
 
 .detail-card {
   background: var(--card-bg);
-  border-radius: var(--card-radius);
+  border-radius: 4px;
   border: 1px solid var(--border-color);
   overflow: hidden;
 }
@@ -1906,7 +1905,7 @@ body.admin-page {
 /* ===== Settings Page ===== */
 .settings-section {
   background: var(--card-bg);
-  border-radius: var(--card-radius);
+  border-radius: 4px;
   border: 1px solid var(--border-color);
   padding: 24px;
   margin-bottom: 20px;
@@ -1932,7 +1931,7 @@ body.admin-page {
   align-items: flex-start;
   gap: 14px;
   padding: 16px;
-  border-radius: 8px;
+  border-radius: 4px;
   text-decoration: none;
   transition: var(--transition);
   cursor: pointer;
@@ -1948,7 +1947,7 @@ body.admin-page {
   width: 44px;
   height: 44px;
   min-width: 44px;
-  border-radius: 8px;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2190,7 +2189,7 @@ body.admin-page {
 .role-detail-icon {
   width: 56px;
   height: 56px;
-  border-radius: 8px;
+  border-radius: 4px;
   background: var(--accent-light);
   color: var(--accent);
   display: flex;
@@ -2313,7 +2312,7 @@ body.admin-page {
   gap: 8px;
   cursor: pointer;
   padding: 6px 10px;
-  border-radius: 8px;
+  border-radius: 4px;
   transition: var(--transition);
 }
 
@@ -2363,7 +2362,7 @@ body.admin-page {
   right: 0;
   width: 260px;
   background: var(--card-bg);
-  border-radius: 12px;
+  border-radius: 4px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
   border: 1px solid var(--border-color);
   opacity: 0;
@@ -2539,7 +2538,7 @@ body.admin-page {
 
 .order-status-btn {
   padding: 4px 12px;
-  border-radius: 16px;
+  border-radius: 4px;
   font-size: 0.75rem;
   font-weight: 500;
   text-decoration: none;
@@ -2613,7 +2612,7 @@ body.admin-page {
 .order-detail-card {
   background: var(--bg-white);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 4px;
   overflow: hidden;
 }
 
@@ -2662,7 +2661,7 @@ body.admin-page {
 .status-badge.status-lg {
   padding: 8px 20px;
   font-size: 0.9rem;
-  border-radius: 20px;
+  border-radius: 4px;
   font-weight: 600;
 }
 
@@ -2715,7 +2714,7 @@ body.admin-page {
   font-size: 0.7rem;
   font-weight: 600;
   padding: 1px 6px;
-  border-radius: 3px;
+  border-radius: 4px;
   margin-left: 6px;
 }
 
@@ -2751,7 +2750,7 @@ body.admin-page {
   background: var(--bg-light);
   color: var(--text-secondary);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: 4px;
   font-size: 0.82rem;
   font-weight: 500;
   text-decoration: none;
@@ -2763,3 +2762,5 @@ body.admin-page {
   color: var(--text-primary);
   text-decoration: none;
 }
+
+
