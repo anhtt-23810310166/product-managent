@@ -1,0 +1,109 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+include ../../mixins/search.pug
+include ../../mixins/filter-status.pug
+include ../../mixins/sort.pug
+include ../../mixins/pagination.pug
+
+block main
+  +pageHeader("Danh sách khách hàng", "Quản lý tài khoản khách hàng")
+
+  //- Filter bar
+  .admin-filter-bar.mb-4
+    .row.align-items-center
+      +search(keyword)
+      +filter-status(filterStatus)
+      +sort(sortOptions)
+
+  //- Users Table
+  .admin-table-wrapper
+    if users && users.length > 0
+      table.admin-table
+        thead
+          tr
+            th.col-stt STT
+            th.col-img Avatar
+            th Họ tên
+            th Email
+            th Điện thoại
+            th.col-status Trạng thái
+            th.col-date Ngày đăng ký
+        tbody
+          each user, index in users
+            tr.animate-in
+              td.col-stt= pagination.skip + index + 1
+              td.col-img
+                if user.avatar
+                  img.product-thumb(src=user.avatar alt=user.fullName style="border-radius: 50%")
+                else
+                  .product-thumb-placeholder(style="border-radius: 50%")
+                    i.fas.fa-user
+              td.col-title
+                .product-title-cell
+                  span.product-name= user.fullName
+                .product-hover-actions
+                  a.hover-action-link.hover-action-detail(href=`${prefixAdmin}/users/detail/${user._id}`) Chi tiết
+                  if user.status === "active"
+                    a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=user._id data-status="active") Khóa
+                  else
+                    a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=user._id data-status="inactive") Mở khóa
+                  a.hover-action-link.hover-action-danger.btn-delete-user(href="javascript:void(0)" data-id=user._id) Xoá
+              td= user.email
+              td= user.phone || '—'
+              td.col-status
+                if user.status === "active"
+                  span.status-badge.status-active Hoạt động
+                else
+                  span.status-badge.status-inactive Đã khóa
+              td.col-date= user.createdAt ? user.createdAt.toLocaleDateString('vi-VN') : '—'
+    else
+      .admin-empty-state
+        i.fas.fa-users
+        h4 Chưa có khách hàng nào
+        p Khách hàng sẽ hiển thị khi có người đăng ký tài khoản
+
+  //- Pagination
+  +pagination(pagination)
+
+block append scripts
+  script.
+    // Change Status
+    const statusButtons = document.querySelectorAll(".btn-change-status");
+    statusButtons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        const id = this.getAttribute("data-id");
+        const currentStatus = this.getAttribute("data-status");
+        const newStatus = currentStatus === "active" ? "inactive" : "active";
+
+        if (!confirm(newStatus === "inactive" ? "Bạn có chắc muốn khóa tài khoản này?" : "Bạn có chắc muốn mở khóa tài khoản này?")) return;
+
+        fetch(`${window.prefixAdmin || '/admin'}/users/change-status/${newStatus}/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" }
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data.code === 200) {
+            location.reload();
+          } else {
+            alert(data.message);
+          }
+        })
+        .catch(function () { alert("Lỗi kết nối!"); });
+      });
+    });
+
+    // Delete
+    const deleteButtons = document.querySelectorAll(".btn-delete-user");
+    deleteButtons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        const id = this.getAttribute("data-id");
+        if (!confirm("Bạn có chắc muốn xóa khách hàng này?")) return;
+
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = `${window.prefixAdmin || '/admin'}/users/delete/${id}?_method=DELETE`;
+        document.body.appendChild(form);
+        form.submit();
+      });
+    });

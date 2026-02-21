@@ -76,7 +76,7 @@ aside.admin-sider#adminSider
     .sider-menu-label Khách hàng
     ul.list-unstyled.mb-0
       li.sider-menu-item
-        a.sider-menu-link(href="#")
+        a.sider-menu-link(href=`${prefixAdmin}/users` class=(currentPage === "users" ? "active" : ""))
           i.fas.fa-users
           span Khách hàng
 

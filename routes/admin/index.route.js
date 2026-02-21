@@ -10,6 +10,7 @@ const authRoutes = require("./auth.route");
 const activityLogRoutes = require("./activity-log.route");
 const profileRoutes = require("./profile.route");
 const orderRoutes = require("./order.route");
+const userRoutes = require("./user.route");
 
 const authMiddleware = require("../../middlewares/admin/auth.middleware");
 
@@ -81,5 +82,12 @@ module.exports = (app) => {
         `${PATH_ADMIN}/orders`,
         authMiddleware.requirePermission("orders_view"),
         orderRoutes
+    );
+
+    // Quản lý khách hàng - cần quyền users_view
+    app.use(
+        `${PATH_ADMIN}/users`,
+        authMiddleware.requirePermission("users_view"),
+        userRoutes
     );
 }

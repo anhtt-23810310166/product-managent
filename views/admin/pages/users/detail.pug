@@ -1,0 +1,59 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+
+block main
+  +pageHeader("Chi tiết khách hàng", user.fullName)
+
+  .admin-form-card
+    .detail-layout
+      .detail-main
+        .detail-section
+          h3.detail-section-title Thông tin khách hàng
+          .detail-grid
+            .detail-item
+              .detail-label Họ tên
+              .detail-value= user.fullName
+
+            .detail-item
+              .detail-label Email
+              .detail-value= user.email
+
+            .detail-item
+              .detail-label Số điện thoại
+              .detail-value= user.phone || "Chưa cập nhật"
+
+        .detail-section
+          h3.detail-section-title Trạng thái
+          .detail-grid
+            .detail-item
+              .detail-label Trạng thái
+              .detail-value
+                if user.status === "active"
+                  span.status-badge.status-active Hoạt động
+                else
+                  span.status-badge.status-inactive Đã khóa
+
+            .detail-item
+              .detail-label Ngày đăng ký
+              .detail-value= user.createdAt ? user.createdAt.toLocaleDateString('vi-VN') : 'Chưa cập nhật'
+
+            .detail-item
+              .detail-label Cập nhật lần cuối
+              .detail-value= user.updatedAt ? user.updatedAt.toLocaleDateString('vi-VN') : 'Chưa cập nhật'
+
+      .detail-side
+        .detail-section
+          h3.detail-section-title Ảnh đại diện
+          if user.avatar
+            img.detail-thumbnail(
+              src=user.avatar
+              alt=user.fullName
+              style="border-radius: 50%"
+            )
+          else
+            .detail-no-image
+              i.fas.fa-user
+              p Chưa có ảnh
+
+    .form-actions
+      a.btn-cancel(href=`${prefixAdmin}/users`) Quay lại

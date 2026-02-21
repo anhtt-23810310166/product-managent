@@ -78,6 +78,15 @@ const systemConfig = (app) => {
                 { label: "Đổi trạng thái", action: "change-status" },
                 { label: "Xóa", action: "delete" }
             ]
+        },
+        {
+            label: "Khách hàng",
+            name: "users",
+            permissions: [
+                { label: "Xem", action: "view" },
+                { label: "Đổi trạng thái", action: "change-status" },
+                { label: "Xóa", action: "delete" }
+            ]
         }
     ];
 };
