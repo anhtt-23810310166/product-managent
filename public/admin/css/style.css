@@ -7,8 +7,8 @@
   --sider-bg-hover: #2a2a3c;
   --sider-text: #9899ac;
   --sider-text-hover: #ffffff;
-  --sider-active-bg: #20212D;
-  --sider-active-border: #F9F9F9;
+  --sider-active-bg: #20212d;
+  --sider-active-border: #f9f9f9;
   --content-bg: #f5f8fa;
   --header-bg: #ffffff;
   --accent: #3e97ff;
@@ -266,8 +266,6 @@ body.admin-page {
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: var(--content-bg);
 }
-
-
 
 /* ===== Top Header ===== */
 .admin-header {
@@ -787,7 +785,9 @@ body.admin-page {
   font-size: 0.75rem;
   gap: 10px;
   align-items: center;
-  transition: opacity 0.15s ease, visibility 0.15s ease;
+  transition:
+    opacity 0.15s ease,
+    visibility 0.15s ease;
   white-space: nowrap;
 }
 
@@ -1974,54 +1974,198 @@ body.admin-page {
 }
 
 /* Settings Icon Colors */
-.icon-info { background: #e0f2fe; color: #0284c7; }
-.icon-language { background: #fef3c7; color: #d97706; }
-.icon-email { background: #e0f2fe; color: #0ea5e9; }
-.icon-city { background: #f3e8ff; color: #7c3aed; }
-.icon-contact { background: #dbeafe; color: #2563eb; }
-.icon-attributes { background: #e0e7ff; color: #4338ca; }
-.icon-social { background: #dbeafe; color: #3b82f6; }
-.icon-embed { background: #f1f5f9; color: #475569; }
-.icon-category { background: #e0e7ff; color: #4f46e5; }
-.icon-brand { background: #e0e7ff; color: #4338ca; }
-.icon-product { background: #f3e8ff; color: #7c3aed; }
-.icon-order { background: #e0e7ff; color: #4338ca; }
-.icon-print { background: #fce7f3; color: #db2777; }
-.icon-source { background: #e0e7ff; color: #4f46e5; }
-.icon-shipping { background: #dbeafe; color: #2563eb; }
-.icon-carrier { background: #dbeafe; color: #1d4ed8; }
-.icon-currency { background: #fef3c7; color: #d97706; }
-.icon-payment { background: #e0e7ff; color: #4338ca; }
-.icon-accounts { background: #dbeafe; color: #2563eb; }
-.icon-roles { background: #f3e8ff; color: #7c3aed; }
-.icon-permissions { background: #e0f2fe; color: #0ea5e9; }
-.icon-approval { background: #dcfce7; color: #16a34a; }
-.icon-devmode { background: #f1f5f9; color: #475569; }
-.icon-cache { background: #fef2f2; color: #dc2626; }
-.icon-redirect { background: #e0f2fe; color: #0284c7; }
-.icon-api { background: #ccfbf1; color: #0f766e; }
-.icon-webhook { background: #ffe4e6; color: #be123c; }
-.icon-google { background: #fee2e2; color: #b91c1c; }
-.icon-notification { background: #fef3c7; color: #d97706; }
-.icon-tax { background: #d1fae5; color: #059669; }
-.icon-security { background: #e2e8f0; color: #334155; }
-.icon-backup { background: #ede9fe; color: #7c3aed; }
-.icon-seo { background: #dcfce7; color: #16a34a; }
-.icon-media { background: #fef3c7; color: #ca8a04; }
-.icon-inventory { background: #e0e7ff; color: #4338ca; }
-.icon-refund { background: #fce7f3; color: #db2777; }
-.icon-coupon { background: #fef3c7; color: #d97706; }
-.icon-promotion { background: #fce7f3; color: #be185d; }
-.icon-loyalty { background: #fef9c3; color: #ca8a04; }
-.icon-activitylog { background: #e0f2fe; color: #0284c7; }
-.icon-marketplace { background: #ffedd5; color: #ea580c; }
-.icon-2fa { background: #ede9fe; color: #6d28d9; }
-.icon-login-limit { background: #fef2f2; color: #b91c1c; }
-.icon-ip-whitelist { background: #e0f2fe; color: #0369a1; }
-.icon-captcha { background: #f0fdf4; color: #15803d; }
-.icon-ssl { background: #dcfce7; color: #16a34a; }
-.icon-password-policy { background: #fef3c7; color: #b45309; }
-.icon-session { background: #e0e7ff; color: #4338ca; }
+.icon-info {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+.icon-language {
+  background: #fef3c7;
+  color: #d97706;
+}
+.icon-email {
+  background: #e0f2fe;
+  color: #0ea5e9;
+}
+.icon-city {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
+.icon-contact {
+  background: #dbeafe;
+  color: #2563eb;
+}
+.icon-attributes {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+.icon-social {
+  background: #dbeafe;
+  color: #3b82f6;
+}
+.icon-embed {
+  background: #f1f5f9;
+  color: #475569;
+}
+.icon-category {
+  background: #e0e7ff;
+  color: #4f46e5;
+}
+.icon-brand {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+.icon-product {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
+.icon-order {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+.icon-print {
+  background: #fce7f3;
+  color: #db2777;
+}
+.icon-source {
+  background: #e0e7ff;
+  color: #4f46e5;
+}
+.icon-shipping {
+  background: #dbeafe;
+  color: #2563eb;
+}
+.icon-carrier {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+.icon-currency {
+  background: #fef3c7;
+  color: #d97706;
+}
+.icon-payment {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+.icon-accounts {
+  background: #dbeafe;
+  color: #2563eb;
+}
+.icon-roles {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
+.icon-permissions {
+  background: #e0f2fe;
+  color: #0ea5e9;
+}
+.icon-approval {
+  background: #dcfce7;
+  color: #16a34a;
+}
+.icon-devmode {
+  background: #f1f5f9;
+  color: #475569;
+}
+.icon-cache {
+  background: #fef2f2;
+  color: #dc2626;
+}
+.icon-redirect {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+.icon-api {
+  background: #ccfbf1;
+  color: #0f766e;
+}
+.icon-webhook {
+  background: #ffe4e6;
+  color: #be123c;
+}
+.icon-google {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.icon-notification {
+  background: #fef3c7;
+  color: #d97706;
+}
+.icon-tax {
+  background: #d1fae5;
+  color: #059669;
+}
+.icon-security {
+  background: #e2e8f0;
+  color: #334155;
+}
+.icon-backup {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+.icon-seo {
+  background: #dcfce7;
+  color: #16a34a;
+}
+.icon-media {
+  background: #fef3c7;
+  color: #ca8a04;
+}
+.icon-inventory {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+.icon-refund {
+  background: #fce7f3;
+  color: #db2777;
+}
+.icon-coupon {
+  background: #fef3c7;
+  color: #d97706;
+}
+.icon-promotion {
+  background: #fce7f3;
+  color: #be185d;
+}
+.icon-loyalty {
+  background: #fef9c3;
+  color: #ca8a04;
+}
+.icon-activitylog {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+.icon-marketplace {
+  background: #ffedd5;
+  color: #ea580c;
+}
+.icon-2fa {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+.icon-login-limit {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+.icon-ip-whitelist {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+.icon-captcha {
+  background: #f0fdf4;
+  color: #15803d;
+}
+.icon-ssl {
+  background: #dcfce7;
+  color: #16a34a;
+}
+.icon-password-policy {
+  background: #fef3c7;
+  color: #b45309;
+}
+.icon-session {
+  background: #e0e7ff;
+  color: #4338ca;
+}
 
 /* Settings Responsive */
 @media (max-width: 1200px) {
@@ -2511,67 +2655,151 @@ body.admin-page {
 }
 
 /* Module badges */
-.module-products { background: #e8f1ff; color: #3e97ff; }
-.module-product-category { background: #fff3e0; color: #f57c00; }
-.module-accounts { background: #e8f5e9; color: #43a047; }
-.module-roles { background: #f3e5f5; color: #8e24aa; }
-.module-auth { background: #fce4ec; color: #e53935; }
+.module-products {
+  background: #e8f1ff;
+  color: #3e97ff;
+}
+.module-product-category {
+  background: #fff3e0;
+  color: #f57c00;
+}
+.module-accounts {
+  background: #e8f5e9;
+  color: #43a047;
+}
+.module-roles {
+  background: #f3e5f5;
+  color: #8e24aa;
+}
+.module-auth {
+  background: #fce4ec;
+  color: #e53935;
+}
 
 /* Action badges */
-.action-create { background: var(--success-bg); color: var(--success); }
-.action-edit { background: #e8f1ff; color: var(--accent); }
-.action-delete { background: var(--danger-bg); color: var(--danger); }
-.action-change-status { background: var(--warning-bg); color: #d69a00; }
-.action-change-multi { background: #f3e5f5; color: #8e24aa; }
-.action-login { background: #e0f2f1; color: #00897b; }
-.action-logout { background: #efebe9; color: #6d4c41; }
-.action-permissions { background: #ede7f6; color: #5e35b1; }
+.action-create {
+  background: var(--success-bg);
+  color: var(--success);
+}
+.action-edit {
+  background: #e8f1ff;
+  color: var(--accent);
+}
+.action-delete {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+.action-change-status {
+  background: var(--warning-bg);
+  color: #d69a00;
+}
+.action-change-multi {
+  background: #f3e5f5;
+  color: #8e24aa;
+}
+.action-login {
+  background: #e0f2f1;
+  color: #00897b;
+}
+.action-logout {
+  background: #efebe9;
+  color: #6d4c41;
+}
+.action-permissions {
+  background: #ede7f6;
+  color: #5e35b1;
+}
 
 /* ===== Order Management ===== */
 
 /* Order Status Filter */
 .order-status-filter {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  align-items: center;
 }
 
-.order-status-btn {
-  padding: 4px 12px;
+.order-status-dropdown {
+  width: 100%;
+  padding: 7px 32px 7px 12px;
   border-radius: 4px;
-  font-size: 0.75rem;
+  font-size: 0.82rem;
   font-weight: 500;
-  text-decoration: none;
-  border: 1px solid var(--border-color);
-  color: var(--text-secondary);
+  color: var(--text-primary);
   background: var(--bg-white);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
   transition: all 0.2s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M2.5 4.5l3.5 3.5 3.5-3.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
 }
 
-.order-status-btn:hover {
-  text-decoration: none;
+.order-status-dropdown:focus {
+  outline: none;
   border-color: var(--accent);
-  color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(62, 151, 255, 0.12);
 }
 
-.order-status-btn.active {
-  background: var(--accent);
-  color: #fff;
+.order-status-dropdown:hover {
   border-color: var(--accent);
 }
 
 /* Order Status Badges */
-.status-pending { background: #fff8e1; color: #f9a825; border-color: #ffe082; }
-.status-confirmed { background: #e3f2fd; color: #1976d2; border-color: #90caf9; }
-.status-shipping { background: #fff3e0; color: #ef6c00; border-color: #ffcc80; }
-.status-delivered { background: #e8f5e9; color: #2e7d32; border-color: #a5d6a7; }
-.status-cancelled { background: #fce4ec; color: #c62828; border-color: #ef9a9a; }
+.status-pending {
+  background: #fff8e1;
+  color: #f9a825;
+  border-color: #ffe082;
+}
+.status-confirmed {
+  background: #e3f2fd;
+  color: #1976d2;
+  border-color: #90caf9;
+}
+.status-shipping {
+  background: #fff3e0;
+  color: #ef6c00;
+  border-color: #ffcc80;
+}
+.status-delivered {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-color: #a5d6a7;
+}
+.status-cancelled {
+  background: #fce4ec;
+  color: #c62828;
+  border-color: #ef9a9a;
+}
 
-.order-status-btn.status-pending.active { background: #f9a825; color: #fff; border-color: #f9a825; }
-.order-status-btn.status-confirmed.active { background: #1976d2; color: #fff; border-color: #1976d2; }
-.order-status-btn.status-shipping.active { background: #ef6c00; color: #fff; border-color: #ef6c00; }
-.order-status-btn.status-delivered.active { background: #2e7d32; color: #fff; border-color: #2e7d32; }
-.order-status-btn.status-cancelled.active { background: #c62828; color: #fff; border-color: #c62828; }
+.order-status-btn.status-pending.active {
+  background: #f9a825;
+  color: #fff;
+  border-color: #f9a825;
+}
+.order-status-btn.status-confirmed.active {
+  background: #1976d2;
+  color: #fff;
+  border-color: #1976d2;
+}
+.order-status-btn.status-shipping.active {
+  background: #ef6c00;
+  color: #fff;
+  border-color: #ef6c00;
+}
+.order-status-btn.status-delivered.active {
+  background: #2e7d32;
+  color: #fff;
+  border-color: #2e7d32;
+}
+.order-status-btn.status-cancelled.active {
+  background: #c62828;
+  color: #fff;
+  border-color: #c62828;
+}
 
 /* Order Table */
 .order-id-link {
@@ -2683,14 +2911,30 @@ body.admin-page {
   color: #fff;
 }
 
-.btn-confirmed { background: #1976d2; }
-.btn-confirmed:hover { background: #1565c0; }
-.btn-shipping { background: #ef6c00; }
-.btn-shipping:hover { background: #e65100; }
-.btn-delivered { background: #2e7d32; }
-.btn-delivered:hover { background: #1b5e20; }
-.btn-cancelled { background: #c62828; }
-.btn-cancelled:hover { background: #b71c1c; }
+.btn-confirmed {
+  background: #1976d2;
+}
+.btn-confirmed:hover {
+  background: #1565c0;
+}
+.btn-shipping {
+  background: #ef6c00;
+}
+.btn-shipping:hover {
+  background: #e65100;
+}
+.btn-delivered {
+  background: #2e7d32;
+}
+.btn-delivered:hover {
+  background: #1b5e20;
+}
+.btn-cancelled {
+  background: #c62828;
+}
+.btn-cancelled:hover {
+  background: #b71c1c;
+}
 
 .order-summary-total {
   display: flex;
@@ -2762,5 +3006,3 @@ body.admin-page {
   color: var(--text-primary);
   text-decoration: none;
 }
-
-

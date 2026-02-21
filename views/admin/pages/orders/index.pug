@@ -15,12 +15,12 @@ block main
       //- Order Status Filter
       .col-md-4
         .order-status-filter
-          each item in orderStatuses
-            a.order-status-btn(
-              href=item.status ? `${prefixAdmin}/orders?status=${item.status}` : `${prefixAdmin}/orders`
-              class=item.active ? "active" : ""
-              class=item.class
-            )= item.name
+          select.order-status-dropdown(onchange=`window.location.href=this.value`)
+            each item in orderStatuses
+              option(
+                value=item.status ? `${prefixAdmin}/orders?status=${item.status}` : `${prefixAdmin}/orders`
+                selected=item.active
+              )= item.name
 
       +sort(sortOptions)
 
