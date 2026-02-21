@@ -2,30 +2,163 @@ extends ../../layouts/default.pug
 include ../../mixins/page-header.pug
 
 block main
-  +pageHeader("Dashboard", "Tổng quan hệ thống quản lý sản phẩm")
+  +pageHeader("Dashboard", "Tổng quan hệ thống")
 
+  //- Stat Cards Row 1
   .row
     .col-lg-3.col-md-6.mb-4
       .stat-card.card-primary.animate-in
         .stat-card-icon
           i.fas.fa-box
-        .stat-card-value 128
+        .stat-card-value= stats.totalProducts || 0
         .stat-card-label Sản phẩm
     .col-lg-3.col-md-6.mb-4
       .stat-card.card-success.animate-in
         .stat-card-icon
           i.fas.fa-tags
-        .stat-card-value 12
+        .stat-card-value= stats.totalCategories || 0
         .stat-card-label Danh mục
     .col-lg-3.col-md-6.mb-4
       .stat-card.card-warning.animate-in
         .stat-card-icon
-          i.fas.fa-users
-        .stat-card-value 5
-        .stat-card-label Tài khoản
+          i.fas.fa-shopping-cart
+        .stat-card-value= stats.totalOrders || 0
+        .stat-card-label Đơn hàng
     .col-lg-3.col-md-6.mb-4
       .stat-card.card-danger.animate-in
         .stat-card-icon
-          i.fas.fa-shopping-cart
-        .stat-card-value 64
-        .stat-card-label Đơn hàng
+          i.fas.fa-money-bill-wave
+        .stat-card-value= (stats.totalRevenue || 0).toLocaleString() + ' ₫'
+        .stat-card-label Doanh thu
+
+  //- Stat Cards Row 2
+  .row
+    .col-lg-3.col-md-6.mb-4
+      .stat-card.card-primary.animate-in
+        .stat-card-icon
+          i.fas.fa-user-shield
+        .stat-card-value= stats.totalAccounts || 0
+        .stat-card-label Tài khoản admin
+    .col-lg-3.col-md-6.mb-4
+      .stat-card.card-success.animate-in
+        .stat-card-icon
+          i.fas.fa-users
+        .stat-card-value= stats.totalUsers || 0
+        .stat-card-label Khách hàng
+    .col-lg-3.col-md-6.mb-4
+      .stat-card.card-warning.animate-in
+        .stat-card-icon
+          i.fas.fa-newspaper
+        .stat-card-value= stats.totalArticles || 0
+        .stat-card-label Bài viết
+    .col-lg-3.col-md-6.mb-4
+      .stat-card.card-danger.animate-in
+        .stat-card-icon
+          i.fas.fa-clock
+        .stat-card-value= stats.pendingOrders || 0
+        .stat-card-label Chờ xác nhận
+
+  //- Order Status Overview & Recent Orders
+  .row
+    //- Order Status Breakdown
+    .col-lg-4.mb-4
+      .dashboard-card.animate-in
+        .dashboard-card-header
+          i.fas.fa-chart-pie.mr-2
+          | Trạng thái đơn hàng
+        .dashboard-card-body
+          .order-stat-row
+            .order-stat-dot.dot-pending
+            span.order-stat-label Chờ xác nhận
+            span.order-stat-count= stats.pendingOrders || 0
+          .order-stat-row
+            .order-stat-dot.dot-confirmed
+            span.order-stat-label Đã xác nhận
+            span.order-stat-count= stats.confirmedOrders || 0
+          .order-stat-row
+            .order-stat-dot.dot-shipping
+            span.order-stat-label Đang giao
+            span.order-stat-count= stats.shippingOrders || 0
+          .order-stat-row
+            .order-stat-dot.dot-delivered
+            span.order-stat-label Đã giao
+            span.order-stat-count= stats.deliveredOrders || 0
+          .order-stat-row
+            .order-stat-dot.dot-cancelled
+            span.order-stat-label Đã hủy
+            span.order-stat-count= stats.cancelledOrders || 0
+
+    //- Recent Orders
+    .col-lg-8.mb-4
+      .dashboard-card.animate-in
+        .dashboard-card-header
+          i.fas.fa-clipboard-list.mr-2
+          | Đơn hàng gần đây
+          a.dashboard-view-all(href=`${prefixAdmin}/orders`) Xem tất cả →
+        .dashboard-card-body.p-0
+          if recentOrders && recentOrders.length > 0
+            table.dashboard-table
+              thead
+                tr
+                  th Mã đơn
+                  th Khách hàng
+                  th Tổng tiền
+                  th Trạng thái
+                  th Ngày
+              tbody
+                each order in recentOrders
+                  tr
+                    td
+                      a.order-id-link(href=`${prefixAdmin}/orders/detail/${order._id}`)
+                        | ##{order._id.toString().slice(-8).toUpperCase()}
+                    td= order.customerName
+                    td.text-danger.font-weight-bold= order.totalAmount.toLocaleString() + ' ₫'
+                    td
+                      - var statusLabels = { pending: 'Chờ xác nhận', confirmed: 'Đã xác nhận', shipping: 'Đang giao', delivered: 'Đã giao', cancelled: 'Đã hủy' }
+                      - var statusClasses = { pending: 'status-pending', confirmed: 'status-confirmed', shipping: 'status-shipping', delivered: 'status-delivered', cancelled: 'status-cancelled' }
+                      span.status-badge(class=statusClasses[order.status])= statusLabels[order.status] || order.status
+                    td= order.createdAt.toLocaleDateString('vi-VN')
+          else
+            .dashboard-empty
+              i.fas.fa-inbox
+              p Chưa có đơn hàng
+
+  //- Recent Products
+  .row
+    .col-12.mb-4
+      .dashboard-card.animate-in
+        .dashboard-card-header
+          i.fas.fa-box.mr-2
+          | Sản phẩm mới nhất
+          a.dashboard-view-all(href=`${prefixAdmin}/products`) Xem tất cả →
+        .dashboard-card-body.p-0
+          if recentProducts && recentProducts.length > 0
+            table.dashboard-table
+              thead
+                tr
+                  th Hình ảnh
+                  th Tên sản phẩm
+                  th Giá
+                  th Trạng thái
+                  th Ngày tạo
+              tbody
+                each product in recentProducts
+                  tr
+                    td
+                      if product.thumbnail
+                        img.dashboard-product-thumb(src=product.thumbnail alt=product.title)
+                      else
+                        .dashboard-thumb-placeholder
+                          i.fas.fa-image
+                    td.font-weight-500= product.title
+                    td.text-danger= product.price.toLocaleString() + ' ₫'
+                    td
+                      if product.status === 'active'
+                        span.status-badge.status-active Hoạt động
+                      else
+                        span.status-badge.status-inactive Dừng
+                    td= product.createdAt ? product.createdAt.toLocaleDateString('vi-VN') : '—'
+          else
+            .dashboard-empty
+              i.fas.fa-inbox
+              p Chưa có sản phẩm

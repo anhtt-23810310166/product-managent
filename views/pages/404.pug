@@ -1,0 +1,122 @@
+doctype html
+html
+  head
+    title 404 - Không tìm thấy trang
+    meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
+    link(rel="preconnect" href="https://fonts.googleapis.com")
+    link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
+    link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css")
+    style.
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: 'Inter', sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f0f2f5;
+        color: #333;
+      }
+      .error-container {
+        text-align: center;
+        padding: 40px 20px;
+        max-width: 560px;
+      }
+      .error-code {
+        font-size: 140px;
+        font-weight: 800;
+        line-height: 1;
+        background: linear-gradient(135deg, #4126A6, #6D3ABB, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 16px;
+        letter-spacing: -4px;
+      }
+      .error-icon {
+        font-size: 48px;
+        color: #6D3ABB;
+        margin-bottom: 20px;
+        animation: float 3s ease-in-out infinite;
+      }
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+      .error-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 12px;
+      }
+      .error-message {
+        font-size: 15px;
+        color: #6b7280;
+        margin-bottom: 32px;
+        line-height: 1.6;
+      }
+      .error-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .btn-back-home {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 28px;
+        background: linear-gradient(135deg, #4126A6, #6D3ABB);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-family: 'Inter', sans-serif;
+      }
+      .btn-back-home:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(109, 58, 187, 0.35);
+        color: #fff;
+        text-decoration: none;
+      }
+      .btn-go-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 28px;
+        background: #fff;
+        color: #4126A6;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        font-family: 'Inter', sans-serif;
+      }
+      .btn-go-back:hover {
+        border-color: #4126A6;
+        background: #f8f5ff;
+        color: #4126A6;
+        text-decoration: none;
+      }
+
+  body
+    .error-container
+      .error-icon
+        i.fas.fa-ghost
+      .error-code 404
+      .error-title Trang không tồn tại
+      .error-message Xin lỗi, trang bạn đang tìm kiếm không tồn tại hoặc đã bị di chuyển. Vui lòng kiểm tra lại đường dẫn hoặc quay về trang chủ.
+      .error-actions
+        a.btn-back-home(href="/")
+          i.fas.fa-home
+          | Trang chủ
+        a.btn-go-back(href="javascript:history.back()")
+          i.fas.fa-arrow-left
+          | Quay lại

@@ -42,6 +42,11 @@ systemConfig(app);
 route(app);
 adminRoutes(app);
 
+// 404 Handler
+app.use((req, res) => {
+    res.status(404).render("pages/404");
+});
+
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
 });
