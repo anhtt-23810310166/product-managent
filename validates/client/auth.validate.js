@@ -87,3 +87,28 @@ module.exports.infoPost = (req, res, next) => {
 
     next();
 };
+
+// [POST] /user/password/change
+module.exports.changePasswordPost = (req, res, next) => {
+    if (!req.body.currentPassword || req.body.currentPassword.trim() === "") {
+        req.flash("error", "Vui lòng nhập mật khẩu hiện tại!");
+        return res.redirect("back");
+    }
+
+    if (!req.body.newPassword || req.body.newPassword.trim() === "") {
+        req.flash("error", "Vui lòng nhập mật khẩu mới!");
+        return res.redirect("back");
+    }
+
+    if (req.body.newPassword.length < 6) {
+        req.flash("error", "Mật khẩu mới phải có ít nhất 6 ký tự!");
+        return res.redirect("back");
+    }
+
+    if (req.body.newPassword !== req.body.confirmPassword) {
+        req.flash("error", "Xác nhận mật khẩu không khớp!");
+        return res.redirect("back");
+    }
+
+    next();
+};

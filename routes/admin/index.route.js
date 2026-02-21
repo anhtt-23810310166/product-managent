@@ -29,11 +29,17 @@ module.exports = (app) => {
     // ===== Route Private (yêu cầu đăng nhập) =====
     app.use(PATH_ADMIN, authMiddleware.requireAuth);
 
-    // Dashboard & Settings - ai đăng nhập cũng truy cập được
+    // Dashboard - ai đăng nhập cũng truy cập được
     app.use(`${PATH_ADMIN}/dashboard`, dashboardRoutes);
-    app.use(`${PATH_ADMIN}/settings`, settingRoutes);
     app.use(`${PATH_ADMIN}/activity-logs`, activityLogRoutes);
     app.use(`${PATH_ADMIN}/profile`, profileRoutes);
+
+    // Cài đặt chung - cần quyền settings_view
+    app.use(
+        `${PATH_ADMIN}/settings`,
+        authMiddleware.requirePermission("settings_view"),
+        settingRoutes
+    );
 
     // Quản lý sản phẩm - cần quyền products_view
     app.use(

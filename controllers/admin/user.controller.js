@@ -1,4 +1,5 @@
 const User = require("../../models/user.model");
+const md5 = require("md5");
 const searchHelper = require("../../helpers/search");
 const filterStatusHelper = require("../../helpers/filterStatus");
 const sortHelper = require("../../helpers/sort");
@@ -86,6 +87,61 @@ module.exports.detail = async (req, res) => {
         });
     } catch (error) {
         console.log("User detail error:", error);
+        res.redirect("back");
+    }
+};
+
+// [GET] /admin/users/edit/:id
+module.exports.edit = async (req, res) => {
+    try {
+        const user = await User.findOne({ _id: req.params.id, deleted: false })
+            .select("-password -token -otpPassword -otpPasswordTimeExpire");
+
+        if (!user) {
+            req.flash("error", "Không tìm thấy khách hàng!");
+            return res.redirect(`${prefixAdmin}/users`);
+        }
+
+        res.render("admin/pages/users/edit", {
+            pageTitle: `Chỉnh sửa: ${user.fullName}`,
+            currentPage: "users",
+            breadcrumbs: [
+                { title: "Khách hàng", link: `${prefixAdmin}/users` },
+                { title: user.fullName }
+            ],
+            user: user
+        });
+    } catch (error) {
+        console.log("User edit error:", error);
+        res.redirect("back");
+    }
+};
+
+// [PATCH] /admin/users/edit/:id
+module.exports.editPatch = async (req, res) => {
+    try {
+        const updateData = {
+            fullName: req.body.fullName,
+            email: req.body.email,
+            phone: req.body.phone,
+            status: req.body.status
+        };
+
+        if (req.body.password && req.body.password.trim() !== "") {
+            updateData.password = md5(req.body.password);
+        }
+
+        if (req.file) {
+            updateData.avatar = req.file.path;
+        }
+
+        await User.updateOne({ _id: req.params.id }, updateData);
+
+        req.flash("success", "Cập nhật khách hàng thành công!");
+        res.redirect(`${prefixAdmin}/users`);
+    } catch (error) {
+        console.log("User editPatch error:", error);
+        req.flash("error", "Lỗi cập nhật khách hàng!");
         res.redirect("back");
     }
 };

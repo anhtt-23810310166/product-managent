@@ -254,3 +254,44 @@ module.exports.infoPost = async (req, res) => {
         res.redirect("back");
     }
 };
+
+// [GET] /user/password/change
+module.exports.changePassword = async (req, res) => {
+    res.render("client/pages/auth/change-password", {
+        pageTitle: "Đổi mật khẩu"
+    });
+};
+
+// [POST] /user/password/change
+module.exports.changePasswordPost = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+
+        const user = await User.findOne({
+            token: req.session.userToken,
+            deleted: false
+        });
+
+        if (!user) {
+            req.flash("error", "Lỗi xác thực!");
+            return res.redirect("/user/login");
+        }
+
+        if (md5(currentPassword) !== user.password) {
+            req.flash("error", "Mật khẩu hiện tại không đúng!");
+            return res.redirect("back");
+        }
+
+        await User.updateOne(
+            { _id: user._id },
+            { password: md5(newPassword) }
+        );
+
+        req.flash("success", "Đổi mật khẩu thành công!");
+        res.redirect("/user/info");
+    } catch (error) {
+        console.log(error);
+        req.flash("error", "Có lỗi xảy ra!");
+        res.redirect("back");
+    }
+};

@@ -25,4 +25,7 @@ router.post("/password/reset", validate.resetPasswordPost, controller.resetPassw
 router.get("/info", authMiddleware.requireAuth, controller.info);
 router.post("/info", authMiddleware.requireAuth, upload.single("avatar"), validate.infoPost, controller.infoPost);
 
+router.get("/password/change", authMiddleware.requireAuth, controller.changePassword);
+router.post("/password/change", authMiddleware.requireAuth, validate.changePasswordPost, controller.changePasswordPost);
+
 module.exports = router;

@@ -3,6 +3,9 @@ include ../../mixins/page-header.pug
 
 block main
   +pageHeader("Chi tiết khách hàng", user.fullName)
+    a.btn-submit(href=`${prefixAdmin}/users/edit/${user._id}`)
+      i.fas.fa-edit
+      |  Chỉnh sửa
 
   .admin-form-card
     .detail-layout

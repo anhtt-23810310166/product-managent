@@ -42,6 +42,7 @@ block main
                 .product-title-cell
                   span.product-name= user.fullName
                 .product-hover-actions
+                  a.hover-action-link.hover-action-edit(href=`${prefixAdmin}/users/edit/${user._id}`) Sửa
                   a.hover-action-link.hover-action-detail(href=`${prefixAdmin}/users/detail/${user._id}`) Chi tiết
                   if user.status === "active"
                     a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=user._id data-status="active") Khóa
