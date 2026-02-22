@@ -1,0 +1,80 @@
+extends ../../layouts/default.pug
+
+block main
+  .chat-page
+    .container
+      .chat-container
+        .chat-header
+          .chat-header-info
+            i.fas.fa-comments.chat-header-icon
+            .chat-header-text
+              h4.chat-title Phòng Chat Chung
+              span.chat-subtitle Trò chuyện với mọi người
+
+        .chat-body#chatBody
+          if chats && chats.length > 0
+            each chat in chats
+              if clientUser && chat.user_id && chat.user_id._id.toString() === clientUser._id.toString()
+                .chat-message.chat-message-self(data-user-id=chat.user_id._id)
+                  .chat-bubble-self
+                    .chat-msg-content= chat.content
+                    if chat.images && chat.images.length > 0
+                      .chat-msg-images
+                        each img in chat.images
+                          img.chat-msg-img(src=img alt="image")
+                    .chat-msg-time= new Date(chat.createdAt).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })
+              else
+                .chat-message.chat-message-other(data-user-id=(chat.user_id ? chat.user_id._id : ''))
+                  .chat-avatar-wrap
+                    if chat.user_id && chat.user_id.avatar
+                      img.chat-avatar(src=chat.user_id.avatar alt="avatar")
+                    else
+                      .chat-avatar-placeholder
+                        i.fas.fa-user
+                  .chat-bubble-other
+                    .chat-msg-sender= chat.user_id ? chat.user_id.fullName : "Ẩn danh"
+                    .chat-msg-content= chat.content
+                    if chat.images && chat.images.length > 0
+                      .chat-msg-images
+                        each img in chat.images
+                          img.chat-msg-img(src=img alt="image")
+                    .chat-msg-time= new Date(chat.createdAt).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })
+          else
+            .chat-empty
+              i.far.fa-comment-dots.chat-empty-icon
+              p Chưa có tin nhắn nào. Hãy bắt đầu cuộc trò chuyện!
+
+        .chat-typing#chatTyping
+          span.chat-typing-text
+
+        //- Khung Preview Hình ảnh (Thêm file-upload-with-preview)
+        .chat-image-preview
+          .custom-file-container(data-upload-id="chat-upload")
+
+        .chat-footer
+          form#chatForm.chat-form
+            input(type="hidden" id="chatUserId" value=clientUser._id)
+            input(type="hidden" id="chatUserName" value=clientUser.fullName)
+            .chat-input-wrap
+              button.chat-emoji-btn(type="button" id="emojiBtn" title="Emoji")
+                i.far.fa-smile
+              label.chat-image-btn(for="file-upload-with-preview-chat-upload" title="Gửi file/ảnh")
+                i.fas.fa-paperclip
+              input.chat-input(type="text" id="chatInput" placeholder="Nhập tin nhắn..." autocomplete="off")
+              button.chat-send-btn(type="submit" title="Gửi")
+                i.fas.fa-paper-plane
+              
+              //- Hidden input cho thư viện upload (Cho phép tất cả các file)
+              input(type="file" class="custom-file-container__custom-file__custom-file-input" id="file-upload-with-preview-chat-upload" multiple style="display: none;")
+
+        //- Emoji picker ( Web Component )
+        .emoji-picker#emojiPicker
+          emoji-picker.light
+
+  //- Thư viện File Upload
+  link(rel="stylesheet" type="text/css" href="https://unpkg.com/file-upload-with-preview/dist/style.css")
+  script(src="https://unpkg.com/file-upload-with-preview/dist/file-upload-with-preview.iife.js")
+
+  script(src="/socket.io/socket.io.js")
+  script(type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1.22.8/index.js")
+  script(type="module" src="/client/js/chat.js")

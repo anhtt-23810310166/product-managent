@@ -26,6 +26,13 @@ nav.navbar.navbar-expand-lg.navbar-dark.shadow-sm
         //- Menu Bài viết (Shopee-style mega dropdown)
         +navShopeeMega("Bài viết", "fas fa-newspaper", "/articles", articleCategories, "/articles", "category")
 
+        //- Chat
+        if clientUser
+          li.nav-item
+            a.nav-link(href="/chat" title="Chat")
+              i.fas.fa-comments.mr-1
+              | Chat
+
         //- Mini Cart
         li.nav-item
           a.nav-link.mini-cart-link(href="/cart")

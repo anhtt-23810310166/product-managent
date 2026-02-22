@@ -1,4 +1,6 @@
 const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
 const methodOverride = require("method-override");
 const cookieSession = require("cookie-session");
 const flash = require("express-flash");
@@ -17,6 +19,12 @@ const adminRoutes = require("./routes/admin/index.route");
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+// Tạo HTTP server và gắn Socket.IO
+const server = http.createServer(app);
+const io = new Server(server, {
+    maxHttpBufferSize: 2e7 // Tăng buffer lên 20MB cho phép gửi file/ảnh base64 dung lượng lớn
+});
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -42,12 +50,15 @@ systemConfig(app);
 route(app);
 adminRoutes(app);
 
+// Socket.IO
+require("./sockets/client/chat.socket")(io);
+
 // 404 Handler
 app.use((req, res) => {
     res.status(404).render("pages/404");
 });
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
 });
 
