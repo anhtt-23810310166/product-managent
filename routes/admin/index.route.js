@@ -11,6 +11,7 @@ const activityLogRoutes = require("./activity-log.route");
 const profileRoutes = require("./profile.route");
 const orderRoutes = require("./order.route");
 const userRoutes = require("./user.route");
+const chatRoutes = require("./chat.route");
 
 const authMiddleware = require("../../middlewares/admin/auth.middleware");
 
@@ -95,5 +96,11 @@ module.exports = (app) => {
         `${PATH_ADMIN}/users`,
         authMiddleware.requirePermission("users_view"),
         userRoutes
+    );
+
+    // Hỗ trợ khách hàng (Inbox chat)
+    app.use(
+        `${PATH_ADMIN}/chat`,
+        chatRoutes // Không yêu cầu quyền quá gắt, hoặc gắn quyền nếu cần
     );
 }

@@ -1,15 +1,33 @@
 const Chat = require("../../models/chat.model");
+const RoomChat = require("../../models/room-chat.model");
 
-// [GET] /chat
-module.exports.index = async (req, res) => {
-    // Lấy 50 tin nhắn gần nhất, populate thông tin user
-    const chats = await Chat.find({ deleted: false })
-        .sort({ createdAt: "asc" })
-        .limit(50)
-        .populate("user_id", "fullName avatar");
+// [GET] /chat/history
+module.exports.history = async (req, res) => {
+    try {
+        const userId = res.locals.clientUser.id;
+        
+        let roomChat = await RoomChat.findOne({ user_id: userId, typeRoom: "support", deleted: false });
+        if (!roomChat) {
+            roomChat = new RoomChat({
+                user_id: userId,
+                typeRoom: "support"
+            });
+            await roomChat.save();
+        }
 
-    res.render("client/pages/chat/index", {
-        title: "Chat",
-        chats: chats
-    });
+        const chats = await Chat.find({ room_chat_id: roomChat.id, deleted: false })
+            .sort({ createdAt: "asc" })
+            .limit(50);
+
+        res.json({
+            code: 200,
+            roomChatId: roomChat.id,
+            chats: chats
+        });
+    } catch (error) {
+        res.json({
+            code: 400,
+            message: "Lỗi Server"
+        });
+    }
 };

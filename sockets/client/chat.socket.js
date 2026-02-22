@@ -1,13 +1,16 @@
 const Chat = require("../../models/chat.model");
-const User = require("../../models/user.model");
 const cloudinary = require("../../config/cloudinary");
 
 module.exports = (io) => {
     io.on("connection", (socket) => {
+        // ----- Tham gia phòng kín (Room Private) -----
+        socket.on("CLIENT_JOIN_ROOM", (roomChatId) => {
+            if(roomChatId) socket.join(roomChatId);
+        });
+
         // ----- Client gửi tin nhắn -----
         socket.on("CLIENT_SEND_MESSAGE", async (data) => {
             try {
-                // data = { userId, content, images }
                 let uploadedImages = [];
                 
                 // Nếu có file base64 gửi lên
@@ -15,7 +18,7 @@ module.exports = (io) => {
                     for (const imageBase64 of data.images) {
                         const result = await cloudinary.uploader.upload(imageBase64, {
                             folder: "product-management/chat",
-                            resource_type: "auto" // Hỗ trợ cả file raw (pdf, docx, zip...) ngoài image, video
+                            resource_type: "auto"
                         });
                         if (result && result.secure_url) {
                             uploadedImages.push(result.secure_url);
@@ -23,22 +26,21 @@ module.exports = (io) => {
                     }
                 }
 
-                // Lưu vào Database
+                // Lưu vào Database với Model Chat mới
                 const chat = new Chat({
-                    user_id: data.userId,
+                    room_chat_id: data.roomChatId,
+                    sender_id: data.userId,
+                    sender_type: "user", // Phía Khách hàng luôn là user gửi
                     content: data.content,
                     images: uploadedImages
                 });
                 await chat.save();
 
-                // Lấy thông tin user để gửi kèm
-                const user = await User.findById(data.userId).select("fullName avatar");
-
-                // Phát tin nhắn cho TẤT CẢ client (bao gồm cả người gửi)
-                io.emit("SERVER_RETURN_MESSAGE", {
-                    userId: data.userId,
-                    fullName: user ? user.fullName : "Ẩn danh",
-                    avatar: user ? user.avatar : "",
+                // Phát tin nhắn cho RIÊNG phòng chat đó
+                io.to(data.roomChatId).emit("SERVER_RETURN_MESSAGE", {
+                    roomChatId: data.roomChatId,
+                    sender_id: data.userId,
+                    sender_type: "user",
                     content: data.content,
                     images: uploadedImages,
                     createdAt: chat.createdAt
@@ -50,12 +52,52 @@ module.exports = (io) => {
 
         // ----- Typing indicator -----
         socket.on("CLIENT_SEND_TYPING", (data) => {
-            // Broadcast cho tất cả NGOẠI TRỪ người gửi
-            socket.broadcast.emit("SERVER_RETURN_TYPING", {
-                userId: data.userId,
-                fullName: data.fullName,
-                type: data.type // "show" hoặc "hide"
-            });
+            // Broadcast cho người CÒN LẠI TRONG PHÒNG hiện tại
+            if(data.roomChatId) {
+                socket.to(data.roomChatId).emit("SERVER_RETURN_TYPING", {
+                    sender_type: "user",
+                    type: data.type // "show" hoặc "hide"
+                });
+            }
         });
+
+        // ============================================
+        // ----- ADMIN Gửi tin nhắn -----
+        // ============================================
+        socket.on("ADMIN_SEND_MESSAGE", async (data) => {
+            try {
+                // Admin hiện tại gửi bằng text thuần tuý
+                const chat = new Chat({
+                    room_chat_id: data.roomChatId,
+                    sender_id: data.userId || "admin",
+                    sender_type: "admin", // Đánh dấu là tin nhắn của CSKH
+                    content: data.content,
+                    images: data.images || []
+                });
+                await chat.save();
+
+                io.to(data.roomChatId).emit("SERVER_RETURN_MESSAGE", {
+                    roomChatId: data.roomChatId,
+                    sender_id: chat.sender_id,
+                    sender_type: "admin",
+                    content: data.content,
+                    images: chat.images,
+                    createdAt: chat.createdAt
+                });
+            } catch (error) {
+                console.log("Admin socket chat error:", error);
+            }
+        });
+
+        // ----- ADMIN Typing indicator -----
+        socket.on("ADMIN_SEND_TYPING", (data) => {
+            if(data.roomChatId) {
+                socket.to(data.roomChatId).emit("SERVER_RETURN_TYPING", {
+                    sender_type: "admin",
+                    type: data.type
+                });
+            }
+        });
+
     });
 };

@@ -95,6 +95,12 @@ module.exports.loginPost = async (req, res) => {
             return res.redirect("back");
         }
 
+        // Tương thích ngược: Nếu user cũ bị khuyết token do lỗi Model Mongoose trước đó, tự tạo lại token
+        if (!user.token) {
+            user.token = crypto.randomBytes(20).toString("hex");
+            await User.updateOne({ _id: user.id }, { token: user.token });
+        }
+
         // Lưu token vào session (dùng key riêng: userToken)
         req.session.userToken = user.token;
 

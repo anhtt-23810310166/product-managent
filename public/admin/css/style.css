@@ -30,6 +30,7 @@
   --danger-bg: rgba(241, 65, 108, 0.08);
   --info: #7239ea;
   --info-bg: rgba(114, 57, 234, 0.08);
+  --shopee-orange: #ee4d2d;
   --transition: all 0.2s ease;
 }
 
@@ -58,6 +59,75 @@ body.admin-page {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== Shopee Theme Helpers ===== */
+.bg-shopee {
+  background-color: var(--shopee-orange) !important;
+  color: white !important;
+}
+
+.text-shopee {
+  color: var(--shopee-orange) !important;
+}
+
+.btn-shopee {
+  background-color: var(--shopee-orange);
+  color: white;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-shopee:hover {
+  background-color: #d73a1c;
+  color: white;
+}
+
+/* ===== Chat Admin Formats ===== */
+.chat-admin-container {
+  font-size: 0.85rem;
+}
+.chat-admin-container h5 {
+  font-size: 1.1rem;
+}
+.chat-admin-container h6 {
+  font-size: 0.95rem;
+}
+.chat-room-list .list-group-item {
+  font-size: 0.85rem;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  border: 1px solid var(--border-color);
+}
+.chat-room-list .list-group-item:last-child {
+  margin-bottom: 0;
+}
+
+.chat-admin-sidebar .card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Bo góc cho khung Chat lớn bên Phải */
+.chat-admin-main .card {
+  border-radius: 12px;
+  overflow: hidden; /* Cắt các header/footer thừa bị vuông */
+}
+.chat-admin-main .card-header {
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+.chat-admin-main .card-footer {
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+/* Bo góc cho thẻ Input Gửi Tin */
+#chatForm .form-control {
+  border-radius: 20px;
+}
+#chatForm .btn {
+  border-radius: 20px;
 }
 
 /* ===== Sidebar ===== */

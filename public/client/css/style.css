@@ -82,16 +82,16 @@ body {
 .navbar-search-wrap {
   display: flex;
   background: #fff;
-  border-radius: 4px;
+  border-radius: 24px;
   overflow: hidden;
-  height: 34px;
+  height: 38px;
 }
 
 .navbar-search-input {
   flex: 1;
   border: none;
   outline: none;
-  padding: 0 12px;
+  padding: 0 16px;
   font-size: 0.85rem;
   color: var(--shopee-text);
   background: transparent;
@@ -102,7 +102,7 @@ body {
 }
 
 .navbar-search-btn {
-  width: 44px;
+  width: 48px;
   border: none;
   background: var(--shopee-orange-dark);
   color: #fff;
@@ -3003,8 +3003,8 @@ textarea.checkout-input {
   display: flex;
   align-items: center;
   background: #f5f5f5;
-  border-radius: 24px;
-  padding: 0 4px 0 8px;
+  border-radius: 30px;
+  padding: 4px 6px 4px 16px;
   border: 1px solid #e8e8e8;
   transition: border-color 0.2s;
 }
@@ -3042,7 +3042,7 @@ textarea.checkout-input {
   border: none;
   outline: none;
   background: transparent;
-  padding: 10px 8px;
+  padding: 8px 10px;
   font-size: 0.88rem;
   color: var(--shopee-text);
 }
@@ -3066,6 +3066,7 @@ textarea.checkout-input {
   font-size: 0.95rem;
   transition: transform 0.15s, box-shadow 0.15s;
   box-shadow: 0 2px 6px rgba(238, 77, 45, 0.25);
+  margin-left: 6px;
 }
 
 .chat-send-btn:hover {
@@ -3226,4 +3227,348 @@ emoji-picker {
 
 .chat-bubble-self .chat-msg-file:hover {
   background: rgba(255,255,255,0.3);
+}
+
+/* =========================================================================
+   FLOATING CHAT WIDGET
+   ========================================================================= */
+
+/* Nút bong bóng kích hoạt chat nổi */
+.chat-widget-trigger {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    background-color: var(--shopee-orange);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    box-shadow: 0 4px 12px rgba(238, 77, 45, 0.4);
+    cursor: pointer;
+    z-index: 9999;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chat-widget-trigger:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(238, 77, 45, 0.5);
+}
+
+.chat-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #ff3b3b;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+}
+
+/* Hộp thoại Chat Box Popup */
+.chat-widget-box {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 320px;
+    height: 420px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    z-index: 9998;
+    overflow: hidden;
+    transform-origin: bottom right;
+    animation: chatBoxPopup 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes chatBoxPopup {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* === HEADER === */
+.chat-widget-header {
+    background-color: var(--shopee-orange);
+    color: white;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.chat-widget-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.chat-widget-close:hover {
+    color: white;
+}
+
+/* === BODY: Vùng hiển thị tin nhắn === */
+.chat-widget-body {
+    flex: 1;
+    padding: 8px 6px;
+    overflow-y: auto;
+    background-color: #f5f5f5;
+}
+
+.chat-widget-body::-webkit-scrollbar {
+    width: 5px;
+}
+.chat-widget-body::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.15);
+    border-radius: 3px;
+}
+
+/* === CHAT MESSAGES - Giới hạn phạm vi Widget === */
+.chat-widget-body .chat-message {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 6px;
+    align-self: auto;
+    width: 100%;
+    max-width: 100%; /* Ghi đè max-width 70% mặc định của Chat Page */
+}
+
+/* Tin nhắn MÌNH → đẩy sang phải */
+.chat-widget-body .chat-message-self {
+    justify-content: flex-end;
+    flex-direction: row; /* Tránh bị row-reverse từ Chat Page cản trở */
+}
+
+.chat-widget-body .chat-bubble-self {
+    background: linear-gradient(135deg, #ee4d2d, #f7622a); /* Trả lại màu cam Shopee */
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 18px 18px 4px 18px;
+    max-width: 80%;
+    word-break: break-word;
+    box-shadow: none;
+}
+
+/* Tin nhắn ĐỐI PHƯƠNG → nằm bên trái */
+.chat-widget-body .chat-message-other {
+    justify-content: flex-start;
+    align-items: flex-end;
+    flex-direction: row;
+}
+
+.chat-widget-body .chat-avatar-wrap {
+    margin-right: 2px;
+    flex-shrink: 0;
+}
+
+.chat-widget-body .chat-avatar-placeholder {
+    width: 26px;
+    height: 26px;
+    background-color: var(--shopee-orange);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+}
+
+.chat-widget-body .chat-bubble-other {
+    background: #e4e6eb;
+    color: #1c1e21;
+    padding: 8px 12px;
+    border-radius: 18px 18px 18px 4px;
+    max-width: 80%;
+    word-break: break-word;
+    box-shadow: none;
+}
+
+/* === Nội dung bên trong Bubble === */
+.chat-widget-body .chat-msg-sender {
+    font-size: 11px;
+    color: var(--shopee-orange);
+    font-weight: 600;
+    margin-bottom: 2px;
+    letter-spacing: normal;
+}
+
+.chat-msg-content {
+    font-size: 13px;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.chat-msg-time {
+    font-size: 10px;
+    color: rgba(0,0,0,0.4);
+    margin-top: 2px;
+    text-align: right;
+}
+.chat-bubble-self .chat-msg-time {
+    color: rgba(255,255,255,0.6);
+}
+
+.chat-msg-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+}
+
+.chat-msg-img {
+    max-width: 100px;
+    max-height: 100px;
+    object-fit: cover;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid #eee;
+}
+
+/* === FOOTER: Phần nhập tin nhắn === */
+.chat-widget-footer {
+    padding: 8px 10px;
+    background-color: #f5f5f5;
+    box-sizing: border-box;
+}
+
+.chat-input-wrap {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 4px 10px;
+    border: 1px solid #e0e0e0;
+}
+
+.chat-input {
+    flex: 1 1 0;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    padding: 4px 6px;
+    font-size: 13px;
+    outline: none;
+}
+
+.chat-emoji-btn, 
+.chat-image-btn, 
+.chat-send-btn {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 15px;
+    padding: 4px;
+    cursor: pointer;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.chat-emoji-btn:hover,
+.chat-image-btn:hover {
+    color: var(--shopee-orange);
+}
+
+.chat-send-btn {
+    color: var(--shopee-orange);
+}
+
+.chat-send-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Emoji Picker in Widget */
+#emojiPicker {
+    position: absolute;
+    bottom: 60px;
+    left: 12px;
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+#emojiPicker.show {
+    display: block;
+}
+
+/* File upload override trong Widget */
+.chat-image-preview .custom-file-container {
+    padding: 0 12px;
+    margin-bottom: 0;
+    display: none;
+}
+.chat-image-preview .custom-file-container.is-active {
+    display: block;
+    margin-bottom: 8px;
+}
+.chat-image-preview .custom-file-container__image-multi-preview {
+    height: 50px !important;
+}
+
+/* =========================================
+   GIAO DIỆN BẠN BÈ (FRIENDS) - ĐỒNG BỘ MÀU CAM
+   ========================================= */
+
+/* Box User */
+.box-user {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.box-user:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+/* Ghi đè màu nút Outline Primary trên thanh Tab Menu */
+a.btn-outline-primary {
+  color: var(--shopee-orange);
+  border-color: var(--shopee-orange);
+}
+a.btn-outline-primary:hover,
+a.btn-outline-primary.active {
+  color: #fff;
+  background-color: var(--shopee-orange);
+  border-color: var(--shopee-orange);
+}
+
+/* Ghi đè màu nút Primary của Box User (Kết bạn, Chấp nhận) */
+.box-user .btn-primary {
+  background-color: var(--shopee-orange);
+  border-color: var(--shopee-orange);
+  color: #fff;
+}
+.box-user .btn-primary:hover {
+  background-color: var(--shopee-orange-dark);
+  border-color: var(--shopee-orange-dark);
+}
+.box-user .btn-primary:disabled {
+  background-color: #fca087; /* Màu cam nhạt đi khi disabled */
+  border-color: #fca087;
+  opacity: 0.8;
 }

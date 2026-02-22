@@ -55,7 +55,9 @@ require("./sockets/client/chat.socket")(io);
 
 // 404 Handler
 app.use((req, res) => {
-    res.status(404).render("pages/404");
+    res.render("client/pages/errors/404", {
+        pageTitle: "404 Not Found"
+    });
 });
 
 server.listen(port, () => {
