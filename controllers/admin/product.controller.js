@@ -1,45 +1,15 @@
 const Product = require("../../models/product.model");
 const ProductCategory = require("../../models/product-category.model");
 const Brand = require("../../models/brand.model");
+const productService = require("../../services/product.service");
 const createTree = require("../../helpers/createTree");
-const filterStatusHelper = require("../../helpers/filterStatus");
-const searchHelper = require("../../helpers/search");
-const sortHelper = require("../../helpers/sort");
-const paginationHelper = require("../../helpers/pagination");
 const systemConfig = require("../../config/system");
 const prefixAdmin = systemConfig.prefixAdmin;
 const createLog = require("../../helpers/activityLog");
 
 // [GET] /admin/products
 module.exports.index = async (req, res) => {
-    // Filter Status
-    const filterStatus = filterStatusHelper(req.query);
-    const find = { deleted: false };
-
-    if (req.query.status) {
-        find.status = req.query.status;
-    }
-
-    // Search
-    const objectSearch = searchHelper(req.query);
-    if (objectSearch.regex) {
-        find.title = objectSearch.regex;
-    }
-
-    // Pagination
-    const totalItems = await Product.countDocuments(find);
-    const objectPagination = paginationHelper(req.query, totalItems);
-
-    // Sort
-    const objectSort = sortHelper(req.query);
-
-    const sort = Object.keys(objectSort.sortObject).length > 0 ? objectSort.sortObject : { position: 1 };
-
-    const products = await Product
-        .find(find)
-        .sort(sort)
-        .skip(objectPagination.skip)
-        .limit(objectPagination.limitItems);
+    const result = await productService.list(req.query);
 
     // Category lookup
     const categories = await ProductCategory.find({ deleted: false });
@@ -62,11 +32,11 @@ module.exports.index = async (req, res) => {
             { title: "Sản phẩm" },
             { title: "Danh sách" }
         ],
-        products: products,
-        filterStatus: filterStatus,
-        keyword: objectSearch.keyword,
-        sortOptions: objectSort.sortOptions,
-        pagination: objectPagination,
+        products: result.items,
+        filterStatus: result.filterStatus,
+        keyword: result.keyword,
+        sortOptions: result.sortOptions,
+        pagination: result.pagination,
         categoryMap: categoryMap,
         brandMap: brandMap
     });
@@ -96,13 +66,7 @@ module.exports.createPost = async (req, res) => {
         req.body.price = parseInt(req.body.price) || 0;
         req.body.discountPercentage = parseInt(req.body.discountPercentage) || 0;
         req.body.stock = parseInt(req.body.stock) || 0;
-
-        if (req.body.position === "" || req.body.position === undefined) {
-            const countProducts = await Product.countDocuments();
-            req.body.position = countProducts + 1;
-        } else {
-            req.body.position = parseInt(req.body.position);
-        }
+        req.body.position = await productService.autoPosition(req.body.position);
 
         if (req.file) {
             req.body.thumbnail = req.file.path;
@@ -128,7 +92,7 @@ module.exports.createPost = async (req, res) => {
 // [GET] /admin/products/edit/:id
 module.exports.edit = async (req, res) => {
     try {
-        const product = await Product.findOne({ _id: req.params.id, deleted: false });
+        const product = await productService.findById(req.params.id);
         if (!product) {
             req.flash("error", "Sản phẩm không tồn tại!");
             return res.redirect(`${prefixAdmin}/products`);
@@ -199,7 +163,7 @@ module.exports.editPatch = async (req, res) => {
 // [GET] /admin/products/detail/:id
 module.exports.detail = async (req, res) => {
     try {
-        const product = await Product.findOne({ _id: req.params.id, deleted: false });
+        const product = await productService.findById(req.params.id);
         if (!product) {
             req.flash("error", "Sản phẩm không tồn tại!");
             return res.redirect(`${prefixAdmin}/products`);
@@ -237,34 +201,21 @@ module.exports.detail = async (req, res) => {
 // [PATCH] /admin/products/change-status/:status/:id
 module.exports.changeStatus = async (req, res) => {
     try {
-        const status = req.params.status;
-        const id = req.params.id;
+        const { status, id } = req.params;
+        const { modified } = await productService.changeStatus(id, status);
 
-        const result = await Product.updateOne({ _id: id }, { status: status });
-
-        if (result.modifiedCount > 0) {
+        if (modified) {
             createLog(req, res, {
                 action: "change-status",
                 module: "products",
                 description: `Đổi trạng thái sản phẩm sang ${status === "active" ? "hoạt động" : "dừng hoạt động"}`
             });
-
-            res.json({
-                code: 200,
-                message: "Cập nhật trạng thái thành công!"
-            });
+            res.json({ code: 200, message: "Cập nhật trạng thái thành công!" });
         } else {
-            res.json({
-                code: 200,
-                message: "Không có thay đổi nào!",
-                noChange: true
-            });
+            res.json({ code: 200, message: "Không có thay đổi nào!", noChange: true });
         }
     } catch (error) {
-        res.json({
-            code: 400,
-            message: "Cập nhật thất bại!"
-        });
+        res.json({ code: 400, message: "Cập nhật thất bại!" });
     }
 }
 
@@ -272,47 +223,7 @@ module.exports.changeStatus = async (req, res) => {
 module.exports.changeMulti = async (req, res) => {
     try {
         const { ids, type } = req.body;
-
-        let count = 0;
-
-        switch (type) {
-            case "active":
-                const resultActive = await Product.updateMany(
-                    { _id: { $in: ids } },
-                    { status: "active" }
-                );
-                count = resultActive.modifiedCount;
-                break;
-            case "inactive":
-                const resultInactive = await Product.updateMany(
-                    { _id: { $in: ids } },
-                    { status: "inactive" }
-                );
-                count = resultInactive.modifiedCount;
-                break;
-            case "delete":
-                const resultDelete = await Product.updateMany(
-                    { _id: { $in: ids } },
-                    { deleted: true }
-                );
-                count = resultDelete.modifiedCount;
-                break;
-            case "change-position":
-                for (const item of ids) {
-                    const resultPos = await Product.updateOne(
-                        { _id: item.id },
-                        { position: parseInt(item.position) }
-                    );
-                    count += resultPos.modifiedCount;
-                }
-                break;
-            default:
-                return res.json({
-                    code: 400,
-                    message: "Hành động không hợp lệ!"
-                });
-        }
-
+        const { count } = await productService.changeMulti(ids, type);
 
         if (count > 0) {
             createLog(req, res, {
@@ -328,10 +239,10 @@ module.exports.changeMulti = async (req, res) => {
             count: count
         });
     } catch (error) {
-        res.json({
-            code: 400,
-            message: "Có lỗi xảy ra!"
-        });
+        if (error.message === "INVALID_ACTION") {
+            return res.json({ code: 400, message: "Hành động không hợp lệ!" });
+        }
+        res.json({ code: 400, message: "Có lỗi xảy ra!" });
     }
 }
 
@@ -339,30 +250,19 @@ module.exports.changeMulti = async (req, res) => {
 module.exports.deleteProduct = async (req, res) => {
     try {
         const id = req.params.id;
-        const result = await Product.updateOne({ _id: id }, { deleted: true, deletedAt: new Date() });
-        
-        if (result.modifiedCount > 0) {
+        const { modified } = await productService.softDelete(id);
+
+        if (modified) {
             createLog(req, res, {
                 action: "delete",
                 module: "products",
                 description: `Xoá sản phẩm (ID: ${id})`
             });
-
-            res.json({
-                code: 200,
-                message: "Xoá sản phẩm thành công!"
-            });
+            res.json({ code: 200, message: "Xoá sản phẩm thành công!" });
         } else {
-            res.json({
-                code: 200,
-                message: "Không có thay đổi nào!",
-                noChange: true
-            });
+            res.json({ code: 200, message: "Không có thay đổi nào!", noChange: true });
         }
     } catch (error) {
-        res.json({
-            code: 400,
-            message: "Có lỗi xảy ra!"
-        });
+        res.json({ code: 400, message: "Có lỗi xảy ra!" });
     }
 }

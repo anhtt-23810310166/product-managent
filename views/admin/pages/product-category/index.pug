@@ -9,6 +9,7 @@ include ../../mixins/batch-actions.pug
 include ../../mixins/category-tree.pug
 
 block main
+  div(data-crud=`${prefixAdmin}/product-category` data-entity-name="danh mục" style="display:none")
   +pageHeader("Danh mục sản phẩm", "Quản lý danh mục sản phẩm trong hệ thống")
     if userPermissions && userPermissions.includes("product-category_create")
       a.btn.btn-add-product(href=`${prefixAdmin}/product-category/create`)
@@ -55,4 +56,4 @@ block main
 
 
 block append scripts
-  script(src="/admin/js/product-category.js")
+  script(src="/admin/js/admin-crud.js")

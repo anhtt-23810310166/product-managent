@@ -8,6 +8,7 @@ include ../../mixins/batch-actions.pug
 include ../../mixins/category-tree.pug
 
 block main
+  div(data-crud=`${prefixAdmin}/article-category` data-entity-name="danh mục" style="display:none")
   +pageHeader("Danh mục bài viết", "Quản lý danh mục bài viết trong hệ thống")
     if userPermissions && userPermissions.includes("article-category_create")
       a.btn.btn-add-product(href=`${prefixAdmin}/article-category/create`)
@@ -53,4 +54,4 @@ block main
             | Thêm danh mục
 
 block append scripts
-  script(src="/admin/js/article-category.js")
+  script(src="/admin/js/admin-crud.js")

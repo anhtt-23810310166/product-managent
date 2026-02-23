@@ -1,4 +1,5 @@
 const ProductCategory = require("../../models/product-category.model");
+const productCategoryService = require("../../services/product-category.service");
 const systemConfig = require("../../config/system");
 const prefixAdmin = systemConfig.prefixAdmin;
 const createTree = require("../../helpers/createTree");
@@ -139,12 +140,7 @@ module.exports.create = async (req, res) => {
 // [POST] /admin/product-category/create
 module.exports.createPost = async (req, res) => {
     try {
-        if (req.body.position === "" || req.body.position === undefined) {
-            const count = await ProductCategory.countDocuments();
-            req.body.position = count + 1;
-        } else {
-            req.body.position = parseInt(req.body.position);
-        }
+        req.body.position = await productCategoryService.autoPosition(req.body.position);
 
         if (req.file) {
             req.body.thumbnail = req.file.path;
@@ -248,6 +244,7 @@ module.exports.editPatch = async (req, res) => {
 };
 
 // [PATCH] /admin/product-category/change-status/:status/:id
+// NOTE: Giữ nguyên logic cascading — không dùng BaseService vì cần cascade status xuống descendants
 module.exports.changeStatus = async (req, res) => {
     try {
         const status = req.params.status;
@@ -287,6 +284,7 @@ module.exports.changeStatus = async (req, res) => {
 };
 
 // [PATCH] /admin/product-category/change-multi
+// NOTE: Giữ nguyên logic cascading cho active/inactive
 module.exports.changeMulti = async (req, res) => {
     try {
         const { ids, type } = req.body;
@@ -316,14 +314,15 @@ module.exports.changeMulti = async (req, res) => {
                     code: 200,
                     message: "Cập nhật trạng thái thành công!"
                 });
-            case "delete":
+            case "delete": {
                 const resultDelete = await ProductCategory.updateMany(
                     { _id: { $in: ids } },
                     { deleted: true, deletedAt: new Date() }
                 );
                 count = resultDelete.modifiedCount;
                 break;
-            case "change-position":
+            }
+            case "change-position": {
                 for (const item of ids) {
                     const resultPos = await ProductCategory.updateOne(
                         { _id: item.id },
@@ -332,6 +331,7 @@ module.exports.changeMulti = async (req, res) => {
                     count += resultPos.modifiedCount;
                 }
                 break;
+            }
             default:
                 return res.json({
                     code: 400,
@@ -353,6 +353,7 @@ module.exports.changeMulti = async (req, res) => {
 };
 
 // [DELETE] /admin/product-category/delete/:id
+// NOTE: Giữ nguyên logic re-parenting — không dùng BaseService.softDelete()
 module.exports.deleteCategory = async (req, res) => {
     try {
         const id = req.params.id;

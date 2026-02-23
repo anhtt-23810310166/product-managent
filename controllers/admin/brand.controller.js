@@ -1,44 +1,19 @@
-const Brand = require("../../models/brand.model");
+const brandService = require("../../services/brand.service");
 const systemConfig = require("../../config/system");
 const prefixAdmin = systemConfig.prefixAdmin;
-const filterStatusHelper = require("../../helpers/filterStatus");
-const searchHelper = require("../../helpers/search");
-const sortHelper = require("../../helpers/sort");
-const paginationHelper = require("../../helpers/pagination");
 const createLog = require("../../helpers/activityLog");
 
 // [GET] /admin/brands
 module.exports.index = async (req, res) => {
     try {
-        const filterStatus = filterStatusHelper(req.query);
-        const find = { deleted: false };
-
-        if (req.query.status) {
-            find.status = req.query.status;
-        }
-
-        const objectSearch = searchHelper(req.query);
-        if (objectSearch.regex) {
-            find.name = objectSearch.regex;
-        }
-
-        const totalItems = await Brand.countDocuments(find);
-        const objectPagination = paginationHelper(req.query, totalItems);
-
         const sortOptions = [
             { value: "position-asc", label: "Vị trí tăng dần" },
             { value: "position-desc", label: "Vị trí giảm dần" },
             { value: "name-asc", label: "Tên A - Z" },
             { value: "name-desc", label: "Tên Z - A" }
         ];
-        const objectSort = sortHelper(req.query, sortOptions);
-        const sort = Object.keys(objectSort.sortObject).length > 0 ? objectSort.sortObject : { position: 1 };
 
-        const brands = await Brand
-            .find(find)
-            .sort(sort)
-            .skip(objectPagination.skip)
-            .limit(objectPagination.limitItems);
+        const result = await brandService.list(req.query, { sortOptions });
 
         res.render("admin/pages/brands/index", {
             pageTitle: "Thương hiệu sản phẩm",
@@ -47,11 +22,11 @@ module.exports.index = async (req, res) => {
                 { title: "Sản phẩm" },
                 { title: "Thương hiệu" }
             ],
-            brands: brands,
-            filterStatus: filterStatus,
-            keyword: objectSearch.keyword,
-            sortOptions: objectSort.sortOptions,
-            pagination: objectPagination
+            brands: result.items,
+            filterStatus: result.filterStatus,
+            keyword: result.keyword,
+            sortOptions: result.sortOptions,
+            pagination: result.pagination
         });
     } catch (error) {
         console.log(error);
@@ -82,18 +57,13 @@ module.exports.create = async (req, res) => {
 // [POST] /admin/brands/create
 module.exports.createPost = async (req, res) => {
     try {
-        if (req.body.position === "" || req.body.position === undefined) {
-            const count = await Brand.countDocuments();
-            req.body.position = count + 1;
-        } else {
-            req.body.position = parseInt(req.body.position);
-        }
+        req.body.position = await brandService.autoPosition(req.body.position);
 
         if (req.file) {
             req.body.logo = req.file.path;
         }
 
-        await Brand.create(req.body);
+        await brandService.Model.create(req.body);
 
         createLog(req, res, {
             action: "create",
@@ -113,7 +83,7 @@ module.exports.createPost = async (req, res) => {
 // [GET] /admin/brands/edit/:id
 module.exports.edit = async (req, res) => {
     try {
-        const brand = await Brand.findOne({ _id: req.params.id, deleted: false });
+        const brand = await brandService.findById(req.params.id);
         if (!brand) {
             req.flash("error", "Không tìm thấy thương hiệu!");
             return res.redirect(`${prefixAdmin}/brands`);
@@ -151,7 +121,7 @@ module.exports.editPatch = async (req, res) => {
             req.body.logo = req.file.path;
         }
 
-        await Brand.updateOne({ _id: req.params.id }, req.body);
+        await brandService.Model.updateOne({ _id: req.params.id }, req.body);
 
         createLog(req, res, {
             action: "edit",
@@ -172,15 +142,18 @@ module.exports.editPatch = async (req, res) => {
 module.exports.changeStatus = async (req, res) => {
     try {
         const { status, id } = req.params;
-        await Brand.updateOne({ _id: id }, { status: status });
+        const { modified } = await brandService.changeStatus(id, status);
 
-        createLog(req, res, {
-            action: "change-status",
-            module: "brands",
-            description: `Đổi trạng thái thương hiệu sang ${status === "active" ? "hoạt động" : "dừng hoạt động"}`
-        });
-
-        res.json({ code: 200, message: "Cập nhật trạng thái thành công!" });
+        if (modified) {
+            createLog(req, res, {
+                action: "change-status",
+                module: "brands",
+                description: `Đổi trạng thái thương hiệu sang ${status === "active" ? "hoạt động" : "dừng hoạt động"}`
+            });
+            res.json({ code: 200, message: "Cập nhật trạng thái thành công!" });
+        } else {
+            res.json({ code: 200, message: "Không có thay đổi nào!", noChange: true });
+        }
     } catch (error) {
         res.json({ code: 400, message: "Cập nhật thất bại!" });
     }
@@ -190,31 +163,14 @@ module.exports.changeStatus = async (req, res) => {
 module.exports.changeMulti = async (req, res) => {
     try {
         const { ids, type } = req.body;
-        let count = 0;
+        const { count } = await brandService.changeMulti(ids, type);
 
-        switch (type) {
-            case "active":
-            case "inactive":
-                await Brand.updateMany({ _id: { $in: ids } }, { status: type });
-                return res.json({ code: 200, message: "Cập nhật trạng thái thành công!" });
-            case "delete":
-                const resultDelete = await Brand.updateMany(
-                    { _id: { $in: ids } },
-                    { deleted: true, deletedAt: new Date() }
-                );
-                count = resultDelete.modifiedCount;
-                break;
-            case "change-position":
-                for (const item of ids) {
-                    const resultPos = await Brand.updateOne(
-                        { _id: item.id },
-                        { position: parseInt(item.position) }
-                    );
-                    count += resultPos.modifiedCount;
-                }
-                break;
-            default:
-                return res.json({ code: 400, message: "Hành động không hợp lệ!" });
+        if (count > 0) {
+            createLog(req, res, {
+                action: "change-multi",
+                module: "brands",
+                description: `Thao tác hàng loạt [${type}] trên ${count} thương hiệu`
+            });
         }
 
         res.json({
@@ -223,6 +179,9 @@ module.exports.changeMulti = async (req, res) => {
             count: count
         });
     } catch (error) {
+        if (error.message === "INVALID_ACTION") {
+            return res.json({ code: 400, message: "Hành động không hợp lệ!" });
+        }
         res.json({ code: 400, message: "Có lỗi xảy ra!" });
     }
 };
@@ -231,9 +190,9 @@ module.exports.changeMulti = async (req, res) => {
 module.exports.deleteBrand = async (req, res) => {
     try {
         const { id } = req.params;
-        const result = await Brand.updateOne({ _id: id }, { deleted: true, deletedAt: new Date() });
+        const { modified } = await brandService.softDelete(id);
 
-        if (result.modifiedCount > 0) {
+        if (modified) {
             createLog(req, res, {
                 action: "delete",
                 module: "brands",

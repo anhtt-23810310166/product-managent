@@ -1,10 +1,7 @@
 const Account = require("../../models/account.model");
 const Role = require("../../models/role.model");
+const accountService = require("../../services/account.service");
 const md5 = require("md5");
-const searchHelper = require("../../helpers/search");
-const filterStatusHelper = require("../../helpers/filterStatus");
-const sortHelper = require("../../helpers/sort");
-const paginationHelper = require("../../helpers/pagination");
 const systemConfig = require("../../config/system");
 const prefixAdmin = systemConfig.prefixAdmin;
 const createLog = require("../../helpers/activityLog");
@@ -22,41 +19,14 @@ const generateToken = (length = 20) => {
 // [GET] /admin/accounts
 module.exports.index = async (req, res) => {
     try {
-        const find = { deleted: false };
-
-        // Search
-        const objectSearch = searchHelper(req.query);
-        if (objectSearch.regex) {
-            find.$or = [
-                { fullName: objectSearch.regex },
-                { email: objectSearch.regex }
-            ];
-        }
-
-        // Filter Status
-        const objectFilter = filterStatusHelper(req.query);
-        if (req.query.status) {
-            find.status = req.query.status;
-        }
-
-        // Sort
         const sortOptions = [
             { value: "fullName-asc", label: "Tên A - Z" },
             { value: "fullName-desc", label: "Tên Z - A" },
             { value: "createdAt-desc", label: "Mới nhất" },
             { value: "createdAt-asc", label: "Cũ nhất" }
         ];
-        const objectSort = sortHelper(req.query, sortOptions);
 
-        // Pagination
-        const totalItems = await Account.countDocuments(find);
-        const objectPagination = paginationHelper(req.query, totalItems, 20);
-
-        const accounts = await Account.find(find)
-            .select("-password -token")
-            .sort(objectSort.sortObject)
-            .skip(objectPagination.skip)
-            .limit(objectPagination.limitItems);
+        const result = await accountService.list(req.query, { sortOptions, limit: 20 });
 
         // Get role names
         const roles = await Role.find({ deleted: false });
@@ -72,12 +42,12 @@ module.exports.index = async (req, res) => {
                 { title: "Cài đặt", link: `${prefixAdmin}/settings` },
                 { title: "Danh sách tài khoản" }
             ],
-            accounts: accounts,
+            accounts: result.items,
             roleMap: roleMap,
-            keyword: objectSearch.keyword,
-            filterStatus: objectFilter,
-            sortOptions: objectSort.sortOptions,
-            pagination: objectPagination
+            keyword: result.keyword,
+            filterStatus: result.filterStatus,
+            sortOptions: result.sortOptions,
+            pagination: result.pagination
         });
     } catch (error) {
         console.log(error);
@@ -260,34 +230,21 @@ module.exports.detail = async (req, res) => {
 // [PATCH] /admin/accounts/change-status/:status/:id
 module.exports.changeStatus = async (req, res) => {
     try {
-        const status = req.params.status;
-        const id = req.params.id;
+        const { status, id } = req.params;
+        const { modified } = await accountService.changeStatus(id, status);
 
-        const result = await Account.updateOne({ _id: id }, { status: status });
-
-        if (result.modifiedCount > 0) {
+        if (modified) {
             createLog(req, res, {
                 action: "change-status",
                 module: "accounts",
                 description: `Đổi trạng thái tài khoản sang ${status === "active" ? "hoạt động" : "khoá"}`
             });
-
-            res.json({
-                code: 200,
-                message: "Cập nhật trạng thái thành công!"
-            });
+            res.json({ code: 200, message: "Cập nhật trạng thái thành công!" });
         } else {
-            res.json({
-                code: 200,
-                message: "Không có thay đổi nào!",
-                noChange: true
-            });
+            res.json({ code: 200, message: "Không có thay đổi nào!", noChange: true });
         }
     } catch (error) {
-        res.json({
-            code: 400,
-            message: "Cập nhật thất bại!"
-        });
+        res.json({ code: 400, message: "Cập nhật thất bại!" });
     }
 };
 
@@ -295,35 +252,14 @@ module.exports.changeStatus = async (req, res) => {
 module.exports.changeMulti = async (req, res) => {
     try {
         const { ids, type } = req.body;
-        let count = 0;
+        const { count } = await accountService.changeMulti(ids, type);
 
-        switch (type) {
-            case "active":
-                const resultActive = await Account.updateMany(
-                    { _id: { $in: ids } },
-                    { status: "active" }
-                );
-                count = resultActive.modifiedCount;
-                break;
-            case "inactive":
-                const resultInactive = await Account.updateMany(
-                    { _id: { $in: ids } },
-                    { status: "inactive" }
-                );
-                count = resultInactive.modifiedCount;
-                break;
-            case "delete":
-                const resultDelete = await Account.updateMany(
-                    { _id: { $in: ids } },
-                    { deleted: true, deletedAt: new Date() }
-                );
-                count = resultDelete.modifiedCount;
-                break;
-            default:
-                return res.json({
-                    code: 400,
-                    message: "Hành động không hợp lệ!"
-                });
+        if (count > 0) {
+            createLog(req, res, {
+                action: "change-multi",
+                module: "accounts",
+                description: `Thao tác hàng loạt [${type}] trên ${count} tài khoản`
+            });
         }
 
         res.json({
@@ -332,10 +268,10 @@ module.exports.changeMulti = async (req, res) => {
             count: count
         });
     } catch (error) {
-        res.json({
-            code: 400,
-            message: "Có lỗi xảy ra!"
-        });
+        if (error.message === "INVALID_ACTION") {
+            return res.json({ code: 400, message: "Hành động không hợp lệ!" });
+        }
+        res.json({ code: 400, message: "Có lỗi xảy ra!" });
     }
 };
 
@@ -343,33 +279,19 @@ module.exports.changeMulti = async (req, res) => {
 module.exports.deleteAccount = async (req, res) => {
     try {
         const id = req.params.id;
-        const result = await Account.updateOne(
-            { _id: id },
-            { deleted: true, deletedAt: new Date() }
-        );
+        const { modified } = await accountService.softDelete(id);
 
-        if (result.modifiedCount > 0) {
+        if (modified) {
             createLog(req, res, {
                 action: "delete",
                 module: "accounts",
                 description: `Xoá tài khoản (ID: ${id})`
             });
-
-            res.json({
-                code: 200,
-                message: "Xoá tài khoản thành công!"
-            });
+            res.json({ code: 200, message: "Xoá tài khoản thành công!" });
         } else {
-            res.json({
-                code: 200,
-                message: "Không có thay đổi nào!",
-                noChange: true
-            });
+            res.json({ code: 200, message: "Không có thay đổi nào!", noChange: true });
         }
     } catch (error) {
-        res.json({
-            code: 400,
-            message: "Có lỗi xảy ra!"
-        });
+        res.json({ code: 400, message: "Có lỗi xảy ra!" });
     }
 };

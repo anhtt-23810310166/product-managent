@@ -1,12 +1,25 @@
-// ===== Brand Page Scripts =====
-// Dùng cho trang quản lý thương hiệu - kế thừa cấu trúc từ product.js
+// ===== Generic Admin CRUD Scripts =====
+// File duy nhất xử lý: Change Status, Batch Actions, Soft Delete, Change Position
+// cho TẤT CẢ entity (products, brands, articles, accounts, categories...).
+//
+// Cách dùng: Thêm attribute data-crud="<endpoint>" vào wrapper element.
+// Ví dụ: .admin-list-wrapper(data-crud="/admin/products")
+//
+// Từ đó JS tự lấy endpoint và gọi đúng API.
 
-// Change Status
 (function () {
-  var buttons = document.querySelectorAll(".btn-change-status");
-  if (!buttons.length) return;
+  var crudEl = document.querySelector("[data-crud]");
+  if (!crudEl) return;
 
-  buttons.forEach(function (button) {
+  var endpoint = crudEl.getAttribute("data-crud"); // e.g. "/admin/products"
+  var entityName = crudEl.getAttribute("data-entity-name") || "mục"; // e.g. "sản phẩm"
+
+  // Scope to document for finding elements (they may be in different containers)
+  var scope = document;
+
+  // ========== 1. Change Status ==========
+  var statusButtons = scope.querySelectorAll(".btn-change-status");
+  statusButtons.forEach(function (button) {
     button.addEventListener("click", function (e) {
       e.preventDefault();
       var id = this.getAttribute("data-id");
@@ -15,34 +28,47 @@
       var self = this;
       var row = this.closest("tr");
 
-      fetch("/admin/brands/change-status/" + newStatus + "/" + id, {
+      fetch(endpoint + "/change-status/" + newStatus + "/" + id, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" }
       })
         .then(function (response) { return response.json(); })
         .then(function (data) {
           if (data.code === 200) {
+            // Update button
             self.setAttribute("data-status", newStatus);
-            if (newStatus === "active") {
-              self.textContent = "Dừng hoạt động";
-            } else {
-              self.textContent = "Hoạt động";
-            }
+            self.textContent = newStatus === "active" ? "Dừng hoạt động" : "Hoạt động";
 
+            // Update badge
             if (row) {
               var badge = row.querySelector(".status-badge");
               if (badge) {
-                if (newStatus === "active") {
-                  badge.textContent = "Hoạt động";
-                  badge.classList.remove("status-inactive");
-                  badge.classList.add("status-active");
-                } else {
-                  badge.textContent = "Dừng hoạt động";
-                  badge.classList.remove("status-active");
-                  badge.classList.add("status-inactive");
-                }
+                badge.textContent = newStatus === "active" ? "Hoạt động" : "Dừng hoạt động";
+                badge.classList.toggle("status-active", newStatus === "active");
+                badge.classList.toggle("status-inactive", newStatus !== "active");
               }
             }
+
+            // Cascade UI update for descendants (product-category)
+            if (data.descendantIds && data.descendantIds.length > 0) {
+              data.descendantIds.forEach(function (descId) {
+                var descBtn = wrapper.querySelector('.btn-change-status[data-id="' + descId + '"]');
+                if (descBtn) {
+                  descBtn.setAttribute("data-status", newStatus);
+                  descBtn.textContent = newStatus === "active" ? "Dừng hoạt động" : "Hoạt động";
+                  var descRow = descBtn.closest("tr");
+                  if (descRow) {
+                    var descBadge = descRow.querySelector(".status-badge");
+                    if (descBadge) {
+                      descBadge.textContent = newStatus === "active" ? "Hoạt động" : "Dừng hoạt động";
+                      descBadge.classList.toggle("status-active", newStatus === "active");
+                      descBadge.classList.toggle("status-inactive", newStatus !== "active");
+                    }
+                  }
+                }
+              });
+            }
+
             if (!data.noChange) {
               showFlashMessage("success", data.message);
             }
@@ -55,20 +81,16 @@
         });
     });
   });
-})();
 
-// Batch Action Handler
-(function () {
-  var batchItems = document.querySelectorAll(".batch-action-item");
-  if (!batchItems.length) return;
-
+  // ========== 2. Batch Actions ==========
+  var batchItems = scope.querySelectorAll(".batch-action-item");
   batchItems.forEach(function (item) {
     item.addEventListener("click", function () {
       var action = this.getAttribute("data-action");
-      var checkboxes = document.querySelectorAll(".checkbox-item:checked");
+      var checkboxes = scope.querySelectorAll(".checkbox-item:checked");
 
       if (checkboxes.length === 0) {
-        alert("Vui lòng chọn ít nhất một thương hiệu!");
+        alert("Vui lòng chọn ít nhất một " + entityName + "!");
         return;
       }
 
@@ -77,14 +99,14 @@
         ids.push(cb.value);
       });
 
-      var confirmMsg = "Bạn có chắc muốn thực hiện hành động này cho " + ids.length + " thương hiệu?";
+      var confirmMsg = "Bạn có chắc muốn thực hiện hành động này cho " + ids.length + " " + entityName + "?";
       if (action === "delete") {
-        confirmMsg = "Bạn có chắc muốn xoá " + ids.length + " thương hiệu đã chọn?";
+        confirmMsg = "Bạn có chắc muốn xoá " + ids.length + " " + entityName + " đã chọn?";
       }
 
       if (!confirm(confirmMsg)) return;
 
-      fetch("/admin/brands/change-multi", {
+      fetch(endpoint + "/change-multi", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ids: ids, type: action })
@@ -107,22 +129,18 @@
         });
     });
   });
-})();
 
-// Soft Delete Single Brand
-(function () {
-  var deleteLinks = document.querySelectorAll(".hover-action-danger");
-  if (!deleteLinks.length) return;
-
+  // ========== 3. Soft Delete Single Item ==========
+  var deleteLinks = scope.querySelectorAll(".hover-action-danger");
   deleteLinks.forEach(function (link) {
     link.addEventListener("click", function (e) {
       e.preventDefault();
       var id = this.getAttribute("data-id");
       if (!id) return;
 
-      if (!confirm("Bạn có chắc muốn xoá thương hiệu này?")) return;
+      if (!confirm("Bạn có chắc muốn xoá " + entityName + " này?")) return;
 
-      fetch("/admin/brands/delete/" + id, {
+      fetch(endpoint + "/delete/" + id, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" }
       })
@@ -143,13 +161,9 @@
         });
     });
   });
-})();
 
-// Change Position
-(function () {
-  var positionInputs = document.querySelectorAll(".position-input");
-  if (!positionInputs.length) return;
-
+  // ========== 4. Change Position ==========
+  var positionInputs = scope.querySelectorAll(".position-input");
   positionInputs.forEach(function (input) {
     input.addEventListener("change", function () {
       var id = this.getAttribute("data-id");
@@ -160,7 +174,7 @@
         return;
       }
 
-      fetch("/admin/brands/change-multi", {
+      fetch(endpoint + "/change-multi", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

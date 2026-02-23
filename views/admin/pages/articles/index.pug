@@ -7,6 +7,7 @@ include ../../mixins/pagination.pug
 include ../../mixins/batch-actions.pug
 
 block main
+  div(data-crud=`${prefixAdmin}/articles` data-entity-name="bài viết" style="display:none")
   +pageHeader("Danh sách bài viết", "Quản lý tất cả bài viết trong hệ thống")
     if userPermissions && userPermissions.includes("articles_create")
       a.btn.btn-add-product(href=`${prefixAdmin}/articles/create`)
@@ -91,5 +92,4 @@ block main
   +pagination(pagination)
 
 block append scripts
-  script(src="/admin/js/article.js")
-
+  script(src="/admin/js/admin-crud.js")
