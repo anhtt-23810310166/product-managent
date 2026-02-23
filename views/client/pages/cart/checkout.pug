@@ -8,52 +8,88 @@ block main
 
     .row
       .col-lg-7
-        .checkout-section
-          h4.checkout-section-title
-            i.fas.fa-user.mr-2
-            | Thông tin giao hàng
+        .card.border-0.shadow-sm.mb-4
+          .card-body.p-3
+            h5.font-weight-bold.mb-4
+              i.fas.fa-map-marker-alt.mr-2(class="tz-auto-aacc5d")
+              | Thông tin nhận hàng
 
-          form.checkout-form(action="/cart/checkout" method="POST")
-            .form-group
-              label.checkout-label(for="customerName") Họ và tên *
-              input.checkout-input#customerName(type="text" name="customerName" required placeholder="Nhập họ và tên")
+            form(action="/cart/checkout" method="POST")
+              if defaultAddress
+                //- Hiển thị Thẻ Địa chỉ (Giao diện giống Shopee)
+                .address-selector-card.mb-4.p-3.rounded(class="tz-auto-cfcc1d")
+                  a.text-decoration-none.text-dark(href=`/user/address?redirect=checkout&selectedId=${defaultAddress._id}` class="tz-auto-b7d6b2")
+                    .flex-grow-1
+                      .font-weight-bold.mb-1 Tới: #{defaultAddress.fullName} - #{defaultAddress.phone}
+                      .text-muted.mb-1(class="tz-auto-267f6d") #{defaultAddress.address}
+                      if defaultAddress.isDefault
+                        span.badge.badge-primary(class="tz-auto-95babf") Mặc định
+                    i.fas.fa-chevron-right.text-muted.align-self-center
+                
+                //- Gửi Form ẩn nội bộ dựa vào DefaultAddress đã chọn
+                input(type="hidden" name="customerName" value=defaultAddress.fullName)
+                input(type="hidden" name="customerPhone" value=defaultAddress.phone)
+                input(type="hidden" name="customerAddress" value=defaultAddress.address)
 
-            .form-group
-              label.checkout-label(for="customerPhone") Số điện thoại *
-              input.checkout-input#customerPhone(type="tel" name="customerPhone" required placeholder="Nhập số điện thoại")
+                .form-group
+                  label.font-weight-500(for="customerNote") Ghi chú (Tùy chọn)
+                  textarea.form-control#customerNote(name="customerNote" rows="3" placeholder="Lưu ý cho người giao hàng..." class="tz-auto-d90f81")
 
-            .form-group
-              label.checkout-label(for="customerAddress") Địa chỉ giao hàng *
-              textarea.checkout-input#customerAddress(name="customerAddress" rows="3" required placeholder="Nhập địa chỉ giao hàng")
+              else if clientUser
+                //- Đã đăng nhập nhưng Sổ địa chỉ trống: Bắt buộc nhấp Thêm địa chỉ
+                .address-selector-card.mb-4.text-center.py-5.rounded(class="tz-auto-835ace")
+                  i.fas.fa-map-marker-alt.fa-3x.mb-3(class="tz-auto-28e6a7")
+                  h5.font-weight-bold Bạn chưa có địa chỉ nhận hàng
+                  p.text-muted Vui lòng thiết lập địa chỉ trước khi thanh toán
+                  a.btn.btn-primary.mt-3(href="/user/address/create?redirect=checkout" class="tz-auto-5204cc") 
+                    i.fas.fa-plus.mr-2
+                    | Thêm Địa Chỉ Mới
+              else
+                //- Chưa đăng nhập (Khách vãng lai): Cho phép hiện Form tự nhập tay
+                .form-group
+                  label.font-weight-500(for="customerName") Họ và tên *
+                  input.form-control#customerName(type="text" name="customerName" required placeholder="Nhập họ và tên" class="tz-auto-d90f81")
 
-            .form-group
-              label.checkout-label(for="customerNote") Ghi chú
-              textarea.checkout-input#customerNote(name="customerNote" rows="2" placeholder="Ghi chú thêm (tùy chọn)")
+                .form-group
+                  label.font-weight-500(for="customerPhone") Số điện thoại *
+                  input.form-control#customerPhone(type="tel" name="customerPhone" required placeholder="Nhập số điện thoại" class="tz-auto-d90f81")
 
-            button.btn-checkout-submit(type="submit")
-              i.fas.fa-check-circle.mr-2
-              | Đặt hàng
+                .form-group
+                  label.font-weight-500(for="customerAddress") Địa chỉ nhận hàng *
+                  textarea.form-control#customerAddress(name="customerAddress" rows="3" required placeholder="Nhập địa chỉ nhận hàng cực kỳ chi tiết" class="tz-auto-d90f81")
+
+                .form-group
+                  label.font-weight-500(for="customerNote") Ghi chú (Tùy chọn)
+                  textarea.form-control#customerNote(name="customerNote" rows="2" placeholder="Lưu ý cho người giao hàng..." class="tz-auto-d90f81")
+
+              //- Ẩn nút đặt hàng nếu User đăng nhập mà CỐ TÌNH CHƯA có Address
+              if (!clientUser || (clientUser && defaultAddress))
+                button.btn.btn-primary.w-100.mt-3(type="submit" class="tz-auto-ca8074")
+                  i.fas.fa-check-circle.mr-2
+                  | Đặt hàng ngay
 
       .col-lg-5
-        .checkout-section
-          h4.checkout-section-title
-            i.fas.fa-shopping-bag.mr-2
-            | Đơn hàng của bạn (#{cartItems.length} sản phẩm)
+        .card.border-0.shadow-sm
+          .card-body.p-3
+            h5.font-weight-bold.mb-4
+              i.fas.fa-shopping-bag.mr-2(class="tz-auto-aacc5d")
+              | Đơn hàng của bạn (#{cartItems.length} sản phẩm)
 
-          .checkout-items
-            each item in cartItems
-              .checkout-item
-                .checkout-item-img
+            .checkout-items-wrapper.mb-4(class="tz-auto-0ca94a")
+              each item in cartItems
+                .d-flex.align-items-center.mb-3.pb-3.border-bottom
                   if item.product.thumbnail
-                    img(src=item.product.thumbnail alt=item.product.title)
+                    img.rounded.border(src=item.product.thumbnail alt=item.product.title class="tz-auto-43e218")
                   else
-                    .checkout-item-placeholder
+                    .bg-light.rounded.d-flex.align-items-center.justify-content-center(class="tz-auto-a9211e")
                       i.fas.fa-image
-                .checkout-item-info
-                  .checkout-item-name= item.product.title
-                  .checkout-item-qty x#{item.quantity}
-                .checkout-item-price= item.itemTotal.toLocaleString() + ' ₫'
+                  
+                  .flex-grow-1.ml-3
+                    a.text-dark.font-weight-bold(href=`/products/detail/${item.product.slug}` class="tz-auto-52355a")= item.product.title
+                    .d-flex.justify-content-between.align-items-center.mt-2
+                      span.text-muted(class="tz-auto-766745") Số lượng: x#{item.quantity}
+                      span.font-weight-bold(class="tz-auto-267f6d")= item.itemTotal.toLocaleString() + ' ₫'
 
-          .checkout-total
-            span.checkout-total-label Tổng thanh toán:
-            span.checkout-total-price= cartTotal.toLocaleString() + ' ₫'
+            .d-flex.justify-content-between.align-items-end.pt-2
+              span.font-weight-bold.text-dark Tổng thanh toán:
+              span.font-weight-bold(class="tz-auto-4c011e")= cartTotal.toLocaleString() + ' ₫'

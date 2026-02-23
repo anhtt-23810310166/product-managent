@@ -1,60 +1,58 @@
 include ../mixins/menu-category.pug
 
-nav.navbar.navbar-expand-lg.navbar-dark.shadow-sm
-  .container
-    a.navbar-brand.d-flex.align-items-center(href="/")
-      img(src="/images/logo.svg" alt="Logo" width="48" height="48")
-    button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarNav")
-      span.navbar-toggler-icon
-    #navbarNav.collapse.navbar-collapse
-      //- Thanh tìm kiếm Shopee-style
-      form.navbar-search-form(action="/products" method="GET")
-        .navbar-search-wrap
-          input.navbar-search-input(type="text" name="keyword" placeholder="Tìm kiếm sản phẩm..." autocomplete="off")
-          button.navbar-search-btn(type="submit")
-            i.fas.fa-search
+header.tz-header.sticky-top.bg-white.shadow-sm
+  //- TẦNG 1: SEARCH BAR & TOOLBAR
+  .tz-header-top.border-bottom
+    .container
+      .row.align-items-center.py-3
+        //- Cột Logo
+        .col-lg-3.col-md-4.col-6
+          a.tz-logo.d-flex.align-items-center.text-decoration-none(href="/")
+            i.fas.fa-bolt.text-primary.mr-2.tz-logo-icon
+            span.font-weight-bold.text-dark.tz-logo-text TechZone
+        
+        //- Cột Thanh tìm kiếm
+        .col-lg-5.d-none.d-lg-block
+          form.tz-search-form.mb-0(action="/products" method="GET")
+            .input-group
+              .input-group-prepend
+                span.input-group-text.bg-white.border-right-0
+                  i.fas.fa-search.text-muted
+              input.form-control.border-left-0(type="text" name="keyword" placeholder="Tìm kiếm sản phẩm, thương hiệu..." autocomplete="off")
+              .input-group-append
+                button.btn.btn-primary.tz-search-btn(type="submit") Tìm
+        
+        //- Cột Công cụ xử lý
+        .col-lg-4.col-md-8.col-6.text-right
+          .tz-header-tools.d-flex.justify-content-end.align-items-center
+            //- Nút chuyển ngôn ngữ
+            .tz-lang-switch.mr-4.d-none.d-md-block
+              span.badge.badge-primary.p-2.px-3.text-primary.tz-lang-badge VN / EN
+            
+            //- Mini giỏ hàng
+            a.tz-tool-icon.mr-4.position-relative.text-dark(href="/cart")
+              i.fas.fa-shopping-cart
+              span.badge.badge-danger.badge-pill.position-absolute#miniCartBadge= cartTotalQuantity || 0
+            
+            //- Khu vực Người dùng Dropdown Auth
+            if clientUser
+              .dropdown.tz-user-dropdown
+                a.tz-tool-icon.text-dark.dropdown-toggle(href="#" id="userDropdown" role="button" data-toggle="dropdown")
+                  i.fas.fa-user-circle
+                .dropdown-menu.dropdown-menu-right.shadow-sm.border-0.mt-2(aria-labelledby="userDropdown")
+                  .dropdown-header.font-weight-bold= clientUser.fullName
+                  a.dropdown-item(href="/user/info")
+                    i.fas.fa-id-card.mr-2.text-muted
+                    | Hồ sơ cá nhân
+                  a.dropdown-item(href="/user/address")
+                    i.fas.fa-map-marker-alt.mr-2.text-muted
+                    | Sổ địa chỉ  
+                  .dropdown-divider
+                  a.dropdown-item.text-danger(href="/user/logout")
+                    i.fas.fa-sign-out-alt.mr-2
+                    | Đăng xuất
+            else
+              a.tz-tool-icon.text-dark(href="/user/login")
+                i.fas.fa-user
 
-      ul.navbar-nav.ml-auto
-        li.nav-item
-          a.nav-link(href="/")
-            i.fas.fa-home.mr-1
-            | Trang chủ
-
-        //- Menu Sản phẩm (Shopee-style mega dropdown)
-        +navShopeeMega("Sản phẩm", "fas fa-box", "/products", productCategories, "/products", "category")
-
-        //- Menu Bài viết (Shopee-style mega dropdown)
-        +navShopeeMega("Bài viết", "fas fa-newspaper", "/articles", articleCategories, "/articles", "category")
-
-
-
-        //- Mini Cart
-        li.nav-item
-          a.nav-link.mini-cart-link(href="/cart")
-            i.fas.fa-shopping-cart
-            span.mini-cart-badge#miniCartBadge= cartTotalQuantity || 0
-
-        //- User Auth
-        if clientUser
-          li.nav-item.dropdown.user-dropdown
-            a.nav-link.dropdown-toggle.user-dropdown-toggle(href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
-              i.fas.fa-user-circle.mr-1
-              span= clientUser.fullName
-            .dropdown-menu.dropdown-menu-right.user-dropdown-menu(aria-labelledby="userDropdown")
-              a.dropdown-item(href="/user/info")
-                i.fas.fa-id-card.mr-2
-                | Thông tin tài khoản
-              .dropdown-divider
-              a.dropdown-item(href="/user/logout")
-                i.fas.fa-sign-out-alt.mr-2
-                | Đăng xuất
-        else
-          li.nav-item.auth-nav-item
-            a.nav-link(href="/user/login")
-              i.fas.fa-sign-in-alt.mr-1
-              | Đăng nhập
-          li.nav-item.auth-nav-item
-            a.nav-link.auth-register-link(href="/user/register")
-              i.fas.fa-user-plus.mr-1
-              | Đăng ký
 

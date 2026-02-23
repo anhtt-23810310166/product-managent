@@ -11,32 +11,45 @@
 //-   currentCategory: danh mục đang chọn (hoặc null)
 
 mixin categorySidebar(headerTitle, allLabel, baseUrl, categories, currentCategory)
-  .category-sidebar
-    .category-sidebar-header
-      i.fas.fa-list.mr-2
-      = headerTitle
-    ul.category-sidebar-list
-      li
-        a.category-sidebar-link(href=baseUrl class=(!currentCategory ? 'active' : ''))
-          = allLabel
-      if categories && categories.length > 0
-        each cat in categories
-          //- Kiểm tra xem danh mục con có đang active không
-          - var hasActiveChild = false
-          if cat.children && cat.children.length > 0 && currentCategory
-            each child in cat.children
-              if currentCategory.slug === child.slug
-                - hasActiveChild = true
-          li(class=(hasActiveChild ? 'has-active-child' : ''))
-            a.category-sidebar-link(
-              href=`${baseUrl}?category=${cat.slug}`
-              class=(currentCategory && currentCategory.slug === cat.slug ? 'active' : '')
-            )= cat.title
+  .tz-sidebar.mt-2
+    .tz-sidebar-header.d-flex.align-items-center.mb-4
+      i.fas.fa-filter.mr-2(class="tz-auto-cd5a6f")
+      h5.mb-0.font-weight-bold(class="tz-auto-beab58") Bộ lọc tìm kiếm
+      
+    .tz-filter-group
+      h6.tz-filter-title.font-weight-bold.mb-3= headerTitle
+      ul.tz-filter-list.list-unstyled.mb-0
+        li.mb-2
+          a.tz-filter-link.d-flex.align-items-center.text-dark(href=baseUrl class=(!currentCategory ? 'active' : ''))
+            .tz-checkbox.mr-2(class=(!currentCategory ? 'checked' : ''))
+              if !currentCategory
+                i.fas.fa-check(class="tz-auto-388d27")
+            span(class="tz-auto-d2dc0a")= allLabel
+            
+        if categories && categories.length > 0
+          each cat in categories
+            - var isActive = currentCategory && currentCategory.slug === cat.slug
+            li.mb-2
+              a.tz-filter-link.d-flex.align-items-center.text-dark(
+                href=`${baseUrl}?category=${cat.slug}`
+                class=(isActive ? 'active' : '')
+              )
+                .tz-checkbox.mr-2(class=(isActive ? 'checked' : ''))
+                  if isActive
+                    i.fas.fa-check(class="tz-auto-388d27")
+                span(class="tz-auto-d2dc0a")= cat.title
+                
             if cat.children && cat.children.length > 0
-              ul.category-sidebar-sub
+              //- Hiển thị danh mục con
+              ul.tz-filter-sublist.list-unstyled.ml-4.mt-2.mb-3
                 each child in cat.children
-                  li
-                    a.category-sidebar-link(
+                  - var isChildActive = currentCategory && currentCategory.slug === child.slug
+                  li.mb-2
+                    a.tz-filter-link.d-flex.align-items-center.text-dark(
                       href=`${baseUrl}?category=${child.slug}`
-                      class=(currentCategory && currentCategory.slug === child.slug ? 'active' : '')
-                    )= child.title
+                      class=(isChildActive ? 'active' : '')
+                    )
+                      .tz-checkbox.mr-2(class=(isChildActive ? 'checked' : ''))
+                        if isChildActive
+                          i.fas.fa-check(class="tz-auto-388d27")
+                      span(class="tz-auto-d2dc0a")= child.title

@@ -1,6 +1,7 @@
 const dashboardRoutes = require("./dashboard.route");
 const productRoutes = require("./product.route");
 const productCategoryRoutes = require("./product-category.route");
+const brandRoutes = require("./brand.route");
 const articleRoutes = require("./article.route");
 const articleCategoryRoutes = require("./article-category.route");
 const settingRoutes = require("./setting.route");
@@ -56,6 +57,13 @@ module.exports = (app) => {
         productCategoryRoutes
     );
 
+    // Quản lý thương hiệu - cần quyền brands_view
+    app.use(
+        `${PATH_ADMIN}/brands`,
+        authMiddleware.requirePermission("brands_view"),
+        brandRoutes
+    );
+
     // Quản lý bài viết - cần quyền articles_view
     app.use(
         `${PATH_ADMIN}/articles`,
@@ -98,9 +106,10 @@ module.exports = (app) => {
         userRoutes
     );
 
-    // Hỗ trợ khách hàng (Inbox chat)
+    // Hỗ trợ khách hàng (Inbox chat) - cần quyền chat_view
     app.use(
         `${PATH_ADMIN}/chat`,
-        chatRoutes // Không yêu cầu quyền quá gắt, hoặc gắn quyền nếu cần
+        authMiddleware.requirePermission("chat_view"),
+        chatRoutes
     );
 }

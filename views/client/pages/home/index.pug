@@ -2,82 +2,215 @@ extends ../../layouts/default
 include ../../mixins/product-card.pug
 
 block main
-  //- ===== Hero Banner =====
-  .home-hero
+  //- CATEGORY MENU
+  .tz-header-nav.bg-white.border-bottom.mb-4.d-none.d-lg-block
     .container
-      .home-hero-inner
-        .home-hero-text
-          h1.home-hero-title Chào mừng đến cửa hàng
-          p.home-hero-desc Khám phá hàng ngàn sản phẩm chất lượng với giá tốt nhất
-          a.home-hero-btn(href="/products")
-            | Mua sắm ngay
-            i.fas.fa-arrow-right.ml-2
+      ul.nav.tz-main-menu.py-2
+        if productCategories && productCategories.length > 0
+          +categoryMenu(productCategories.slice(0, 8), '/products', 'category')
+        else
+          li.nav-item
+            a.nav-link.font-weight-500(href='/products') Tất cả sản phẩm
 
   .container
+    //- ===== 1. HERO BANNER =====
+    .tz-hero-banner
+      .row.align-items-center
+        .col-lg-6.col-md-8.p-5
+          .badge.badge-primary.mb-3.tz-badge MỚI RA MẮT
+          h1.tz-hero-title iPhone 15 Pro Max#[br] Titan Tự Nhiên
+          p.tz-hero-desc.mt-3 Khung viền titan. Chip A17 Pro mạnh mẽ. Nút Tác Vụ hoàn toàn mới. Sẵn hàng ngay hôm nay.
+          .mt-4.d-flex
+            a.btn.btn-light.tz-hero-btn.mr-3(href="/products")
+              span.font-weight-bold.text-dark Mua ngay
+            a.btn.btn-outline-light.tz-hero-btn(href="/products")
+              span Xem chi tiết
 
-    //- ===== Danh mục sản phẩm =====
+    //- ===== 2. FEATURES BAR =====
+    .tz-features.mt-3.mb-5
+      .row
+        .col-lg-3.col-md-6.mb-3.mb-lg-0
+          .tz-feature-item.d-flex.align-items-center
+            .icon-wrap.rounded-circle.mr-3
+              i.fas.fa-shield-alt
+            div
+              h6.mb-0 100% Chính hãng
+              small.text-muted Cam kết chất lượng
+        .col-lg-3.col-md-6.mb-3.mb-lg-0
+          .tz-feature-item.d-flex.align-items-center
+            .icon-wrap.rounded-circle.mr-3
+              i.fas.fa-truck
+            div
+              h6.mb-0 Miễn phí vận chuyển
+              small.text-muted Đơn từ 500k
+        .col-lg-3.col-md-6.mb-3.mb-lg-0
+          .tz-feature-item.d-flex.align-items-center
+            .icon-wrap.rounded-circle.mr-3
+              i.fas.fa-sync-alt
+            div
+              h6.mb-0 Bảo hành 12 tháng
+              small.text-muted Tại các trung tâm
+        .col-lg-3.col-md-6.mb-3.mb-lg-0
+          .tz-feature-item.d-flex.align-items-center
+            .icon-wrap.rounded-circle.mr-3
+              i.fas.fa-headset
+            div
+              h6.mb-0 Hỗ trợ 24/7
+              small.text-muted Tư vấn nhiệt tình
+
+    //- ===== 3. DANH MỤC NỔI BẬT =====
     if productCategories && productCategories.length > 0
-      .home-section
-        .home-section-header
-          h2.home-section-title
-            | Danh mục
-          a.home-section-link(href="/products") Xem tất cả
-            i.fas.fa-chevron-right.ml-1
-        .home-categories
-          each cat in productCategories
-            a.home-category-item(href=`/products?category=${cat.slug}`)
-              if cat.thumbnail
-                .home-category-img
-                  img(src=cat.thumbnail alt=cat.title)
-              else
-                .home-category-img
-                  i.fas.fa-th-large
-              span.home-category-name= cat.title
+      .tz-section.mb-5
+        h4.tz-section-title.mb-4 Danh mục nổi bật
+        .row
+          - const catIcons = ['fa-mobile-alt', 'fa-laptop', 'fa-headphones', 'fa-clock', 'fa-tablet-alt', 'fa-plug']
+          each cat, i in productCategories.slice(0, 6)
+            .col-lg-2.col-md-4.col-6.mb-3
+              a.tz-cat-box.text-center.d-block(href=`/products?category=${cat.slug}`)
+                if cat.thumbnail
+                  img.d-block.mx-auto.mb-3(src=cat.thumbnail alt=cat.title)
+                else
+                  i.fas.cat-icon.d-block.mb-3(class=catIcons[i] || 'fa-tags')
+                h6= cat.title
 
-    //- ===== Sản phẩm nổi bật =====
+    //- ===== 4. FLASH SALE =====
     if featuredProducts && featuredProducts.length > 0
-      .home-section
-        .home-section-header
-          h2.home-section-title
-            | Sản phẩm nổi bật
-          a.home-section-link(href="/products") Xem tất cả
-            i.fas.fa-chevron-right.ml-1
-        .home-product-grid
+      .tz-flashsale-wrapper.mb-5
+        .d-flex.align-items-center.justify-content-between.mb-4.flex-wrap
+          .d-flex.align-items-center
+            h3.tz-flash-title.mb-0.mr-3
+              i.fas.fa-bolt.mr-2
+              | FLASH SALE
+            .tz-countdown.ml-3.d-none.d-md-flex
+              span.text-white.mr-2.tz-countdown-label Kết thúc trong
+              .cd-box 02
+              span.text-white.mx-1 :
+              .cd-box 15
+              span.text-white.mx-1 :
+              .cd-box 48
+          a.text-white.tz-view-all(href="/products")
+            | Xem tất cả
+            i.fas.fa-arrow-right.ml-2
+
+        .row
           each product in featuredProducts
-            +productCard(product)
+            .col-lg-3.col-md-6.mb-3
+              .tz-flash-card
+                if product.discountPercentage > 0
+                  .tz-badge-discount -#{product.discountPercentage}%
+                a(href=`/products/detail/${product.slug}`)
+                  .card-img-wrap
+                    img(src=(product.thumbnail || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&auto=format&fit=crop") alt=product.title)
+                .card-body
+                  h6.card-title
+                    a(href=`/products/detail/${product.slug}`)= product.title
 
-    //- ===== Sản phẩm mới nhất =====
+                  if product.discountPercentage > 0
+                    - const salePrice = Math.round(product.price * (1 - product.discountPercentage / 100))
+                    .tz-price-sale #{salePrice.toLocaleString('vi-VN')}₫
+                    .tz-price-original #{product.price.toLocaleString('vi-VN')}₫
+                  else
+                    .tz-price-sale #{product.price ? product.price.toLocaleString('vi-VN') + '₫' : 'Liên hệ'}
+
+                  .tz-sold-bar.mt-2
+                    .tz-sold-bar-fill(class="tz-auto-526a45")
+                  .d-flex.justify-content-between.align-items-center.mt-2
+                    small.text-muted.tz-sold-count Đã bán #{Math.floor(Math.random() * 100 + 20)}
+                    a.tz-flash-btn.tz-flash-btn-sm.px-3(href=`/products/detail/${product.slug}`) Mua ngay
+
+    //- ===== 5. HÀNG MỚI VỀ =====
     if newestProducts && newestProducts.length > 0
-      .home-section
-        .home-section-header
-          h2.home-section-title
-            | Sản phẩm mới nhất
-          a.home-section-link(href="/products") Xem tất cả
-            i.fas.fa-chevron-right.ml-1
-        .home-product-grid
-          each product in newestProducts
-            +productCard(product)
+      .tz-section.mb-5
+        .d-flex.justify-content-between.align-items-end.mb-4
+          div
+            h4.tz-section-title.mb-1 Hàng mới về
 
-    //- ===== Bài viết nổi bật =====
+          a.tz-view-all(href="/products")
+            | Xem tất cả
+            i.fas.fa-arrow-right.ml-2
+
+        .row
+          each product in newestProducts
+            .col-lg-3.col-md-6.mb-4
+              .card.tz-product-card.h-100.border-0
+                if product.featured == "1"
+                  .badge.badge-info.tz-badge-new HOT
+                else
+                  .badge.badge-primary.tz-badge-new(class="tz-auto-95babf") MỚI
+
+                a(href=`/products/detail/${product.slug}`)
+                  img.card-img-top.p-3(src=(product.thumbnail || "https://images.unsplash.com/photo-1531297172867-4f5145cdb2cc?q=80&w=600&auto=format&fit=crop"))
+
+                .card-body.pt-0.pb-3.px-3
+                  h6.card-title.tz-product-title.tz-product-title-sm.mb-1
+                    a.text-dark(href=`/products/detail/${product.slug}`)= product.title
+
+                  .d-flex.align-items-end.justify-content-between.mt-3
+                    .d-flex.flex-column
+                      if product.discountPercentage > 0
+                        - const newPrice = Math.round(product.price * (1 - product.discountPercentage / 100))
+                        .tz-price-blue #{newPrice.toLocaleString('vi-VN')}₫
+                        small.text-muted.tz-price-original-sm #{product.price.toLocaleString('vi-VN')}₫
+                      else
+                        .tz-price-blue #{product.price ? product.price.toLocaleString('vi-VN') + '₫' : 'Liên hệ'}
+                        small.tz-price-spacer &nbsp;
+
+                    .d-flex.align-items-center
+                      i.fas.fa-star.text-warning.tz-product-star
+                      span.text-muted.ml-1.tz-product-rating-count 4.#{Math.floor(Math.random() * 3 + 7)}
+
+    //- ===== 6. SẢN PHẨM NỔI BẬT =====
+    if featuredProducts && featuredProducts.length > 0
+      .tz-section.mb-5
+        .d-flex.justify-content-between.align-items-end.mb-4
+          div
+            h4.tz-section-title.mb-1 Sản phẩm nổi bật
+          a.tz-view-all(href="/products")
+            | Xem tất cả
+            i.fas.fa-arrow-right.ml-2
+
+        .row
+          each product in featuredProducts
+            .col-lg-3.col-md-6.mb-4
+              +productCard(product)
+
+    //- ===== 7. BÀI VIẾT NỔI BẬT =====
     if featuredArticles && featuredArticles.length > 0
-      .home-section
-        .home-section-header
-          h2.home-section-title
-            | Bài viết nổi bật
-          a.home-section-link(href="/articles") Xem tất cả
-            i.fas.fa-chevron-right.ml-1
-        .home-article-grid
-          each article in featuredArticles
-            a.home-article-card(href=`/articles/${article.slug}`)
-              if article.thumbnail
-                .home-article-img
-                  img(src=article.thumbnail alt=article.title)
-              else
-                .home-article-img.home-article-img-placeholder
-                  i.fas.fa-newspaper
-              .home-article-body
-                h3.home-article-title= article.title
-                if article.createdAt
-                  span.home-article-date
-                    i.far.fa-clock.mr-1
-                    = article.createdAt.toLocaleDateString('vi-VN')
+      .tz-section.mb-5
+        .d-flex.justify-content-between.align-items-end.mb-4
+          div
+            h4.tz-section-title.mb-1 Bài viết nổi bật
+            p.text-muted.mb-0.tz-section-desc Những thông tin công nghệ mới nhất
+          a.tz-view-all(href="/articles")
+            | Xem tất cả
+            i.fas.fa-arrow-right.ml-2
+
+        .row
+          each article in featuredArticles.slice(0, 4)
+            .col-lg-3.col-md-6.mb-4
+              .card.tz-product-card.h-100.border-0
+                a(href=`/articles/detail/${article.slug}`)
+                  img.card-img-top.tz-article-card-img(src=(article.thumbnail || "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=600&auto=format&fit=crop"))
+                .card-body.p-3
+                  h6.card-title.tz-product-title.tz-product-title-sm.mb-2
+                    a.text-dark(href=`/articles/detail/${article.slug}`)= article.title
+                  p.text-muted.mb-0.tz-article-desc-truncate= article.description || "Nội dung bài viết đang được cập nhật..."
+
+    //- ===== 8. DOUBLE BANNERS =====
+    .row.mb-5
+      .col-md-6.mb-4.mb-md-0
+        .tz-mini-banner.position-relative.rounded.overflow-hidden
+          img.w-100(src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1600&auto=format&fit=crop")
+          .tz-mini-banner-content.position-absolute.p-3.d-flex.flex-column.align-items-start.justify-content-center.bg-gradient-dark-right
+            span.badge.bg-white.text-dark.mb-2.tz-mini-banner-badge GAMING GEAR
+            h4.text-white.font-weight-bold Nâng tầm trải nghiệm#[br] chiến game đỉnh cao
+            a.btn.btn-primary.mt-2.tz-mini-banner-btn(href="/products") Khám phá ngay
+
+      .col-md-6
+        .tz-mini-banner.position-relative.rounded.overflow-hidden
+          img.w-100(src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1600&auto=format&fit=crop")
+          .tz-mini-banner-content.position-absolute.p-3.d-flex.flex-column.align-items-start.justify-content-center.bg-gradient-dark-light-right
+            span.badge.bg-white.text-dark.mb-2.tz-mini-banner-badge VĂN PHÒNG
+            h4.text-white.font-weight-bold Laptop doanh nhân#[br] Mỏng nhẹ & Mạnh mẽ
+            a.btn.btn-light.mt-2.tz-mini-banner-btn(href="/products") Xem bộ sưu tập
+

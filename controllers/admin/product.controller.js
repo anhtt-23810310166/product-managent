@@ -1,5 +1,6 @@
 const Product = require("../../models/product.model");
 const ProductCategory = require("../../models/product-category.model");
+const Brand = require("../../models/brand.model");
 const createTree = require("../../helpers/createTree");
 const filterStatusHelper = require("../../helpers/filterStatus");
 const searchHelper = require("../../helpers/search");
@@ -47,6 +48,13 @@ module.exports.index = async (req, res) => {
         categoryMap[cat._id.toString()] = cat.title;
     });
 
+    // Brand lookup
+    const brands = await Brand.find({ deleted: false, status: "active" }).sort({ position: 1 });
+    const brandMap = {};
+    brands.forEach(b => {
+        brandMap[b._id.toString()] = b.name;
+    });
+
     res.render("admin/pages/products/index", {
         pageTitle: "Danh sách sản phẩm",
         currentPage: "products",
@@ -59,7 +67,8 @@ module.exports.index = async (req, res) => {
         keyword: objectSearch.keyword,
         sortOptions: objectSort.sortOptions,
         pagination: objectPagination,
-        categoryMap: categoryMap
+        categoryMap: categoryMap,
+        brandMap: brandMap
     });
 }
 
@@ -67,6 +76,7 @@ module.exports.index = async (req, res) => {
 module.exports.create = async (req, res) => {
     const categories = await ProductCategory.find({ deleted: false }).sort({ position: "asc" });
     const tree = createTree(categories);
+    const brands = await Brand.find({ deleted: false, status: "active" }).sort({ position: 1 });
 
     res.render("admin/pages/products/create", {
         pageTitle: "Thêm sản phẩm mới",
@@ -75,7 +85,8 @@ module.exports.create = async (req, res) => {
             { title: "Sản phẩm" },
             { title: "Thêm sản phẩm" }
         ],
-        categories: tree
+        categories: tree,
+        brands: brands
     });
 }
 
@@ -125,6 +136,7 @@ module.exports.edit = async (req, res) => {
 
         const categories = await ProductCategory.find({ deleted: false }).sort({ position: "asc" });
         const tree = createTree(categories);
+        const brands = await Brand.find({ deleted: false, status: "active" }).sort({ position: 1 });
 
         res.render("admin/pages/products/edit", {
             pageTitle: "Chỉnh sửa sản phẩm",
@@ -135,6 +147,7 @@ module.exports.edit = async (req, res) => {
             ],
             product: product,
             categories: tree,
+            brands: brands,
             returnUrl: req.headers.referer || `${prefixAdmin}/products`
         });
     } catch (error) {
@@ -154,6 +167,7 @@ module.exports.editPatch = async (req, res) => {
 
         product.title = req.body.title;
         product.product_category_id = req.body.product_category_id || "";
+        product.brand_id = req.body.brand_id || "";
         product.description = req.body.description;
         product.price = parseInt(req.body.price) || 0;
         product.discountPercentage = parseInt(req.body.discountPercentage) || 0;
@@ -197,6 +211,12 @@ module.exports.detail = async (req, res) => {
             category = await ProductCategory.findById(product.product_category_id);
         }
 
+        // Get brand
+        let brand = null;
+        if (product.brand_id) {
+            brand = await Brand.findById(product.brand_id);
+        }
+
         res.render("admin/pages/products/detail", {
             pageTitle: "Chi tiết sản phẩm",
             currentPage: "products",
@@ -205,7 +225,8 @@ module.exports.detail = async (req, res) => {
                 { title: "Chi tiết" }
             ],
             product: product,
-            category: category
+            category: category,
+            brand: brand
         });
     } catch (error) {
         req.flash("error", "Có lỗi xảy ra!");

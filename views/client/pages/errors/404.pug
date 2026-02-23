@@ -27,7 +27,7 @@ html(lang="vi")
       .error-code {
         font-size: 100px;
         font-weight: 800;
-        color: #ee4d2d;
+        color: var(--tz-blue, #0048ff);
         line-height: 1;
         margin-bottom: 20px;
       }
@@ -36,17 +36,18 @@ html(lang="vi")
         color: #ffc107;
         margin-bottom: 20px;
       }
-      .btn-shopee {
-        background-color: #ee4d2d;
+      .btn-tz {
+        background-color: var(--tz-blue, #0048ff);
         color: white;
-        padding: 10px 24px;
-        border-radius: 4px;
+        padding: 6px 16px;
+        font-size: 13px;
+        border-radius: 6px;
         font-weight: 500;
         transition: all 0.2s;
         border: none;
       }
-      .btn-shopee:hover {
-        background-color: #d73a1c;
+      .btn-tz:hover {
+        background-color: var(--tz-blue-dark, #0036cc);
         color: white;
         text-decoration: none;
       }
@@ -58,6 +59,6 @@ html(lang="vi")
       .error-code 404
       h3.font-weight-bold.mb-3 Xin lỗi, trang bạn tìm không tồn tại!
       p.text-muted.mb-4 Quý khách có thể đã nhập sai địa chỉ hoặc trang đã bị xóa/di chuyển. Vui lòng quay lại trang chủ để tiếp tục mua sắm.
-      a.btn.btn-shopee(href="/")
+      a.btn.btn-tz(href="/")
         i.fas.fa-home.mr-2
         | Trở về Trang Chủ

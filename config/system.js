@@ -27,6 +27,17 @@ const systemConfig = (app) => {
             ]
         },
         {
+            label: "Thương hiệu sản phẩm",
+            name: "brands",
+            permissions: [
+                { label: "Xem", action: "view" },
+                { label: "Thêm mới", action: "create" },
+                { label: "Chỉnh sửa", action: "edit" },
+                { label: "Xóa", action: "delete" },
+                { label: "Đổi trạng thái", action: "change-status" }
+            ]
+        },
+        {
             label: "Bài viết",
             name: "articles",
             permissions: [
@@ -91,6 +102,13 @@ const systemConfig = (app) => {
         {
             label: "Cài đặt chung",
             name: "settings",
+            permissions: [
+                { label: "Xem", action: "view" }
+            ]
+        },
+        {
+            label: "Hỗ trợ CSKH",
+            name: "chat",
             permissions: [
                 { label: "Xem", action: "view" }
             ]

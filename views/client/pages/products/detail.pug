@@ -1,100 +1,117 @@
 extends ../../layouts/default
 
 block main
-  .product-detail-page
-    .container.py-4
-      //- Breadcrumb
-      nav.product-breadcrumb(aria-label="breadcrumb")
-        ol.breadcrumb
-          li.breadcrumb-item
-            a(href="/")
-              i.fas.fa-home.mr-1
-              | Trang chủ
-          li.breadcrumb-item
-            a(href="/products") Sản phẩm
-          li.breadcrumb-item.active= product.title
+  .container.py-4
+    //- Breadcrumb
+    nav(aria-label="breadcrumb")
+      ol.breadcrumb.bg-transparent.px-0.pb-3.pt-0.mb-0.tz-breadcrumb-nav
+        li.breadcrumb-item
+          a.text-muted(href="/") Trang chủ
+        li.breadcrumb-item
+          a.text-muted(href="/products") Sản phẩm
+        li.breadcrumb-item.active.tz-breadcrumb-active(aria-current="page")= product.title
 
-      //- Product Detail Card
-      .product-detail-card
-        .row.no-gutters
-          //- Product Image
-          .col-lg-5.col-md-6
-            .product-detail-img-wrap
-              if product.thumbnail
-                img.product-detail-img(src=product.thumbnail alt=product.title)
-              else
-                .product-detail-no-img
-                  i.fas.fa-image.fa-4x
-                  p Chưa có ảnh
+    //- Product Detail Card
+    .card.border-0.shadow-sm.overflow-hidden.mb-5.tz-detail-card
+      .row.no-gutters.p-3
+        //- Product Image
+        .col-lg-5.col-md-6.text-center.mb-4.mb-md-0
+          .position-relative.p-3.tz-product-image-box
+            if product.discountPercentage && product.discountPercentage > 0
+              .badge.badge-danger.position-absolute.tz-badge-discount-lg 
+                | -#{product.discountPercentage}%
+            
+            if product.thumbnail
+              img.img-fluid.p-3.tz-product-image-main(src=product.thumbnail alt=product.title)
+            else
+              .py-5.text-muted
+                i.fas.fa-image.fa-4x.mb-3
+                p Chưa có ảnh
 
-              if product.discountPercentage && product.discountPercentage > 0
-                .product-detail-discount-badge
-                  | -#{product.discountPercentage}%
+        //- Product Info
+        .col-lg-7.col-md-6.pl-md-5
+          h1.font-weight-bold.mb-3.tz-product-title-lg= product.title
+          
+          .d-flex.align-items-center.mb-4
+            .d-flex.text-warning.mr-3.tz-stars-lg
+              i.fas.fa-star
+              i.fas.fa-star
+              i.fas.fa-star
+              i.fas.fa-star
+              i.fas.fa-star.text-muted
+            span.text-muted.mr-3.tz-rating-text (Đánh giá)
+            span.text-muted.tz-rating-text | Đã bán 0
 
-          //- Product Info
-          .col-lg-7.col-md-6
-            .product-detail-info
-              h1.product-detail-title= product.title
+          //- Price
+          .p-3.mb-4.tz-price-box
+            if product.discountPercentage && product.discountPercentage > 0
+              - var discountedPrice = Math.round(product.price * (1 - product.discountPercentage / 100))
+              .d-flex.align-items-end
+                .font-weight-bold.mr-3.tz-price-current-lg= discountedPrice.toLocaleString('vi-VN') + '₫'
+                .text-muted.mb-1.tz-price-old-lg= product.price.toLocaleString('vi-VN') + '₫'
+              .mt-1
+                span.badge.badge-success.font-weight-normal.tz-badge-saving
+                  | Tiết kiệm: #{(product.price - discountedPrice).toLocaleString('vi-VN')}₫
+            else
+              .font-weight-bold.tz-price-current-lg= product.price ? product.price.toLocaleString('vi-VN') + '₫' : 'Liên hệ'
 
-              //- Price
-              .product-detail-price-box
-                if product.discountPercentage && product.discountPercentage > 0
-                  - var discountedPrice = Math.round(product.price * (1 - product.discountPercentage / 100) / 1000) * 1000
-                  .product-detail-price-new= discountedPrice.toLocaleString() + ' ₫'
-                  .product-detail-price-old
-                    span.price-line-through= product.price.toLocaleString() + ' ₫'
-                    span.discount-text Tiết kiệm #{(product.price - discountedPrice).toLocaleString()} ₫
-                else
-                  .product-detail-price-new= product.price ? product.price.toLocaleString() + ' ₫' : 'Liên hệ'
+          //- Stock
+          .mb-3.tz-stock-status
+            span.text-muted.mr-3 Trạng thái:
+            if product.stock > 10
+              span.tz-text-success-bold
+                i.fas.fa-check-circle.mr-1
+                | Còn hàng (#{product.stock})
+            else if product.stock > 0
+              span.font-weight-bold.text-warning
+                i.fas.fa-exclamation-triangle.mr-1
+                | Sắp hết (#{product.stock})
+            else
+              span.font-weight-bold.text-danger
+                i.fas.fa-times-circle.mr-1
+                | Hết hàng
 
-              //- Stock
-              .product-detail-stock
-                if product.stock > 10
-                  .stock-available
-                    i.fas.fa-check-circle.mr-2
-                    | Còn hàng (#{product.stock} sản phẩm)
-                else if product.stock > 0
-                  .stock-low
-                    i.fas.fa-exclamation-triangle.mr-2
-                    | Sắp hết (chỉ còn #{product.stock} sản phẩm)
-                else
-                  .stock-out
-                    i.fas.fa-times-circle.mr-2
-                    | Hết hàng
+          //- Brand
+          if brand
+            .mb-4.tz-stock-status
+              span.text-muted.mr-3 Thương hiệu:
+              .d-inline-flex.align-items-center.tz-brand-badge
+                if brand.logo
+                  img.tz-brand-logo(src=brand.logo alt=brand.name)
+                span.font-weight-bold.tz-brand-name= brand.name
 
-              //- Divider
-              hr.product-detail-divider
+          //- Divider
+          hr.my-4
 
-              //- Thêm vào giỏ hàng
-              if product.stock > 0
-                form.add-to-cart-form(action=`/cart/add/${product._id}` method="POST")
-                  .add-to-cart-section
-                    label.add-to-cart-label Số Lượng
-                    .quantity-control
-                      button.quantity-btn.quantity-minus(type="button") −
-                      input.quantity-input(type="number" name="quantity" value="1" min="1" max=product.stock)
-                      button.quantity-btn.quantity-plus(type="button") +
-                    span.stock-hint #{product.stock} sản phẩm có sẵn
-                  .add-to-cart-actions
-                    button.btn-add-to-cart(type="submit")
-                      i.fas.fa-cart-plus.mr-2
-                      | Thêm Vào Giỏ Hàng
-              else
-                .add-to-cart-actions
-                  button.btn-add-to-cart.disabled(disabled)
-                    i.fas.fa-ban.mr-2
-                    | Hết hàng
+          //- Thêm vào giỏ hàng
+          if product.stock > 0
+            form(action=`/cart/add/${product._id}` method="POST")
+              .d-flex.align-items-center.mb-4
+                span.text-muted.mr-4.tz-quantity-label Số lượng:
+                .input-group.tz-quantity-input-group
+                  .input-group-prepend
+                    button.btn.btn-light.px-3.tz-quantity-btn(type="button" onclick="this.parentNode.nextElementSibling.stepDown()") -
+                  input.form-control.text-center.border-0.px-0.tz-quantity-input(type="number" name="quantity" value="1" min="1" max=product.stock)
+                  .input-group-append
+                    button.btn.btn-light.px-3.tz-quantity-btn(type="button" onclick="this.parentNode.previousElementSibling.stepUp()") +
+              
+              .d-flex.mt-4
+                button.btn.d-flex.align-items-center.justify-content-center.mr-3.tz-btn-add-cart(type="submit")
+                  i.fas.fa-cart-plus.mr-2
+                  | THÊM VÀO GIỎ
+                //- Nút MUA NGAY
+                button.btn.d-flex.align-items-center.justify-content-center.tz-btn-buy-now(type="submit" name="buyNow" value="true")
+                  | MUA NGAY
+          else
+            .mt-4
+              button.btn.btn-secondary.w-100.tz-btn-out-stock(disabled)
+                i.fas.fa-ban.mr-2
+                | SẢN PHẨM HẾT HÀNG
 
-              //- Description
-              if product.description
-                .product-detail-desc
-                  h5.desc-title
-                    i.fas.fa-align-left.mr-2
-                    | Mô tả sản phẩm
-                  .desc-text!= product.description
-
-              //- Actions
-              .product-detail-actions
-                a.btn-back-list(href="/products")
-                  i.fas.fa-arrow-left.mr-2
-                  | Quay lại danh sách
+    //- Description Section
+    if product.description
+      .card.border-0.shadow-sm.mb-5
+        .card-header.bg-white.py-3.tz-card-header-light
+          h5.mb-0.font-weight-bold.tz-card-title-md Đặc điểm nổi bật
+        .card-body.p-3
+          .tz-product-desc.content-html.tz-product-desc-content!= product.description

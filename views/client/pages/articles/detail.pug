@@ -2,51 +2,53 @@ extends ../../layouts/default
 
 block main
   .container.py-4
-    //- Breadcrumb
-    .article-breadcrumb
-      nav
-        ol.breadcrumb
-          li.breadcrumb-item
-            a(href="/") Trang chủ
-          li.breadcrumb-item
-            a(href="/articles") Bài viết
-          li.breadcrumb-item.active= article.title
+    nav(aria-label="breadcrumb")
+      ol.breadcrumb.bg-transparent.px-0.pb-3.pt-0.mb-0(class="tz-auto-267f6d")
+        li.breadcrumb-item
+          a.text-muted(href="/") Trang chủ
+        li.breadcrumb-item
+          a.text-muted(href="/articles") Bài viết
+        li.breadcrumb-item.active(aria-current="page" class="tz-auto-9902e1")= article.title
 
     .row
       .col-lg-8.col-md-8
-        .article-detail-card
+        .card.border-0.shadow-sm.mb-4
           if article.thumbnail
-            .article-detail-img
-              img(src=article.thumbnail alt=article.title)
-          .article-detail-body
-            h1.article-detail-title= article.title
-            .article-detail-meta
-              if article.createdAt
-                span.article-detail-date
-                  i.far.fa-clock.mr-1
-                  = article.createdAt.toLocaleDateString('vi-VN')
-            hr.article-detail-divider
-            .article-detail-content!= article.description
+            img.card-img-top(src=article.thumbnail alt=article.title class="tz-auto-fcd4e1")
+          .card-body.p-3
+            h1.font-weight-bold.mb-3(class="tz-auto-dd18fd")= article.title
+            
+            if article.createdAt
+              .text-muted.mb-4(class="tz-auto-267f6d")
+                i.far.fa-clock.mr-2
+                = article.createdAt.toLocaleDateString('vi-VN')
+            
+            hr.mb-4
+            
+            .article-content(class="tz-auto-24f0f2")
+              != article.description
 
       //- Sidebar: bài viết liên quan
       .col-lg-4.col-md-4
         if relatedArticles && relatedArticles.length > 0
-          .article-related
-            h3.article-related-title Bài viết liên quan
-            each related in relatedArticles
-              a.article-related-item(href=`/articles/${related.slug}`)
-                if related.thumbnail
-                  .article-related-img
-                    img(src=related.thumbnail alt=related.title)
-                else
-                  .article-related-img.article-related-img-placeholder
-                    i.fas.fa-newspaper
-                .article-related-info
-                  h4.article-related-name= related.title
-                  if related.createdAt
-                    span.article-related-date= related.createdAt.toLocaleDateString('vi-VN')
+          .card.border-0.shadow-sm.mb-4
+            .card-header.bg-white.border-bottom.py-3
+              h5.card-title.mb-0.font-weight-bold(class="tz-auto-beab58") Bài viết liên quan
+            .card-body.p-0
+              .list-group.list-group-flush
+                each related in relatedArticles
+                  a.list-group-item.list-group-item-action.d-flex.align-items-center.py-3(href=`/articles/detail/${related.slug}` class="tz-auto-ffeebd")
+                    if related.thumbnail
+                      img.rounded.mr-3(src=related.thumbnail alt=related.title class="tz-auto-7879f1")
+                    else
+                      .rounded.mr-3.bg-light.d-flex.align-items-center.justify-content-center(class="tz-auto-9da70d")
+                        i.fas.fa-newspaper
+                    div
+                      h6.mb-1.font-weight-bold(class="tz-auto-3be204")= related.title
+                      if related.createdAt
+                        small.text-muted= related.createdAt.toLocaleDateString('vi-VN')
 
-        .article-sidebar-nav
-          a.btn-back-list(href="/articles")
+        .mt-4
+          a.btn.btn-outline-secondary(href="/articles")
             i.fas.fa-arrow-left.mr-2
             | Quay lại danh sách

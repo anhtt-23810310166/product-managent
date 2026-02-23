@@ -1,5 +1,5 @@
-const Chat = require("../../models/chat.model");
-const cloudinary = require("../../config/cloudinary");
+const Chat = require("../models/chat.model");
+const cloudinary = require("../config/cloudinary");
 
 module.exports = (io) => {
     io.on("connection", (socket) => {

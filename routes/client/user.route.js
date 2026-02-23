@@ -28,4 +28,7 @@ router.post("/info", authMiddleware.requireAuth, upload.single("avatar"), valida
 router.get("/password/change", authMiddleware.requireAuth, controller.changePassword);
 router.post("/password/change", authMiddleware.requireAuth, validate.changePasswordPost, controller.changePasswordPost);
 
+const addressRoutes = require("./address.route");
+router.use("/address", addressRoutes);
+
 module.exports = router;

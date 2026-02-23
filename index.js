@@ -51,7 +51,7 @@ route(app);
 adminRoutes(app);
 
 // Socket.IO
-require("./sockets/client/chat.socket")(io);
+require("./sockets/chat.socket")(io);
 
 // 404 Handler
 app.use((req, res) => {

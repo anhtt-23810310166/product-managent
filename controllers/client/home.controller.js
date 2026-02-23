@@ -10,13 +10,13 @@ module.exports.index = async (req, res) => {
             featured: true,
             status: "active",
             deleted: false
-        }).sort({ position: "desc" }).limit(10);
+        }).sort({ position: "desc" }).limit(4);
 
         // Sản phẩm mới nhất
         const newestProducts = await Product.find({
             status: "active",
             deleted: false
-        }).sort({ createdAt: -1 }).limit(10);
+        }).sort({ createdAt: -1 }).limit(4);
 
         // Bài viết nổi bật
         const featuredArticles = await Article.find({

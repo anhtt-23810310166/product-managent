@@ -22,7 +22,7 @@
     });
 
     chatWidgetClose.addEventListener("click", () => {
-        chatWidgetBox.classList.add("d-none");    // Đóng widget
+        chatWidgetBox.classList.add("d-none");    // Đóng widget (thủ công)
         chatWidgetTrigger.classList.remove("d-none"); // Hiện lại bong bóng nổi
     });
 

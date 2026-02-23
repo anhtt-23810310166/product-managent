@@ -3,39 +3,56 @@ include ../../mixins/category-sidebar.pug
 
 block main
   .container.py-4
+    nav(aria-label="breadcrumb")
+      ol.breadcrumb.bg-transparent.px-0.pb-3.pt-0.mb-0(class="tz-auto-267f6d")
+        li.breadcrumb-item
+          a.text-muted(href="/") Trang chủ
+        if currentCategory
+          li.breadcrumb-item
+            a.text-muted(href="/articles") Bài viết
+          li.breadcrumb-item.active(aria-current="page" class="tz-auto-9902e1")= currentCategory.title
+        else
+          li.breadcrumb-item.active(aria-current="page" class="tz-auto-9902e1") Bài viết
+
     .row
       //- Sidebar danh mục
       .col-lg-3.col-md-4.mb-4
-        +categorySidebar("Danh mục bài viết", "Tất cả bài viết", "/articles", articleCategories, currentCategory)
+        +categorySidebar("Danh mục bài viết", "Tất cả", "/articles", articleCategories, currentCategory)
 
       //- Nội dung chính
       .col-lg-9.col-md-8
-        .d-flex.justify-content-between.align-items-center.mb-3
+        .d-flex.align-items-center.mb-4.pb-3(class="tz-auto-fd019f")
           .page-header-left
-            h2.page-title= currentCategory ? currentCategory.title : 'Tất cả bài viết'
-          if currentCategory
-            a.btn-clear-filter(href="/articles")
-              i.fas.fa-times.mr-1
-              | Bỏ lọc
+            h3.mb-1(class="tz-auto-4280d6")= currentCategory ? currentCategory.title : 'Tất cả bài viết'
+            span.text-muted(class="tz-auto-267f6d") Tìm thấy <strong>#{articles.length}</strong> bài viết
+            
+          .ml-auto
+            if currentCategory
+              a.btn.btn-sm.btn-outline-secondary(href="/articles")
+                i.fas.fa-times.mr-1
+                | Bỏ lọc
 
         if articles && articles.length > 0
-          .article-list
+          .row
             each article in articles
-              a.article-card(href=`/articles/${article.slug}`)
-                .article-card-inner
-                  if article.thumbnail
-                    .article-card-img
-                      img(src=article.thumbnail alt=article.title)
-                  else
-                    .article-card-img.article-card-img-placeholder
-                      i.fas.fa-newspaper
-                  .article-card-body
-                    h3.article-card-title= article.title
+              .col-lg-4.col-md-6.mb-4
+                .card.tz-product-card.h-100.border-0.shadow-sm
+                  a(href=`/articles/detail/${article.slug}`)
+                    if article.thumbnail
+                      img.card-img-top(src=article.thumbnail alt=article.title class="tz-auto-b052ce")
+                    else
+                      .card-img-top.d-flex.align-items-center.justify-content-center.bg-light(class="tz-auto-70de97")
+                        i.fas.fa-newspaper.fa-3x
+                  .card-body.p-3.d-flex.flex-column
+                    h6.card-title.tz-product-title.mb-2(class="tz-auto-d7e999")
+                      a.text-dark(href=`/articles/detail/${article.slug}`)= article.title
+                    
                     if article.description
-                      p.article-card-desc= article.description
-                    .article-card-meta
+                      p.text-muted.mb-3(class="tz-auto-23e787")= article.description
+                      
+                    .mt-auto
                       if article.createdAt
-                        span.article-card-date
+                        span.text-muted(class="tz-auto-345895")
                           i.far.fa-clock.mr-1
                           = article.createdAt.toLocaleDateString('vi-VN')
         else

@@ -1,0 +1,86 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+
+block main
+  +pageHeader("Chỉnh sửa thương hiệu", brand.name)
+
+  .admin-form-card
+    form(
+      action=`${prefixAdmin}/brands/edit/${brand._id}?_method=PATCH`
+      method="POST"
+      enctype="multipart/form-data"
+    )
+      input(type="hidden" name="returnUrl" value=returnUrl)
+      .form-row
+        .form-col
+          .form-group
+            label.form-label Tên thương hiệu
+              span.required *
+            input.form-input(
+              type="text"
+              name="name"
+              placeholder="Nhập tên thương hiệu"
+              value=brand.name
+              required
+            )
+
+          .form-group
+            label.form-label Mô tả
+            textarea.form-input.form-textarea(
+              name="description"
+              placeholder="Nhập mô tả thương hiệu"
+              rows="4"
+            )= brand.description
+
+          .form-row-inline
+            .form-group.form-group-half
+              label.form-label Vị trí
+              input.form-input(
+                type="text"
+                name="position"
+                placeholder="Tự động"
+                value=brand.position
+              )
+            .form-group.form-group-half
+              label.form-label Trạng thái
+              select.form-input.form-select(name="status")
+                option(value="active" selected=(brand.status === "active")) Hoạt động
+                option(value="inactive" selected=(brand.status === "inactive")) Dừng hoạt động
+
+        .form-col.form-col-side
+          .form-group
+            label.form-label Logo thương hiệu
+            .upload-area#uploadArea
+              input.upload-input(
+                type="file"
+                name="logo"
+                id="uploadFile"
+                accept="image/*"
+              )
+              if brand.logo
+                .upload-placeholder#uploadPlaceholder(style="display:none")
+                  i.fas.fa-cloud-upload-alt
+                  p Kéo thả hoặc click để chọn ảnh
+                  span.upload-hint Hỗ trợ: JPG, PNG, GIF, WebP
+                img.upload-preview#uploadPreview(
+                  src=brand.logo
+                  alt="Preview"
+                  style="display:block"
+                )
+              else
+                .upload-placeholder#uploadPlaceholder
+                  i.fas.fa-cloud-upload-alt
+                  p Kéo thả hoặc click để chọn ảnh
+                  span.upload-hint Hỗ trợ: JPG, PNG, GIF, WebP
+                img.upload-preview#uploadPreview(src="" alt="Preview")
+
+      .form-actions
+        a.btn-cancel(href=`${prefixAdmin}/brands`) Huỷ
+        button.btn-submit(type="submit")
+          i.fas.fa-save
+          |  Lưu thay đổi
+
+block append scripts
+  script(src="/admin/js/upload-preview.js")
+  script(src="/admin/libs/tinymce/tinymce.min.js")
+  script(src="/admin/js/tinymce-init.js")

@@ -115,7 +115,7 @@ module.exports.loginPost = async (req, res) => {
 
 // [GET] /user/logout — kế thừa pattern từ admin auth.controller.js
 module.exports.logout = (req, res) => {
-    req.session = null;
+    req.session.userToken = null;
     res.redirect("/");
 };
 

@@ -97,6 +97,10 @@ module.exports.addPost = async (req, res) => {
             );
         }
 
+        if (req.body.buyNow === "true") {
+            return res.redirect("/cart/checkout");
+        }
+
         req.flash("success", "Đã thêm sản phẩm vào giỏ hàng!");
         res.redirect("back");
     } catch (error) {
@@ -195,10 +199,22 @@ module.exports.checkout = async (req, res) => {
 
         const { cartItems, cartTotal } = await getCartDetails(cart);
 
+        let defaultAddress = null;
+        if (res.locals.clientUser && res.locals.clientUser.addresses) {
+            if (req.query.addressId) {
+                defaultAddress = res.locals.clientUser.addresses.find(addr => addr._id.toString() === req.query.addressId);
+            }
+            if (!defaultAddress) {
+                defaultAddress = res.locals.clientUser.addresses.find(addr => addr.isDefault) || res.locals.clientUser.addresses[0];
+            }
+        }
+
         res.render("client/pages/cart/checkout", {
             title: "Thanh toán",
             cartItems,
-            cartTotal
+            cartTotal,
+            defaultAddress,
+            req: req
         });
     } catch (error) {
         console.log("Checkout error:", error);

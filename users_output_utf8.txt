@@ -1,0 +1,5 @@
+﻿[dotenv@17.3.1] injecting env (7) from .env -- tip: đŸ¤– agentic secret storage: https://dotenvx.com/as2
+Connected to MongoDB
+Email: admin@gmail.com
+Role ID: undefined
+Role Title: undefined

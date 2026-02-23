@@ -7,6 +7,17 @@ const userSchema = new mongoose.Schema(
         password: String,
         avatar: String,
         token: String,
+        addresses: [
+            {
+                fullName: String,
+                phone: String,
+                address: String,
+                isDefault: {
+                    type: Boolean,
+                    default: false
+                }
+            }
+        ],
         status: {
             type: String,
             default: "active"

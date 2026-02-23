@@ -33,6 +33,14 @@ block main
                 +categoryOptions(categories, 1, product.product_category_id || "")
 
           .form-group
+            label.form-label Thương hiệu
+            select.form-input.form-select(name="brand_id")
+              option(value="" selected=(product.brand_id === "" || !product.brand_id)) ── Chọn thương hiệu ──
+              if brands
+                each brand in brands
+                  option(value=brand._id selected=(product.brand_id && product.brand_id.toString() === brand._id.toString()))= brand.name
+
+          .form-group
             label.form-label Mô tả
             textarea.form-input.form-textarea(
               name="description"

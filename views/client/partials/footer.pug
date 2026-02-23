@@ -1,3 +1,60 @@
-footer.site-footer.mt-5
-  .container.text-center
-    p.mb-0 &copy; 2026 Product Manager. All rights reserved.
+footer.tz-footer.bg-white.pt-5.pb-3.mt-5.border-top
+  .container
+    .row
+      //- Cột 1: Thông tin
+      .col-lg-3.col-md-6.mb-4
+        a.tz-logo.d-flex.align-items-center.text-decoration-none.mb-3(href="/")
+          i.fas.fa-bolt.text-primary.mr-2.tz-footer-logo-icon
+          span.font-weight-bold.text-dark.tz-footer-logo-text TechZone
+        p.text-muted.tz-footer-desc Hệ thống bán lẻ thiết bị công nghệ uy tín hàng đầu. Cam kết sản phẩm chính hãng, bảo hành tin cậy, dịch vụ tận tâm.
+        .tz-socials.mt-3
+          a.btn.btn-outline-light.btn-sm.rounded-circle.mr-2.text-dark.border(href="#")
+            i.fab.fa-facebook-f
+          a.btn.btn-outline-light.btn-sm.rounded-circle.text-dark.border(href="#")
+            i.fab.fa-instagram
+
+      //- Cột 2: Thông tin & Chính sách
+      .col-lg-3.col-md-6.mb-4
+        h6.font-weight-bold.mb-3 Thông tin & Chính sách
+        ul.list-unstyled.tz-footer-links
+          li.mb-2: a.text-muted(href="#") Về chúng tôi
+          li.mb-2: a.text-muted(href="#") Chính sách bảo hành
+          li.mb-2: a.text-muted(href="#") Chính sách đổi trả
+          li.mb-2: a.text-muted(href="#") Giao hàng & Thanh toán
+          li.mb-2: a.text-muted(href="#") Bảo mật thông tin
+
+      //- Cột 3: Tổng đài (Bôi xanh nổi bật)
+      .col-lg-3.col-md-6.mb-4
+        h6.font-weight-bold.mb-3 Tổng đài hỗ trợ
+        
+        div.mb-3
+          p.text-muted.mb-0.tz-footer-title-sm Mua hàng
+          div.font-weight-bold.tz-footer-hotline 1800.1234
+          span.text-muted.tz-footer-hotline-time (7:30 - 22:00)
+
+        div
+          p.text-muted.mb-0.tz-footer-title-sm Khiếu nại - Bảo hành
+          div.font-weight-bold.text-dark.tz-footer-hotline-dark 1800.5678
+          span.text-muted.tz-footer-hotline-time (8:00 - 21:00)
+
+      //- Cột 4: Thanh toán (Icons)
+      .col-lg-3.col-md-6.mb-4
+        h6.font-weight-bold.mb-3 Thanh toán
+        .d-flex.flex-wrap
+          div.bg-light.border.rounded.p-2.mr-2.mb-2.tz-payment-icon
+            span VISA
+          div.bg-light.border.rounded.p-2.mr-2.mb-2.tz-payment-icon
+            span MOMO
+          div.bg-light.border.rounded.p-2.mr-2.mb-2.tz-payment-icon
+            span ZALO
+          div.bg-light.border.rounded.p-2.mr-2.mb-2.tz-payment-icon
+            span COD
+
+    hr.my-4
+    
+    //- Bản quyền dưới cùng
+    .row.align-items-center
+      .col-md-6.text-center.text-md-left
+        p.text-muted.mb-0.tz-footer-copyright &copy; 2026 TechZone. All rights reserved.
+      .col-md-6.text-center.text-md-right
+        p.text-muted.mb-0.tz-footer-copyright Designed by Electronics Store.

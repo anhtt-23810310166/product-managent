@@ -1,0 +1,90 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+include ../../mixins/search.pug
+include ../../mixins/filter-status.pug
+include ../../mixins/sort.pug
+include ../../mixins/pagination.pug
+include ../../mixins/batch-actions.pug
+
+block main
+  +pageHeader("Danh sách thương hiệu", "Quản lý tất cả thương hiệu trong hệ thống")
+    if userPermissions && userPermissions.includes("brands_create")
+      a.btn.btn-add-product(href=`${prefixAdmin}/brands/create`)
+        i.fas.fa-plus.mr-2
+        | Thêm thương hiệu
+
+  //- Filter bar
+  .admin-filter-bar.mb-4
+    .row.align-items-center
+      +search(keyword)
+      +filter-status(filterStatus)
+      +sort(sortOptions)
+      .col-md-2
+        .d-flex.gap-2
+          if userPermissions && (userPermissions.includes("brands_edit") || userPermissions.includes("brands_delete") || userPermissions.includes("brands_change-status"))
+            +batch-actions()
+
+  //- Brands Table
+  .admin-table-wrapper
+    if brands && brands.length > 0
+      table.admin-table
+        thead
+          tr
+            if userPermissions && (userPermissions.includes("brands_edit") || userPermissions.includes("brands_delete") || userPermissions.includes("brands_change-status"))
+              th.col-check
+                input.form-check-input(type="checkbox" id="checkAll")
+            th.col-stt STT
+            th.col-img Logo
+            th.col-title Tên thương hiệu
+            th.col-position Vị trí
+            th.col-status Trạng thái
+        tbody
+          each brand, index in brands
+            tr.animate-in
+              if userPermissions && (userPermissions.includes("brands_edit") || userPermissions.includes("brands_delete") || userPermissions.includes("brands_change-status"))
+                td.col-check
+                  input.form-check-input.checkbox-item(type="checkbox" name="id" value=brand._id)
+              td.col-stt= pagination.skip + index + 1
+              td.col-img
+                if brand.logo
+                  img.product-thumb(src=brand.logo alt=brand.name)
+                else
+                  .product-thumb-placeholder
+                    i.fas.fa-trademark
+              td.col-title
+                .product-title-cell
+                  span.product-name= brand.name
+                  if brand.description
+                    span.product-meta= brand.description
+                .product-hover-actions
+                  if userPermissions && userPermissions.includes("brands_edit")
+                    a.hover-action-link.hover-action-edit(href=`${prefixAdmin}/brands/edit/${brand._id}`) Sửa
+                  if userPermissions && userPermissions.includes("brands_change-status")
+                    if brand.status === "active"
+                      a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=brand._id data-status="active") Dừng hoạt động
+                    else
+                      a.hover-action-link.hover-action-status.btn-change-status(href="javascript:void(0)" data-id=brand._id data-status="inactive") Hoạt động
+                  if userPermissions && userPermissions.includes("brands_delete")
+                    a.hover-action-link.hover-action-danger(href="javascript:void(0)" data-id=brand._id) Xoá
+              td.col-position
+                input.position-input(type="number" value=brand.position data-id=brand._id min="1")
+              td.col-status
+                if brand.status === "active"
+                  span.status-badge.status-active Hoạt động
+                else
+                  span.status-badge.status-inactive Dừng hoạt động
+    else
+      .admin-empty-state
+        i.fas.fa-trademark
+        h4 Chưa có thương hiệu nào
+        p Bắt đầu thêm thương hiệu đầu tiên cho cửa hàng của bạn
+        if userPermissions && userPermissions.includes("brands_create")
+          a.btn.btn-add-product(href=`${prefixAdmin}/brands/create`)
+            i.fas.fa-plus.mr-2
+            | Thêm thương hiệu
+
+  //- Pagination
+  +pagination(pagination)
+
+block append scripts
+  script(src="/admin/js/brand.js")

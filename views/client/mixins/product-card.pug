@@ -4,28 +4,32 @@
 //- =============================================
 
 mixin productCard(product)
-  .home-product-card
-    a.home-product-link(href=`/products/detail/${product.slug}`)
-      .home-product-img
-        if product.thumbnail
-          img(src=product.thumbnail alt=product.title)
+  .card.tz-product-card.h-100.border-0.shadow-sm
+    if product.featured == "1"
+      .badge.badge-info.tz-badge-new HOT
+    else if product.discountPercentage > 0
+      .badge.badge-danger.tz-badge-discount(class="tz-auto-30fe19") -#{product.discountPercentage}%
+      
+    a(href=`/products/detail/${product.slug}`)
+      img.card-img-top.p-3(src=(product.thumbnail || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&auto=format&fit=crop") class="tz-auto-9bddc1")
+      
+    .card-body.pt-0.pb-3.px-3.d-flex.flex-column
+      h6.card-title.tz-product-title.mb-3(class="tz-auto-2704c1")
+        a.text-dark(href=`/products/detail/${product.slug}`)= product.title
+      
+      .mt-auto
+        if product.discountPercentage > 0
+          - const newPrice = Math.round(product.price * (1 - product.discountPercentage / 100))
+          .tz-price-blue.font-weight-bold(class="tz-auto-94b033") #{newPrice.toLocaleString('vi-VN')}₫
+          small.text-muted(class="tz-auto-dea443") #{product.price.toLocaleString('vi-VN')}₫
         else
-          .home-product-img-placeholder
-            i.fas.fa-image
-        if product.discountPercentage && product.discountPercentage > 0
-          span.home-product-discount= `-${product.discountPercentage}%`
-      .home-product-info
-        h3.home-product-name= product.title
-        .home-product-price
-          if product.discountPercentage && product.discountPercentage > 0
-            - var discountedPrice = Math.round(product.price * (1 - product.discountPercentage / 100) / 1000) * 1000
-            span.home-price-current= discountedPrice.toLocaleString('vi-VN') + '₫'
-            span.home-price-original= product.price.toLocaleString('vi-VN') + '₫'
-          else
-            span.home-price-current= product.price ? product.price.toLocaleString('vi-VN') + '₫' : 'Liên hệ'
-    if product.stock > 0
-      form.home-product-cart-form(action=`/cart/add/${product._id}` method="POST")
-        input(type="hidden" name="quantity" value="1")
-        button.home-product-cart-btn(type="submit" title="Thêm vào giỏ hàng")
-          i.fas.fa-cart-plus.mr-1
-          | Thêm vào giỏ
+          .tz-price-blue.font-weight-bold(class="tz-auto-94b033") #{product.price ? product.price.toLocaleString('vi-VN') + '₫' : 'Liên hệ'}
+          small(class="tz-auto-c70adc") &nbsp;
+          
+      if product.stock > 0
+        form.mt-auto.pt-3(action=`/cart/add/${product._id}` method="POST")
+          input(type="hidden" name="quantity" value="1")
+          button.btn.btn-sm.btn-outline-primary.w-100(type="submit" class="tz-auto-b96279")
+            i.fas.fa-cart-plus.mr-1
+            | Thêm vào giỏ
+

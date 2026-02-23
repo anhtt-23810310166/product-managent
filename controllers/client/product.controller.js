@@ -1,5 +1,6 @@
 const Product = require("../../models/product.model");
 const ProductCategory = require("../../models/product-category.model");
+const Brand = require("../../models/brand.model");
 
 // Helper: lấy tất cả ID con cháu của 1 category
 const getDescendantIds = async (parentId) => {
@@ -95,9 +96,19 @@ module.exports.detail = async (req, res) => {
             }
         }
 
+        // Get brand info
+        let brand = null;
+        if (product.brand_id) {
+            brand = await Brand.findOne({
+                _id: product.brand_id,
+                deleted: false
+            });
+        }
+
         res.render("client/pages/products/detail", {
             title: product.title,
-            product: product
+            product: product,
+            brand: brand
         });
     } catch (error) {
         res.redirect("/products");

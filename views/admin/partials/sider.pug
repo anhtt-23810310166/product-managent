@@ -36,10 +36,10 @@ aside.admin-sider#adminSider
             span Media
 
     //- ===== Bán hàng =====
-    if userPermissions && (userPermissions.includes("products_view") || userPermissions.includes("product-category_view"))
+    if userPermissions && (userPermissions.includes("products_view") || userPermissions.includes("product-category_view") || userPermissions.includes("brands_view"))
       .sider-menu-label Bán hàng
       ul.list-unstyled.mb-0
-        li.sider-menu-item.has-submenu(class=(currentPage === "products" || currentPage === "product-create" || currentPage === "product-category" ? "open" : ""))
+        li.sider-menu-item.has-submenu(class=(currentPage === "products" || currentPage === "product-create" || currentPage === "product-category" || currentPage === "brands" ? "open" : ""))
           a.sider-menu-link.submenu-toggle(href="javascript:void(0)")
             i.fas.fa-box
             span Sản phẩm
@@ -54,6 +54,9 @@ aside.admin-sider#adminSider
             if userPermissions.includes("product-category_view")
               li
                 a.sider-submenu-link(href=`${prefixAdmin}/product-category` class=(currentPage === "product-category" ? "active" : "")) Danh mục
+            if userPermissions.includes("brands_view")
+              li
+                a.sider-submenu-link(href=`${prefixAdmin}/brands` class=(currentPage === "brands" ? "active" : "")) Thương hiệu
 
         if userPermissions && userPermissions.includes("orders_view")
           li.sider-menu-item(class=(currentPage === "orders" ? "open" : ""))

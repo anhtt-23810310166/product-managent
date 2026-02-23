@@ -47,7 +47,7 @@ block main
               .detail-value= product.position || "Chưa đặt"
 
         .detail-section
-          h3.detail-section-title Danh mục
+          h3.detail-section-title Danh mục & Thương hiệu
           .detail-grid
             .detail-item
               .detail-label Danh mục sản phẩm
@@ -56,6 +56,13 @@ block main
                   a.detail-parent-link(href=`${prefixAdmin}/product-category/detail/${category._id}`)= category.title
                 else
                   span.text-muted Chưa phân loại
+            .detail-item
+              .detail-label Thương hiệu
+              .detail-value
+                if brand
+                  span= brand.name
+                else
+                  span.text-muted Chưa gắn thương hiệu
 
         .detail-section
           h3.detail-section-title Trạng thái

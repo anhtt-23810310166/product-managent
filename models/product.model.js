@@ -7,6 +7,10 @@ const productSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
+    brand_id: {
+        type: String,
+        default: ""
+    },
     slug: {
         type: String,
         slug: "title",

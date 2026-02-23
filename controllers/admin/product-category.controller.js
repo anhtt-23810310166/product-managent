@@ -138,10 +138,6 @@ module.exports.create = async (req, res) => {
 
 // [POST] /admin/product-category/create
 module.exports.createPost = async (req, res) => {
-    if (!res.locals.role.permissions.includes("product_category_create")) {
-        req.flash("error", "Bạn không có quyền thực hiện hành động này!");
-        return res.redirect(`${prefixAdmin}/product-category`);
-    }
     try {
         if (req.body.position === "" || req.body.position === undefined) {
             const count = await ProductCategory.countDocuments();
@@ -166,7 +162,7 @@ module.exports.createPost = async (req, res) => {
         res.redirect(`${prefixAdmin}/product-category`);
     } catch (error) {
         console.log(error);
-        req.flash("error", "Có lỗi xảy ra!");
+        req.flash("error", `Có lỗi xảy ra: ${error.message}`);
         res.redirect(`${prefixAdmin}/product-category`);
     }
 };

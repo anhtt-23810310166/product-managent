@@ -1,0 +1,14 @@
+//- Flash messages + Toast container
+#toastContainer.toast-container
+  if messages.success && messages.success.length > 0
+    each msg in messages.success
+      .toast-notification.toast-success.show
+        i.fas.fa-check-circle.toast-icon
+        span.toast-message= msg
+        button.toast-close(type="button") &times;
+  if messages.error && messages.error.length > 0
+    each msg in messages.error
+      .toast-notification.toast-error.show
+        i.fas.fa-exclamation-circle.toast-icon
+        span.toast-message= msg
+        button.toast-close(type="button") &times;

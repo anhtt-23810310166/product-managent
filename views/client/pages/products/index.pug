@@ -4,33 +4,51 @@ include ../../mixins/product-card.pug
 
 block main
   .container.py-4
+    nav(aria-label="breadcrumb")
+      ol.breadcrumb.bg-transparent.px-0.pb-3.pt-0.mb-0.tz-breadcrumb-nav
+        li.breadcrumb-item
+          a.text-muted(href="/") Trang chủ
+        if currentCategory
+          li.breadcrumb-item
+            a.text-muted(href="/products") Sản phẩm
+          li.breadcrumb-item.active.tz-breadcrumb-active(aria-current="page")= currentCategory.title
+        else if keyword
+          li.breadcrumb-item
+            a.text-muted(href="/products") Sản phẩm
+          li.breadcrumb-item.active.tz-breadcrumb-active(aria-current="page") Tìm kiếm
+        else
+          li.breadcrumb-item.active.tz-breadcrumb-active(aria-current="page") Sản phẩm
+
     .row
       //- Sidebar danh mục
       .col-lg-3.col-md-4.mb-4
-        +categorySidebar("Danh mục sản phẩm", "Tất cả sản phẩm", "/products", productCategories, currentCategory)
+        +categorySidebar("Danh mục sản phẩm", "Tất cả", "/products", productCategories, currentCategory)
 
       //- Nội dung chính
       .col-lg-9.col-md-8
-        .d-flex.justify-content-between.align-items-center.mb-3
+        .d-flex.align-items-center.mb-4.pb-3.border-bottom
           .page-header-left
             if keyword
-              h2.page-title Kết quả tìm kiếm: "#{keyword}"
+              h3.mb-1.tz-page-title-md Kết quả tìm kiếm: "#{keyword}"
             else
-              h2.page-title= currentCategory ? currentCategory.title : 'Tất cả sản phẩm'
-          .page-header-right.d-flex.align-items-center
+              h3.mb-1.tz-page-title-md= currentCategory ? currentCategory.title : 'Máy tính xách tay'
+            span.text-muted.tz-text-sm Tìm thấy <strong>#{products.length}</strong> kết quả
+            
+          .ml-auto
             if keyword
-              a.btn-clear-filter.mr-2(href="/products")
+              a.btn.btn-sm.btn-outline-secondary.mr-2(href="/products")
                 i.fas.fa-times.mr-1
                 | Xóa tìm kiếm
-            if currentCategory
-              a.btn-clear-filter(href=keyword ? `/products?keyword=${keyword}` : '/products')
+            if currentCategory && !keyword
+              a.btn.btn-sm.btn-outline-secondary(href="/products")
                 i.fas.fa-times.mr-1
                 | Bỏ lọc
 
         if products && products.length > 0
-          .home-product-grid
+          .row
             each product in products
-              +productCard(product)
+              .col-lg-4.col-md-6.mb-4
+                +productCard(product)
         else
           .text-center.py-5
             .empty-state

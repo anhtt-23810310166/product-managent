@@ -38,6 +38,7 @@ block main
             th.col-title Tên sản phẩm
             th.col-price Giá / Giá đặc biệt
             th.col-category Danh mục
+            th.col-category Thương hiệu
             th.col-position Vị trí
             th.col-stock Số lượng
             th.col-status Trạng thái
@@ -78,6 +79,11 @@ block main
               td.col-category
                 if product.product_category_id && categoryMap[product.product_category_id]
                   span.category-tag= categoryMap[product.product_category_id]
+                else
+                  span.text-muted --
+              td.col-category
+                if product.brand_id && brandMap[product.brand_id]
+                  span.category-tag= brandMap[product.brand_id]
                 else
                   span.text-muted --
               td.col-position
