@@ -83,6 +83,65 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  // ===== AJAX Add To Cart =====
+  const addToCartForms = document.querySelectorAll('form[action^="/cart/add/"]');
+  if (addToCartForms.length > 0) {
+    addToCartForms.forEach(form => {
+      form.addEventListener('submit', function (e) {
+        // Nếu click nút "Mua ngay" (có querySelector value='true') thì để trình duyệt chuyển trang bình thường
+        const submitter = e.submitter;
+        if (submitter && submitter.name === 'buyNow' && submitter.value === 'true') {
+          return; // Không chặn, cho phép form submit gốc tới /checkout
+        }
+
+        e.preventDefault(); // Chặn hành vi load lại trang cho nút "Thêm vào giỏ"
+
+        const actionUrl = form.getAttribute('action');
+        const quantityInput = form.querySelector('input[name="quantity"]');
+        const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
+
+        fetch(actionUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ quantity: quantity })
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              // Cập nhật số trên icon giỏ hàng
+              const miniCartBadge = document.getElementById('miniCartBadge');
+              if (miniCartBadge) {
+                miniCartBadge.textContent = data.cartTotalQuantity;
+              }
+              // Toast thông báo
+              if (typeof showToast === 'function') {
+                showToast("Đã thêm sản phẩm vào giỏ hàng!", "success");
+              } else {
+                alert("Đã thêm sản phẩm vào giỏ hàng!");
+              }
+            } else {
+              if (typeof showToast === 'function') {
+                showToast(data.message || "Có lỗi xảy ra", "error");
+              } else {
+                alert(data.message || "Có lỗi xảy ra");
+              }
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            if (typeof showToast === 'function') {
+              showToast("Lỗi kết nối mạng!", "error");
+            } else {
+              alert("Lỗi kết nối mạng!");
+            }
+          });
+      });
+    });
+  }
+
   // ===== Cart Page AJAX =====
   var isCartPage = document.querySelector(".cart-wrapper");
   if (!isCartPage) return;

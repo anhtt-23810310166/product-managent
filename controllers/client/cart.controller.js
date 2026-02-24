@@ -64,6 +64,7 @@ module.exports.addPost = async (req, res) => {
     try {
         const productId = req.params.productId;
         const quantity = parseInt(req.body.quantity) || 1;
+        const isAjax = req.headers.accept && req.headers.accept.includes("application/json");
 
         // Kiểm tra sản phẩm tồn tại
         const product = await Product.findOne({
@@ -73,6 +74,7 @@ module.exports.addPost = async (req, res) => {
         });
 
         if (!product) {
+            if (isAjax) return res.json({ success: false, message: "Sản phẩm không tồn tại" });
             return res.redirect("back");
         }
 
@@ -101,10 +103,21 @@ module.exports.addPost = async (req, res) => {
             return res.redirect("/cart/checkout");
         }
 
+        // Nếu là gọi AJAX thì trả về JSON + tổng số sản phẩm mới
+        if (isAjax || req.xhr) {
+            // Lấy lại cart để đếm tổng số lượng chính xác
+            const updatedCart = await Cart.findById(cart._id);
+            const totalQuantity = getCartTotalQuantity(updatedCart.items);
+            return res.json({ success: true, message: "Đã thêm vào giỏ hàng!", cartTotalQuantity: totalQuantity });
+        }
+
         req.flash("success", "Đã thêm sản phẩm vào giỏ hàng!");
         res.redirect("back");
     } catch (error) {
         console.log("Add to cart error:", error);
+        if (req.headers.accept && req.headers.accept.includes("application/json")) {
+            return res.json({ success: false, message: "Lỗi thêm giỏ hàng" });
+        }
         res.redirect("back");
     }
 };
