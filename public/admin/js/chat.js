@@ -119,4 +119,33 @@
         div.textContent = str;
         return div.innerHTML;
     }
+
+    // ---- Theo dõi Online/Offline Real-time ----
+    socket.on("SERVER_RETURN_USER_ONLINE", function(data) {
+        const userId = data.userId;
+        const isOnline = data.statusOnline;
+
+        // 1. Cụm Header Trang Chi Tiết
+        const headerStatus = document.querySelector(`[data-status-userid="${userId}"]`);
+        if (headerStatus) {
+            if (isOnline) {
+                headerStatus.className = "text-success";
+                headerStatus.innerHTML = '<i class="fas fa-circle mr-1" style="font-size: 8px;"></i>Đang trực tuyến';
+            } else {
+                headerStatus.className = "text-muted";
+                headerStatus.innerHTML = '<i class="fas fa-circle mr-1" style="font-size: 8px;"></i>Ngoại tuyến';
+            }
+        }
+
+        // 2. Cụm Sidebar Danh sách Khách hàng
+        const sidebarStatus = document.querySelector(`span[data-sidebar-userid="${userId}"]`);
+        if (sidebarStatus) {
+            if (isOnline) {
+                sidebarStatus.innerHTML = '<i class="fas fa-circle text-success" style="font-size: 10px;" title="Online"></i>';
+            } else {
+                sidebarStatus.innerHTML = '<i class="fas fa-circle text-muted" style="font-size: 10px;" title="Offline"></i>';
+            }
+        }
+    });
+
 })();

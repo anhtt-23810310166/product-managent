@@ -181,3 +181,39 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+
+// ===== SWIPER INITIALIZATION =====
+document.addEventListener("DOMContentLoaded", function () {
+  if (typeof Swiper !== 'undefined') {
+    // New Arrivals Swiper
+    var newArrivalsSwiper = new Swiper('.tz-new-arrivals-swiper', {
+      slidesPerView: 2, // Mặc định trên Mobile
+      spaceBetween: 15,
+      autoplay: {
+        delay: 3500,
+        disableOnInteraction: false,
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      breakpoints: {
+        576: { slidesPerView: 2, spaceBetween: 20 },
+        768: { slidesPerView: 3, spaceBetween: 20 },
+        992: { slidesPerView: 4, spaceBetween: 24 }
+      }
+    });
+  }
+});
+
+// ===== Product Gallery - Click to switch image =====
+function changeGalleryImage(thumbEl, imgSrc) {
+  var mainImg = document.getElementById("galleryMainImg");
+  if (mainImg) {
+    mainImg.src = imgSrc;
+  }
+  // Update active state
+  var allThumbs = document.querySelectorAll(".tz-gallery-thumb");
+  allThumbs.forEach(function (t) { t.classList.remove("active"); });
+  thumbEl.classList.add("active");
+}

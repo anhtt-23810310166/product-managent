@@ -46,8 +46,11 @@ block main
                   | ##{order._id.toString().slice(-8).toUpperCase()}
               td.col-customer
                 .order-customer-info
-                  span.order-customer-name= order.customerName
-                  span.order-customer-phone= order.customerPhone
+                  span.order-customer-name
+                    b #{order.bookerName}
+                  span.order-customer-phone= order.bookerPhone
+                  if order.bookerName !== order.customerName
+                    small.text-muted Nhận: #{order.customerName}
               td.col-items= order.items.length
               td.col-total
                 span.order-total-price= order.totalAmount.toLocaleString() + ' ₫'

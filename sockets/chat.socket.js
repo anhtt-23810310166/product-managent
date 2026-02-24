@@ -1,11 +1,47 @@
 const Chat = require("../models/chat.model");
+const User = require("../models/user.model");
 const cloudinary = require("../config/cloudinary");
+
+let onlineUsers = {}; // Map socket.id => userId
 
 module.exports = (io) => {
     io.on("connection", (socket) => {
         // ----- Tham gia phòng kín (Room Private) -----
         socket.on("CLIENT_JOIN_ROOM", (roomChatId) => {
             if(roomChatId) socket.join(roomChatId);
+        });
+
+        // ----- Khách hàng Online -----
+        socket.on("CLIENT_ONLINE", async (userId) => {
+            if (userId) {
+                onlineUsers[socket.id] = userId;
+                
+                // Cập nhật DB
+                await User.updateOne({ _id: userId }, { statusOnline: true });
+                
+                // Báo cho toàn cục Admin biết User này vừa Online
+                socket.broadcast.emit("SERVER_RETURN_USER_ONLINE", {
+                    userId: userId,
+                    statusOnline: true
+                });
+            }
+        });
+
+        // ----- Khách hàng Disconnect (Offline) -----
+        socket.on("disconnect", async () => {
+            const userId = onlineUsers[socket.id];
+            if (userId) {
+                // Cập nhật DB
+                await User.updateOne({ _id: userId }, { statusOnline: false });
+                
+                // Báo cục bộ Admin biết User này vừa Offline
+                socket.broadcast.emit("SERVER_RETURN_USER_ONLINE", {
+                    userId: userId,
+                    statusOnline: false
+                });
+                
+                delete onlineUsers[socket.id];
+            }
         });
 
         // ----- Client gửi tin nhắn -----

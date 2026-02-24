@@ -23,8 +23,15 @@ block main
                     else
                       .rounded-circle.bg-secondary.text-white.d-flex.align-items-center.justify-content-center.mr-3(style="width: 45px; height: 45px;")
                         i.fas.fa-user
-                    .room-info
-                      h6.mb-1.font-weight-bold= room.user_id ? room.user_id.fullName : "Khách ẩn danh"
+                    .room-info.flex-grow-1
+                      .d-flex.align-items-center.justify-content-between
+                        h6.mb-1.font-weight-bold= room.user_id ? room.user_id.fullName : "Khách ẩn danh"
+                        if room.user_id
+                          span(data-sidebar-userid=room.user_id.id)
+                            if room.user_id.statusOnline
+                              i.fas.fa-circle.text-success(style="font-size: 10px;" title="Online")
+                            else
+                              i.fas.fa-circle.text-muted(style="font-size: 10px;" title="Offline")
                       small.text-muted Bấm để hỗ trợ ngay
             else
               .p-4.text-center.text-muted
@@ -43,10 +50,17 @@ block main
                 .rounded-circle.bg-secondary.text-white.d-flex.align-items-center.justify-content-center.mr-3(style="width: 45px; height: 45px;")
                   i.fas.fa-user
               div
+              div
                 h5.mb-0= activeRoom.user_id ? activeRoom.user_id.fullName : "Khách ẩn danh"
-                small.text-success 
-                  i.fas.fa-circle.mr-1(style="font-size: 8px;")
-                  | Đang trực tuyến
+                if activeRoom.user_id
+                  if activeRoom.user_id.statusOnline
+                    small.text-success(data-status-userid=activeRoom.user_id.id)
+                      i.fas.fa-circle.mr-1(style="font-size: 8px;")
+                      | Đang trực tuyến
+                  else
+                    small.text-muted(data-status-userid=activeRoom.user_id.id)
+                      i.fas.fa-circle.mr-1(style="font-size: 8px;")
+                      | Ngoại tuyến
             div
               button.btn.btn-sm.btn-outline-secondary(style="border-radius: 20px;")
                 i.fas.fa-info-circle.mr-1

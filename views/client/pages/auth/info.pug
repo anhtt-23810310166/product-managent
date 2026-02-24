@@ -1,61 +1,63 @@
 extends ../../layouts/default.pug
+include ../../mixins/account-sidebar.pug
 
 block main
-  .auth-page
-    .container
-      .user-info-card
-        .user-info-header
-          h2.user-info-title
-            i.fas.fa-user-circle.mr-2
-            | Thông tin tài khoản
+  .container.py-4
+    //- Breadcrumb
+    nav(aria-label="breadcrumb")
+      ol.breadcrumb.bg-transparent.px-0.pb-3.pt-0.mb-0.tz-breadcrumb-nav
+        li.breadcrumb-item
+          a.text-muted(href="/") Trang chủ
+        li.breadcrumb-item.active.tz-breadcrumb-active(aria-current="page") Hồ sơ của tôi
 
-        .user-info-body
-          form(action="/user/info" method="POST" enctype="multipart/form-data")
-            .row
-              //- Avatar
-              .col-md-4.text-center.mb-4
-                .user-avatar-section
-                  if clientUser.avatar
-                    img.user-avatar-img(src=clientUser.avatar alt="Avatar")
-                  else
-                    .user-avatar-placeholder
-                      i.fas.fa-user
-                  label.user-avatar-upload(for="avatarInput")
+    .tz-account-layout
+      //- Left Sidebar
+      +accountSidebar("info")
+
+      //- Right Content
+      .tz-account-content
+        .tz-card
+          .tz-card-header
+            i.fas.fa-user-edit.mr-2
+            | Hồ sơ của tôi
+          .tz-card-body
+            .tz-profile-subtitle Quản lý thông tin hồ sơ để bảo mật tài khoản
+
+            form(action="/user/info" method="POST" enctype="multipart/form-data")
+              .tz-profile-layout
+                //- Form Fields
+                .tz-profile-form
+                  .tz-form-group
+                    label.tz-form-label Họ và tên
+                    input.tz-form-input(type="text" name="fullName" value=clientUser.fullName placeholder="Nhập họ tên..." required)
+
+                  .tz-form-group
+                    label.tz-form-label Email
+                    input.tz-form-input.tz-input-disabled(type="email" value=clientUser.email disabled)
+
+                  .tz-form-group
+                    label.tz-form-label Số điện thoại
+                    input.tz-form-input(type="text" name="phone" value=clientUser.phone || "" placeholder="Nhập số điện thoại...")
+
+                  .tz-form-group
+                    label.tz-form-label Ngày tham gia
+                    input.tz-form-input.tz-input-disabled(type="text" value=clientUser.createdAt.toLocaleDateString("vi-VN") disabled)
+
+                  button.tz-btn-primary(type="submit")
+                    i.fas.fa-save.mr-2
+                    | Lưu thay đổi
+
+                //- Avatar Upload
+                .tz-profile-avatar-section
+                  .tz-profile-avatar-box
+                    if clientUser.avatar
+                      img.tz-profile-avatar-img(src=clientUser.avatar alt="Avatar")
+                    else
+                      .tz-profile-avatar-placeholder
+                        i.fas.fa-user
+                  label.tz-profile-avatar-btn(for="avatarInput")
                     i.fas.fa-camera.mr-1
-                    | Đổi ảnh
+                    | Thay đổi
                   input#avatarInput(type="file" name="avatar" accept="image/*" hidden)
-
-              //- Thông tin
-              .col-md-8
-                .auth-form-group
-                  label Họ tên
-                  .auth-input-wrapper
-                    i.fas.fa-user
-                    input(type="text" name="fullName" value=clientUser.fullName placeholder="Nhập họ tên..." required)
-
-                .auth-form-group
-                  label Email
-                  .auth-input-wrapper.input-disabled
-                    i.fas.fa-envelope
-                    input(type="email" value=clientUser.email disabled)
-
-                .auth-form-group
-                  label Số điện thoại
-                  .auth-input-wrapper
-                    i.fas.fa-phone
-                    input(type="text" name="phone" value=clientUser.phone || "" placeholder="Nhập số điện thoại...")
-
-                .auth-form-group
-                  label Ngày tham gia
-                  .auth-input-wrapper.input-disabled
-                    i.fas.fa-calendar
-                    input(type="text" value=clientUser.createdAt.toLocaleDateString("vi-VN") disabled)
-
-                button.auth-btn(type="submit")
-                  i.fas.fa-save.mr-1
-                  | Lưu thay đổi
-
-                .text-center.mt-3
-                  a(href="/user/password/change" class="tz-auto-cc195c")
-                    i.fas.fa-key.mr-1
-                    | Đổi mật khẩu
+                  .tz-profile-avatar-hint Dung lượng file tối đa 1 MB
+                  .tz-profile-avatar-hint Định dạng: .JPEG, .PNG

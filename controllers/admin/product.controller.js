@@ -68,8 +68,13 @@ module.exports.createPost = async (req, res) => {
         req.body.stock = parseInt(req.body.stock) || 0;
         req.body.position = await productService.autoPosition(req.body.position);
 
-        if (req.file) {
-            req.body.thumbnail = req.file.path;
+        if (req.files && req.files["thumbnail"] && req.files["thumbnail"].length > 0) {
+            req.body.thumbnail = req.files["thumbnail"][0].path;
+        }
+
+        // Xử lý nhiều ảnh phụ
+        if (req.files && req.files["images"] && req.files["images"].length > 0) {
+            req.body.images = req.files["images"].map(file => file.path);
         }
 
         const product = new Product(req.body);
@@ -84,6 +89,7 @@ module.exports.createPost = async (req, res) => {
         req.flash("success", "Thêm sản phẩm thành công!");
         res.redirect(`${prefixAdmin}/products`);
     } catch (error) {
+        console.error("CREATE PRODUCT ERROR:", error);
         req.flash("error", "Có lỗi xảy ra!");
         res.redirect("back");
     }
@@ -140,8 +146,22 @@ module.exports.editPatch = async (req, res) => {
         product.status = req.body.status;
         product.featured = req.body.featured === "true" ? true : false;
 
-        if (req.file) {
-            product.thumbnail = req.file.path;
+        if (req.files && req.files["thumbnail"] && req.files["thumbnail"].length > 0) {
+            product.thumbnail = req.files["thumbnail"][0].path;
+        }
+
+        // Xử lý xóa ảnh phụ cũ
+        if (req.body.deletedImages) {
+            const deletedImages = Array.isArray(req.body.deletedImages)
+                ? req.body.deletedImages
+                : [req.body.deletedImages];
+            product.images = (product.images || []).filter(img => !deletedImages.includes(img));
+        }
+
+        // Xử lý thêm ảnh phụ mới
+        if (req.files && req.files["images"] && req.files["images"].length > 0) {
+            const newImages = req.files["images"].map(file => file.path);
+            product.images = [...(product.images || []), ...newImages];
         }
 
         await product.save();

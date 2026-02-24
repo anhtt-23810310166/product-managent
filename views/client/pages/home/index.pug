@@ -120,7 +120,7 @@ block main
 
     //- ===== 5. HÀNG MỚI VỀ =====
     if newestProducts && newestProducts.length > 0
-      .tz-section.mb-5
+      .tz-section.mb-3
         .d-flex.justify-content-between.align-items-end.mb-4
           div
             h4.tz-section-title.mb-1 Hàng mới về
@@ -130,38 +130,13 @@ block main
             i.fas.fa-arrow-right.ml-2
 
         .row
-          each product in newestProducts
-            .col-lg-3.col-md-6.mb-4
-              .card.tz-product-card.h-100.border-0
-                if product.featured == "1"
-                  .badge.badge-info.tz-badge-new HOT
-                else
-                  .badge.badge-primary.tz-badge-new(class="tz-auto-95babf") MỚI
-
-                a(href=`/products/detail/${product.slug}`)
-                  img.card-img-top.p-3(src=(product.thumbnail || "https://images.unsplash.com/photo-1531297172867-4f5145cdb2cc?q=80&w=600&auto=format&fit=crop"))
-
-                .card-body.pt-0.pb-3.px-3
-                  h6.card-title.tz-product-title.tz-product-title-sm.mb-1
-                    a.text-dark(href=`/products/detail/${product.slug}`)= product.title
-
-                  .d-flex.align-items-end.justify-content-between.mt-3
-                    .d-flex.flex-column
-                      if product.discountPercentage > 0
-                        - const newPrice = Math.round(product.price * (1 - product.discountPercentage / 100))
-                        .tz-price-blue #{newPrice.toLocaleString('vi-VN')}₫
-                        small.text-muted.tz-price-original-sm #{product.price.toLocaleString('vi-VN')}₫
-                      else
-                        .tz-price-blue #{product.price ? product.price.toLocaleString('vi-VN') + '₫' : 'Liên hệ'}
-                        small.tz-price-spacer &nbsp;
-
-                    .d-flex.align-items-center
-                      i.fas.fa-star.text-warning.tz-product-star
-                      span.text-muted.ml-1.tz-product-rating-count 4.#{Math.floor(Math.random() * 3 + 7)}
+          each product in newestProducts.slice(0, 8)
+            .col-lg-3.col-md-6.col-6.mb-4
+              +productCard(product)
 
     //- ===== 6. SẢN PHẨM NỔI BẬT =====
     if featuredProducts && featuredProducts.length > 0
-      .tz-section.mb-5
+      .tz-section.mb-5.mt-3
         .d-flex.justify-content-between.align-items-end.mb-4
           div
             h4.tz-section-title.mb-1 Sản phẩm nổi bật

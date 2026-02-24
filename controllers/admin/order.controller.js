@@ -1,4 +1,5 @@
 const Order = require("../../models/order.model");
+const User = require("../../models/user.model");
 const filterStatusHelper = require("../../helpers/filterStatus");
 const searchHelper = require("../../helpers/search");
 const sortHelper = require("../../helpers/sort");
@@ -52,15 +53,35 @@ module.exports.index = async (req, res) => {
 
         // Sort
         const objectSort = sortHelper(req.query);
-        const sort = Object.keys(objectSort.sortObject).length > 0
-            ? objectSort.sortObject
-            : { createdAt: -1 };
+        let sort = objectSort.sortObject;
+        if (!req.query.sortKey) {
+            sort = { createdAt: -1 };
+        }
 
         const orders = await Order
             .find(find)
             .sort(sort)
             .skip(objectPagination.skip)
-            .limit(objectPagination.limitItems);
+            .limit(objectPagination.limitItems)
+            .lean();
+
+        // Gắn thông tin người đặt (booker) thay vì chỉ người nhận
+        const userIds = orders.map(o => o.userId).filter(id => id);
+        const users = await User.find({ _id: { $in: userIds } }).select("fullName phone");
+
+        for (const order of orders) {
+            // Mặc định là thông tin người nhận (trường hợp khách mua không đăng nhập)
+            order.bookerName = order.customerName;
+            order.bookerPhone = order.customerPhone;
+            
+            if (order.userId) {
+                const user = users.find(u => u.id === order.userId);
+                if (user) {
+                    order.bookerName = user.fullName;
+                    order.bookerPhone = user.phone;
+                }
+            }
+        }
 
         res.render("admin/pages/orders/index", {
             pageTitle: "Quản lý đơn hàng",

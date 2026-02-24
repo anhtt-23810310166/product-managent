@@ -34,25 +34,37 @@ header.tz-header.sticky-top.bg-white.shadow-sm
               i.fas.fa-shopping-cart
               span.badge.badge-danger.badge-pill.position-absolute#miniCartBadge= cartTotalQuantity || 0
             
-            //- Khu vực Người dùng Dropdown Auth
+            //- Khu vực Người dùng — Shopee-style hover popup
             if clientUser
-              .dropdown.tz-user-dropdown
-                a.tz-tool-icon.text-dark.dropdown-toggle(href="#" id="userDropdown" role="button" data-toggle="dropdown")
+              .tz-user-popup-wrap
+                a.tz-tool-icon.text-dark(href="/user/info")
                   i.fas.fa-user-circle
-                .dropdown-menu.dropdown-menu-right.shadow-sm.border-0.mt-2(aria-labelledby="userDropdown")
-                  .dropdown-header.font-weight-bold= clientUser.fullName
-                  a.dropdown-item(href="/user/info")
-                    i.fas.fa-id-card.mr-2.text-muted
-                    | Hồ sơ cá nhân
-                  a.dropdown-item(href="/user/address")
-                    i.fas.fa-map-marker-alt.mr-2.text-muted
-                    | Sổ địa chỉ  
-                  .dropdown-divider
-                  a.dropdown-item.text-danger(href="/user/logout")
-                    i.fas.fa-sign-out-alt.mr-2
-                    | Đăng xuất
+                .tz-user-popup
+                  .tz-user-popup-header
+                    .tz-user-popup-avatar
+                      if clientUser.avatar
+                        img(src=clientUser.avatar alt=clientUser.fullName)
+                      else
+                        i.fas.fa-user-circle
+                    .tz-user-popup-name= clientUser.fullName
+                  .tz-user-popup-body
+                    a.tz-user-popup-item(href="/user/info")
+                      i.fas.fa-user.mr-2
+                      | Tài khoản của tôi
+                    a.tz-user-popup-item(href="/orders")
+                      i.fas.fa-clipboard-list.mr-2
+                      | Đơn mua
+                  .tz-user-popup-footer
+                    a.tz-user-popup-item.tz-user-popup-logout(href="/user/logout")
+                      i.fas.fa-sign-out-alt.mr-2
+                      | Đăng xuất
             else
-              a.tz-tool-icon.text-dark(href="/user/login")
-                i.fas.fa-user
+              .tz-user-popup-wrap
+                a.tz-tool-icon.text-dark(href="/user/login")
+                  i.fas.fa-user
+                .tz-user-popup
+                  .tz-user-popup-guest
+                    a.tz-popup-btn-login(href="/user/login") Đăng nhập
+                    a.tz-popup-btn-register(href="/user/register") Đăng ký
 
 

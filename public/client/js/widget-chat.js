@@ -36,6 +36,11 @@
     const chatUserId = chatUserIdInput.value;
     const chatUserName = document.getElementById("chatUserName").value;
     
+    // Báo Online ngay khi có ID
+    if (chatUserId) {
+        socket.emit("CLIENT_ONLINE", chatUserId);
+    }
+    
     const chatBody = document.getElementById("chatBody");
     const chatForm = document.getElementById("chatForm");
     const chatInput = document.getElementById("chatInput");

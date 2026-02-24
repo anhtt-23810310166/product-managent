@@ -14,19 +14,27 @@ block main
     //- Product Detail Card
     .card.border-0.shadow-sm.overflow-hidden.mb-5.tz-detail-card
       .row.no-gutters.p-3
-        //- Product Image
-        .col-lg-5.col-md-6.text-center.mb-4.mb-md-0
-          .position-relative.p-3.tz-product-image-box
-            if product.discountPercentage && product.discountPercentage > 0
-              .badge.badge-danger.position-absolute.tz-badge-discount-lg 
-                | -#{product.discountPercentage}%
+        //- Product Image Gallery (Shopee-style)
+        .col-lg-5.col-md-6.mb-4.mb-md-0
+          .tz-gallery
+            .tz-gallery-main.position-relative
+              if product.discountPercentage && product.discountPercentage > 0
+                .badge.badge-danger.position-absolute.tz-badge-discount-lg 
+                  | -#{product.discountPercentage}%
+              if product.thumbnail
+                img.tz-gallery-main-img#galleryMainImg(src=product.thumbnail alt=product.title)
+              else
+                .py-5.text-muted.text-center
+                  i.fas.fa-image.fa-4x.mb-3
+                  p Chưa có ảnh
             
-            if product.thumbnail
-              img.img-fluid.p-3.tz-product-image-main(src=product.thumbnail alt=product.title)
-            else
-              .py-5.text-muted
-                i.fas.fa-image.fa-4x.mb-3
-                p Chưa có ảnh
+            //- Thumbnail Strip
+            - var allImages = [product.thumbnail].concat(product.images || []).filter(Boolean)
+            if allImages.length > 1
+              .tz-gallery-thumbs
+                each img, idx in allImages
+                  .tz-gallery-thumb(class=(idx === 0 ? "active" : "") onclick="changeGalleryImage(this, '" + img + "')")
+                    img(src=img alt=`Ảnh ${idx + 1}`)
 
         //- Product Info
         .col-lg-7.col-md-6.pl-md-5

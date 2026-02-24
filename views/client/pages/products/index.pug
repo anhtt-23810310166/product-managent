@@ -20,9 +20,51 @@ block main
           li.breadcrumb-item.active.tz-breadcrumb-active(aria-current="page") Sản phẩm
 
     .row
-      //- Sidebar danh mục
+      //- Sidebar filter
       .col-lg-3.col-md-4.mb-4
-        +categorySidebar("Danh mục sản phẩm", "Tất cả", "/products", productCategories, currentCategory)
+        form(action="/products" method="GET" id="filter-form")
+          if keyword
+            input(type="hidden" name="keyword" value=keyword)
+          
+          .tz-sidebar.mt-2.p-3.border.rounded.bg-white
+            .tz-sidebar-header.d-flex.align-items-center.mb-4.pb-2.border-bottom
+              i.fas.fa-filter.mr-2(class="tz-auto-cd5a6f")
+              h5.mb-0.font-weight-bold(class="tz-auto-beab58") Bộ lọc tìm kiếm
+            
+            //- Category Filter
+            .tz-filter-group.mb-4
+              h6.tz-filter-title.font-weight-bold.mb-3 Danh mục sản phẩm
+              
+              each cat in productCategories
+                .custom-control.custom-radio.mb-2
+                  input.custom-control-input(
+                    type="radio" 
+                    name="category" 
+                    id=`cat-${cat.slug}` 
+                    value=cat.slug 
+                    checked=(currentCategory && currentCategory.slug === cat.slug)
+                  )
+                  label.custom-control-label(for=`cat-${cat.slug}`)= cat.title
+                  
+            //- Brand Filter
+            .tz-filter-group.mb-4
+              h6.tz-filter-title.font-weight-bold.mb-3 Thương hiệu
+              if brands && brands.length > 0
+                each brand in brands
+                  .custom-control.custom-checkbox.mb-2
+                    input.custom-control-input(
+                      type="checkbox" 
+                      name="brand" 
+                      id=`brand-${brand.slug}` 
+                      value=brand.slug 
+                      checked=(selectedBrands && selectedBrands.includes(brand.slug))
+                    )
+                    label.custom-control-label(for=`brand-${brand.slug}`)= brand.name
+              else
+                p.text-muted.small Chưa có thương hiệu nào
+                  
+            button.btn.btn-primary.w-100.mb-2(type="submit" style="background-color: #0b93d5; border-color: #0b93d5;") Áp dụng
+            a.d-block.text-center.text-muted(href="/products" style="text-decoration: none; transition: font-weight 0.2s; font-size: 14px;" onmouseover="this.style.fontWeight='bold'" onmouseout="this.style.fontWeight='normal'") Xóa tất cả
 
       //- Nội dung chính
       .col-lg-9.col-md-8
@@ -31,18 +73,8 @@ block main
             if keyword
               h3.mb-1.tz-page-title-md Kết quả tìm kiếm: "#{keyword}"
             else
-              h3.mb-1.tz-page-title-md= currentCategory ? currentCategory.title : 'Máy tính xách tay'
+              h3.mb-1.tz-page-title-md= currentCategory ? currentCategory.title : 'Tất cả sản phẩm'
             span.text-muted.tz-text-sm Tìm thấy <strong>#{products.length}</strong> kết quả
-            
-          .ml-auto
-            if keyword
-              a.btn.btn-sm.btn-outline-secondary.mr-2(href="/products")
-                i.fas.fa-times.mr-1
-                | Xóa tìm kiếm
-            if currentCategory && !keyword
-              a.btn.btn-sm.btn-outline-secondary(href="/products")
-                i.fas.fa-times.mr-1
-                | Bỏ lọc
 
         if products && products.length > 0
           .row

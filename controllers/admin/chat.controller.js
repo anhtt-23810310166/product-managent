@@ -5,7 +5,7 @@ const User = require("../../models/user.model");
 // [GET] /admin/chat
 module.exports.index = async (req, res) => {
     // Lấy danh sách tất cả các Room Chat đang active để render vào Cột Bên Trái
-    const roomChats = await RoomChat.find({ deleted: false }).populate("user_id", "fullName avatar");
+    const roomChats = await RoomChat.find({ deleted: false }).populate("user_id", "fullName avatar statusOnline");
 
     res.render("admin/pages/chat/index", {
         pageTitle: "Hỗ trợ khách hàng",
@@ -22,7 +22,7 @@ module.exports.detail = async (req, res) => {
         const roomChatId = req.params.roomChatId;
         
         // Vẫn phải lấy list room cho Cột Bên Trái
-        const roomChats = await RoomChat.find({ deleted: false }).populate("user_id", "fullName avatar");
+        const roomChats = await RoomChat.find({ deleted: false }).populate("user_id", "fullName avatar statusOnline");
         
         // Lấy tin nhắn của room đã chọn cho Cột Bên Phải
         const chats = await Chat.find({ room_chat_id: roomChatId, deleted: false })
@@ -30,7 +30,7 @@ module.exports.detail = async (req, res) => {
             .limit(50);
             
         // Tìm thông tin khách hàng sở hữu room này
-        const activeRoom = await RoomChat.findOne({ _id: roomChatId, deleted: false }).populate("user_id", "fullName avatar phone");
+        const activeRoom = await RoomChat.findOne({ _id: roomChatId, deleted: false }).populate("user_id", "fullName avatar phone statusOnline");
 
         if(!activeRoom) {
             return res.redirect(`${req.app.locals.prefixAdmin}/chat`);

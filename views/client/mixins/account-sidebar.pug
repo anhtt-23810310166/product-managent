@@ -1,0 +1,46 @@
+//- Account Sidebar Mixin — Shopee/Stitch style
+//- Usage: +accountSidebar("info") where param is active menu key
+
+mixin accountSidebar(activeMenu)
+  .tz-account-sidebar
+    //- User Info Header
+    .tz-account-user
+      .tz-account-avatar
+        if clientUser && clientUser.avatar
+          img(src=clientUser.avatar alt=clientUser.fullName)
+        else
+          i.fas.fa-user-circle
+      .tz-account-user-info
+        .tz-account-name= clientUser ? clientUser.fullName : 'Tài khoản'
+        a.tz-account-edit(href="/user/info")
+          i.fas.fa-pen.mr-1
+          | Sửa hồ sơ
+
+    //- Navigation Menu
+    nav.tz-account-nav
+      a.tz-account-nav-item(href="/user/info" class=(activeMenu === "info" ? "active" : ""))
+        .tz-account-nav-icon
+          i.fas.fa-user
+        span Hồ sơ của tôi
+
+      a.tz-account-nav-item(href="/orders" class=(activeMenu === "orders" ? "active" : ""))
+        .tz-account-nav-icon
+          i.fas.fa-shopping-bag
+        span Đơn mua
+
+      a.tz-account-nav-item(href="/user/address" class=(activeMenu === "address" ? "active" : ""))
+        .tz-account-nav-icon
+          i.fas.fa-map-marker-alt
+        span Địa chỉ
+
+      a.tz-account-nav-item(href="/user/password/change" class=(activeMenu === "password" ? "active" : ""))
+        .tz-account-nav-icon
+          i.fas.fa-lock
+        span Đổi mật khẩu
+
+      .tz-account-nav-divider
+
+      a.tz-account-nav-item.tz-account-nav-logout(href="/user/logout")
+        .tz-account-nav-icon
+          i.fas.fa-sign-out-alt
+        span Đăng xuất

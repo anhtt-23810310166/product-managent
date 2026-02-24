@@ -130,6 +130,30 @@ block main
                   span.upload-hint Hỗ trợ: JPG, PNG, GIF, WebP (tối đa 5MB)
                 img.upload-preview#uploadPreview(src="" alt="Preview")
 
+          .form-group
+            label.form-label Ảnh phụ sản phẩm (tối đa 8 ảnh)
+            if product.images && product.images.length > 0
+              .existing-images-grid
+                each img, idx in product.images
+                  .existing-image-item
+                    img(src=img alt=`Ảnh ${idx + 1}`)
+                    label.existing-image-remove(title="Xóa ảnh này")
+                      input(type="checkbox" name="deletedImages" value=img hidden)
+                      i.fas.fa-times-circle
+            .multi-upload-area#multiUploadArea
+              input.multi-upload-input(
+                type="file"
+                name="images"
+                id="multiUploadFile"
+                accept="image/*"
+                multiple
+              )
+              .multi-upload-placeholder
+                i.fas.fa-images
+                p Thêm ảnh phụ
+                span.upload-hint JPG, PNG, GIF, WebP (tối đa 5MB/ảnh)
+            .multi-preview-container#multiPreviewContainer
+
       .form-actions
         a.btn-cancel(href=`${prefixAdmin}/products`) Huỷ
         button.btn-submit(type="submit")
@@ -138,6 +162,7 @@ block main
 
 block append scripts
   script(src="/admin/js/upload-preview.js")
+  script(src="/admin/js/multi-upload-preview.js")
   script(src="/admin/libs/tinymce/tinymce.min.js")
   script(src="/admin/js/tinymce-init.js")
 

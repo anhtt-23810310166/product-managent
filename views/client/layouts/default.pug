@@ -8,6 +8,8 @@ html
     link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
     link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap")
     link(rel="stylesheet", href=`/client/css/style.css?v=${Date.now()}`)
+    //- Swiper CSS
+    link(rel="stylesheet", href="https://unpkg.com/swiper/swiper-bundle.min.css")
     //- CSS Thư viện Upload cho Widget Chat
     link(rel="stylesheet" type="text/css" href="https://unpkg.com/file-upload-with-preview/dist/style.css")
   body
@@ -29,4 +31,6 @@ html
     
     //- Socket.IO Global
     script(src="/socket.io/socket.io.js")
+    //- Swiper JS
+    script(src="https://unpkg.com/swiper/swiper-bundle.min.js")
     script(src="/client/js/script.js")

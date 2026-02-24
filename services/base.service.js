@@ -54,7 +54,7 @@ class BaseService {
         const objectSort = sortHelper(query, options.sortOptions);
         const sort = Object.keys(objectSort.sortObject).length > 0
             ? objectSort.sortObject
-            : { position: 1 };
+            : { createdAt: -1 };
 
         // Query
         const items = await this.Model

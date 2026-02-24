@@ -42,10 +42,12 @@ module.exports.index = async (req, res) => {
             log.createdAtFormatted = dayjs(log.createdAt).format("DD/MM/YYYY HH:mm:ss");
         });
 
-        // Module labels
         const moduleLabels = {
             "products": "Sản phẩm",
-            "product-category": "Danh mục",
+            "product-category": "Danh mục sản phẩm",
+            "brands": "Thương hiệu",
+            "articles": "Bài viết",
+            "article-category": "Danh mục bài viết",
             "accounts": "Tài khoản",
             "roles": "Nhóm quyền",
             "auth": "Xác thực"

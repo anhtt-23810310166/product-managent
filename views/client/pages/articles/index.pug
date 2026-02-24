@@ -36,7 +36,7 @@ block main
           .row
             each article in articles
               .col-lg-4.col-md-6.mb-4
-                .card.tz-product-card.h-100.border-0.shadow-sm
+                .card.tz-product-card.border-0.shadow-sm
                   a(href=`/articles/detail/${article.slug}`)
                     if article.thumbnail
                       img.card-img-top(src=article.thumbnail alt=article.title class="tz-auto-b052ce")
@@ -50,7 +50,7 @@ block main
                     if article.description
                       p.text-muted.mb-3(class="tz-auto-23e787")= article.description
                       
-                    .mt-auto
+                    .mt-0
                       if article.createdAt
                         span.text-muted(class="tz-auto-345895")
                           i.far.fa-clock.mr-1

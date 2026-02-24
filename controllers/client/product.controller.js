@@ -28,6 +28,15 @@ module.exports.index = async (req, res) => {
         let currentCategory = null;
         const keyword = req.query.keyword || "";
 
+        let selectedBrands = [];
+        if (req.query.brand) {
+            if (Array.isArray(req.query.brand)) {
+                selectedBrands = req.query.brand;
+            } else {
+                selectedBrands = [req.query.brand];
+            }
+        }
+
         // Lọc theo danh mục
         if (req.query.category) {
             const category = await ProductCategory.findOne({
@@ -44,11 +53,29 @@ module.exports.index = async (req, res) => {
             }
         }
 
+        // Lọc theo thương hiệu
+        if (selectedBrands.length > 0) {
+            const brandsFound = await Brand.find({
+                slug: { $in: selectedBrands },
+                status: "active",
+                deleted: false
+            });
+            if (brandsFound.length > 0) {
+                find.brand_id = { $in: brandsFound.map(b => b.id) };
+            }
+        }
+
         // Tìm kiếm theo từ khóa (kế thừa pattern từ admin search)
         if (keyword.trim()) {
             const keywordRegex = new RegExp(keyword.trim(), "i");
             find.title = keywordRegex;
         }
+
+        // Lấy tất cả thương hiệu cho sidebar
+        const allBrands = await Brand.find({
+            status: "active",
+            deleted: false
+        }).sort({ position: "asc" });
 
         const products = await Product.find(find)
             .sort({ position: "desc" });
@@ -57,7 +84,9 @@ module.exports.index = async (req, res) => {
             title: keyword ? `Tìm kiếm: ${keyword}` : (currentCategory ? currentCategory.title : "Sản phẩm"),
             products,
             currentCategory,
-            keyword
+            keyword,
+            brands: allBrands,
+            selectedBrands
         });
     } catch (error) {
         console.log(error);
@@ -65,7 +94,9 @@ module.exports.index = async (req, res) => {
             title: "Sản phẩm",
             products: [],
             currentCategory: null,
-            keyword: ""
+            keyword: "",
+            brands: [],
+            selectedBrands: []
         });
     }
 }

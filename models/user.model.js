@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: "active"
         },
+        statusOnline: {
+            type: Boolean,
+            default: false
+        },
         otpPassword: String,
         otpPasswordTimeExpire: Date,
         deleted: {

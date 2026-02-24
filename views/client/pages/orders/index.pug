@@ -1,0 +1,87 @@
+extends ../../layouts/default
+include ../../mixins/account-sidebar.pug
+
+block main
+  .container.py-4
+    nav(aria-label="breadcrumb")
+      ol.breadcrumb.bg-transparent.px-0.pb-3.pt-0.mb-0.tz-breadcrumb-nav
+        li.breadcrumb-item
+          a.text-muted(href="/") Trang chủ
+        li.breadcrumb-item.active.tz-breadcrumb-active(aria-current="page") Đơn hàng của tôi
+
+    .tz-account-layout
+      +accountSidebar("orders")
+      .tz-account-content
+        .tz-card
+          .tz-card-header
+            i.fas.fa-shopping-bag.mr-2
+            | Đơn hàng của tôi
+          
+          //- Shopee-style Status Tabs
+          - var currentStatus = typeof filterStatus !== 'undefined' ? filterStatus : ''
+          .tz-order-tabs
+            a.tz-order-tab(href="/orders" class=(currentStatus === '' ? 'active' : ''))
+              | Tất cả
+            a.tz-order-tab(href="/orders?status=pending" class=(currentStatus === 'pending' ? 'active' : ''))
+              | Chờ xác nhận
+            a.tz-order-tab(href="/orders?status=confirmed" class=(currentStatus === 'confirmed' ? 'active' : ''))
+              | Đã xác nhận
+            a.tz-order-tab(href="/orders?status=shipping" class=(currentStatus === 'shipping' ? 'active' : ''))
+              | Đang giao
+            a.tz-order-tab(href="/orders?status=delivered" class=(currentStatus === 'delivered' ? 'active' : ''))
+              | Đã giao
+            a.tz-order-tab(href="/orders?status=cancelled" class=(currentStatus === 'cancelled' ? 'active' : ''))
+              | Đã hủy
+
+          //- Order List
+          .tz-card-body
+            if orders && orders.length > 0
+              each order in orders
+                a.tz-order-card-link(href=`/orders/${order._id}`)
+                  .tz-order-card.mb-3
+                    .tz-order-card-header
+                      .d-flex.align-items-center
+                        .tz-order-id
+                          i.fas.fa-receipt.mr-2
+                          | ##{order._id.toString().slice(-8).toUpperCase()}
+                        .tz-order-date.ml-3
+                          i.far.fa-clock.mr-1
+                          = new Date(order.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                      .tz-order-status(class=`tz-status-${order.status}`)= statusLabels[order.status]
+                    
+                    .tz-order-card-body
+                      - var previewItems = order.items.slice(0, 2)
+                      each item in previewItems
+                        .tz-order-item
+                          .tz-order-item-thumb
+                            if item.thumbnail
+                              img(src=item.thumbnail alt=item.title)
+                            else
+                              .tz-order-item-placeholder
+                                i.fas.fa-image
+                          .tz-order-item-info
+                            .tz-order-item-name= item.title
+                            .tz-order-item-meta
+                              span.tz-order-item-qty x#{item.quantity}
+                              span.tz-order-item-price= item.itemTotal.toLocaleString('vi-VN') + '₫'
+                      
+                      if order.items.length > 2
+                        .tz-order-more
+                          | ... và #{order.items.length - 2} sản phẩm khác
+
+                    .tz-order-card-footer
+                      .tz-order-summary
+                        span #{order.items.length} sản phẩm
+                        span.mx-2 •
+                        span Tổng: 
+                        span.tz-order-total-amount= order.totalAmount.toLocaleString('vi-VN') + '₫'
+
+            else
+              .tz-empty-state-inline
+                .tz-empty-icon
+                  i.fas.fa-box-open
+                h5 Chưa có đơn hàng nào
+                p Hãy khám phá các sản phẩm và bắt đầu mua sắm!
+                a.tz-btn-primary(href="/products")
+                  i.fas.fa-shopping-cart.mr-2
+                  | Mua sắm ngay

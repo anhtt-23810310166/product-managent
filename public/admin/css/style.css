@@ -1672,6 +1672,168 @@ body.admin-page {
   border-radius: 4px;
 }
 
+/* Multi Upload Area */
+.multi-upload-area {
+  position: relative;
+  border: 2px dashed var(--border-color);
+  border-radius: 4px;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--content-bg);
+  margin-top: 8px;
+}
+
+.multi-upload-area:hover {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.multi-upload-input {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.multi-upload-placeholder {
+  color: var(--text-muted);
+}
+
+.multi-upload-placeholder i {
+  font-size: 1.8rem;
+  margin-bottom: 6px;
+  color: var(--accent);
+  opacity: 0.6;
+}
+
+.multi-upload-placeholder p {
+  font-size: 0.82rem;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.multi-preview-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.multi-preview-item {
+  position: relative;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.multi-preview-item img {
+  width: 100%;
+  height: 80px;
+  object-fit: cover;
+}
+
+.multi-preview-name {
+  display: block;
+  font-size: 0.65rem;
+  padding: 2px 4px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.multi-preview-remove {
+  position: absolute;
+  top: 2px; right: 2px;
+  background: rgba(255,255,255,0.9);
+  border: none;
+  border-radius: 50%;
+  width: 20px; height: 20px;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  z-index: 3;
+}
+
+.multi-preview-remove:hover {
+  background: var(--danger);
+  color: #fff;
+}
+
+.existing-images-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.existing-image-item {
+  position: relative;
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.existing-image-item img {
+  width: 100%;
+  height: 80px;
+  object-fit: cover;
+}
+
+.existing-image-remove {
+  position: absolute;
+  top: 4px; right: 4px;
+  cursor: pointer;
+  background: rgba(255,255,255,0.85);
+  border-radius: 50%;
+  width: 22px; height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: var(--danger);
+  transition: var(--transition);
+  z-index: 3;
+  margin: 0;
+}
+
+.existing-image-remove:hover {
+  background: var(--danger);
+  color: #fff;
+}
+
+.existing-image-item.marked-for-delete {
+  opacity: 0.35;
+  border-color: var(--danger);
+}
+
+.existing-image-item.marked-for-delete::after {
+  content: "XÓA";
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--danger);
+  background: rgba(255,255,255,0.8);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
 /* Form Actions */
 .form-actions {
   display: flex;
