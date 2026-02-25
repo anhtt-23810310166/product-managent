@@ -1,6 +1,8 @@
 const Product = require("../../models/product.model");
 const ProductCategory = require("../../models/product-category.model");
 const Brand = require("../../models/brand.model");
+const Review = require("../../models/review.model");
+const Order = require("../../models/order.model");
 
 // Helper: lấy tất cả ID con cháu của 1 category
 const getDescendantIds = async (parentId) => {
@@ -136,10 +138,55 @@ module.exports.detail = async (req, res) => {
             });
         }
 
+        // Lấy danh sách đánh giá
+        const reviews = await Review.find({
+            productId: product._id.toString(),
+            deleted: false
+        }).sort({ createdAt: -1 });
+
+        // Tính trung bình sao
+        let averageRating = 0;
+        if (reviews.length > 0) {
+            const totalRating = reviews.reduce((sum, r) => sum + r.rating, 0);
+            averageRating = Math.round((totalRating / reviews.length) * 10) / 10;
+        }
+
+        // Kiểm tra user đã mua chưa & đã review chưa
+        let canReview = false;
+        let hasReviewed = false;
+        const user = res.locals.clientUser;
+
+        if (user) {
+            const hasPurchased = await Order.findOne({
+                userId: user._id.toString(),
+                "items.productId": product._id.toString(),
+                status: "delivered",
+                deleted: false
+            });
+
+            if (hasPurchased) {
+                canReview = true;
+                const existingReview = await Review.findOne({
+                    productId: product._id.toString(),
+                    userId: user._id.toString(),
+                    deleted: false
+                });
+                if (existingReview) {
+                    canReview = false;
+                    hasReviewed = true;
+                }
+            }
+        }
+
         res.render("client/pages/products/detail", {
             title: product.title,
             product: product,
-            brand: brand
+            brand: brand,
+            reviews: reviews,
+            averageRating: averageRating,
+            reviewCount: reviews.length,
+            canReview: canReview,
+            hasReviewed: hasReviewed
         });
     } catch (error) {
         res.redirect("/products");

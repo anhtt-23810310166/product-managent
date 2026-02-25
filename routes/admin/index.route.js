@@ -13,6 +13,7 @@ const profileRoutes = require("./profile.route");
 const orderRoutes = require("./order.route");
 const userRoutes = require("./user.route");
 const chatRoutes = require("./chat.route");
+const reviewRoutes = require("./review.route");
 
 const authMiddleware = require("../../middlewares/admin/auth.middleware");
 
@@ -104,6 +105,13 @@ module.exports = (app) => {
         `${PATH_ADMIN}/users`,
         authMiddleware.requirePermission("users_view"),
         userRoutes
+    );
+
+    // Quản lý đánh giá - cần quyền reviews_view
+    app.use(
+        `${PATH_ADMIN}/reviews`,
+        authMiddleware.requirePermission("reviews_view"),
+        reviewRoutes
     );
 
     // Hỗ trợ khách hàng (Inbox chat) - cần quyền chat_view

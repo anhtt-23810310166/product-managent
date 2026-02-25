@@ -112,6 +112,14 @@ const systemConfig = (app) => {
             permissions: [
                 { label: "Xem", action: "view" }
             ]
+        },
+        {
+            label: "Đánh giá sản phẩm",
+            name: "reviews",
+            permissions: [
+                { label: "Xem", action: "view" },
+                { label: "Xóa", action: "delete" }
+            ]
         }
     ];
 };

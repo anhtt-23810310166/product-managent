@@ -88,10 +88,11 @@ aside.admin-sider#adminSider
           i.fas.fa-comments
           span Hỗ trợ CSKH
 
-      li.sider-menu-item
-        a.sider-menu-link(href="#")
-          i.fas.fa-star
-          span Bình luận/Đánh giá
+      if userPermissions && userPermissions.includes("reviews_view")
+        li.sider-menu-item
+          a.sider-menu-link(href=`${prefixAdmin}/reviews` class=(currentPage === "reviews" ? "active" : ""))
+            i.fas.fa-star
+            span Bình luận/Đánh giá
 
       li.sider-menu-item
         a.sider-menu-link(href="#")

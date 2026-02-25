@@ -1,0 +1,94 @@
+extends ../../layouts/default.pug
+include ../../mixins/page-header.pug
+include ../../mixins/search.pug
+include ../../mixins/pagination.pug
+
+block main
+  +pageHeader("Quản lý đánh giá", "Quản lý tất cả đánh giá sản phẩm trong hệ thống")
+
+  //- Filter bar
+  .admin-filter-bar.mb-4
+    .row.align-items-center
+      +search(keyword)
+
+      //- Rating Filter
+      .col-md-4
+        .order-status-filter
+          select.order-status-dropdown(onchange=`window.location.href=this.value`)
+            option(value=`${prefixAdmin}/reviews` selected=!selectedRating) Tất cả đánh giá
+            - for (var i = 5; i >= 1; i--)
+              option(value=`${prefixAdmin}/reviews?rating=${i}` selected=(selectedRating == i))= i + ' sao'
+
+  //- Reviews Table
+  .admin-table-wrapper
+    if reviews && reviews.length > 0
+      table.admin-table
+        thead
+          tr
+            th.col-stt STT
+            th Khách hàng
+            th Sản phẩm
+            th Đánh giá
+            th Bình luận
+            th Ngày
+            th Hành động
+        tbody
+          each review, index in reviews
+            tr.animate-in(data-id=review._id)
+              td.col-stt= pagination.skip + index + 1
+              td
+                .d-flex.align-items-center
+                  if review.userAvatar
+                    img(src=review.userAvatar alt=review.userName style="width:30px;height:30px;border-radius:50%;object-fit:cover;margin-right:8px")
+                  else
+                    i.fas.fa-user-circle.mr-2(style="font-size:24px;color:#ccc")
+                  span= review.userName
+              td
+                if productMap[review.productId]
+                  a(href=`/products/detail/${productMap[review.productId].slug}` target="_blank")= productMap[review.productId].title
+                else
+                  span.text-muted (Sản phẩm đã xoá)
+              td
+                .d-flex.align-items-center
+                  - for (var i = 1; i <= 5; i++)
+                    if i <= review.rating
+                      i.fas.fa-star.text-warning(style="font-size:12px")
+                    else
+                      i.fas.fa-star.text-muted(style="font-size:12px")
+                  span.ml-1.text-muted (#{review.rating})
+              td
+                if review.comment
+                  span(style="max-width:250px;display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap")= review.comment
+                else
+                  span.text-muted (Không có bình luận)
+              td= review.createdAt.toLocaleDateString('vi-VN')
+              td
+                button.btn.btn-sm.btn-outline-danger(onclick=`deleteReview('${review._id}')`)
+                  i.fas.fa-trash-alt
+    else
+      .admin-empty-state
+        i.fas.fa-star-half-alt
+        h4 Chưa có đánh giá nào
+        p Đánh giá sẽ hiển thị khi khách hàng đánh giá sản phẩm
+
+  //- Pagination
+  +pagination(pagination)
+
+  script.
+    function deleteReview(id) {
+      if (!confirm('Bạn có chắc muốn xoá đánh giá này?')) return;
+
+      fetch('#{prefixAdmin}/reviews/delete/' + id, {
+        method: 'DELETE'
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data.code === 200) {
+          var row = document.querySelector('tr[data-id="' + id + '"]');
+          if (row) row.remove();
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch(function() { alert('Có lỗi xảy ra!'); });
+    }

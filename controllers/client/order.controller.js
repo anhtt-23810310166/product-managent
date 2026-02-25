@@ -1,4 +1,5 @@
 const Order = require("../../models/order.model");
+const Product = require("../../models/product.model");
 
 // [GET] /orders
 module.exports.index = async (req, res) => {
@@ -80,11 +81,20 @@ module.exports.detail = async (req, res) => {
             cancelled: "danger"
         };
 
+        // Lấy slug sản phẩm để tạo link
+        const productIds = order.items.map(item => item.productId);
+        const products = await Product.find({ _id: { $in: productIds } }).select("slug");
+        const productSlugs = {};
+        products.forEach(p => {
+            productSlugs[p._id.toString()] = p.slug;
+        });
+
         res.render("client/pages/orders/detail.pug", {
             title: `Đơn hàng #${order._id.toString().slice(-8).toUpperCase()}`,
             order: order,
             statusLabels: statusLabels,
-            statusColors: statusColors
+            statusColors: statusColors,
+            productSlugs: productSlugs
         });
     } catch (error) {
         console.error("Order detail error:", error);

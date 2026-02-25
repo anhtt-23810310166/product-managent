@@ -24,70 +24,76 @@ block main
               = new Date(order.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
           .tz-order-status.tz-status-lg(class=`tz-status-${order.status}`)= statusLabels[order.status]
 
-        .row
-          .col-lg-8.mb-4
-            .tz-card
-              .tz-card-header
-                i.fas.fa-box.mr-2
-                | Sản phẩm đã mua
-                span.tz-card-badge #{order.items.length}
-              .tz-card-body.p-0
-                each item, idx in order.items
-                  .tz-order-detail-row(class=(idx < order.items.length - 1 ? "tz-border-bottom" : ""))
-                    .tz-order-detail-thumb
-                      if item.thumbnail
-                        img(src=item.thumbnail alt=item.title)
-                      else
-                        .tz-order-item-placeholder
-                          i.fas.fa-image
-                    .tz-order-detail-info
-                      .tz-order-detail-name= item.title
-                      .tz-order-detail-meta
-                        if item.discountPercentage && item.discountPercentage > 0
-                          span.tz-price-old= item.price.toLocaleString('vi-VN') + '₫'
-                          span.tz-discount-tag -#{item.discountPercentage}%
-                        span.tz-unit-price= item.unitPrice.toLocaleString('vi-VN') + '₫'
-                        span.tz-qty-label × #{item.quantity}
-                    .tz-order-detail-total= item.itemTotal.toLocaleString('vi-VN') + '₫'
+        //- Single Card: All order details
+        .tz-card.mb-4
+          //- Section 1: Sản phẩm đã mua
+          .tz-card-header
+            i.fas.fa-box.mr-2
+            | Sản phẩm đã mua
+            span.tz-card-badge #{order.items.length}
+          .tz-card-body.p-0
+            each item, idx in order.items
+              .tz-order-detail-row(class=(idx < order.items.length - 1 ? "tz-border-bottom" : ""))
+                .tz-order-detail-thumb
+                  if item.thumbnail
+                    img(src=item.thumbnail alt=item.title)
+                  else
+                    .tz-order-item-placeholder
+                      i.fas.fa-image
+                .tz-order-detail-info
+                  .tz-order-detail-name
+                    if productSlugs && productSlugs[item.productId]
+                      a(href=`/products/detail/${productSlugs[item.productId]}` style="color: inherit; text-decoration: none;")= item.title
+                    else
+                      span= item.title
+                  .tz-order-detail-meta
+                    if item.discountPercentage && item.discountPercentage > 0
+                      span.tz-price-old= item.price.toLocaleString('vi-VN') + '₫'
+                      span.tz-discount-tag -#{item.discountPercentage}%
+                    span.tz-unit-price= item.unitPrice.toLocaleString('vi-VN') + '₫'
+                    span.tz-qty-label × #{item.quantity}
+                .tz-order-detail-total= item.itemTotal.toLocaleString('vi-VN') + '₫'
 
-          .col-lg-4.mb-4
-            .tz-card.mb-3
-              .tz-card-header
-                i.fas.fa-truck.mr-2
-                | Thông tin giao hàng
-              .tz-card-body
-                .tz-info-row
-                  .tz-info-label Người nhận
-                  .tz-info-value= order.customerName
-                .tz-info-row
-                  .tz-info-label Điện thoại
-                  .tz-info-value= order.customerPhone
-                .tz-info-row
-                  .tz-info-label Địa chỉ
-                  .tz-info-value= order.customerAddress
-                if order.customerNote
-                  .tz-info-row
-                    .tz-info-label Ghi chú
-                    .tz-info-value.font-italic= order.customerNote
+          //- Section 2: Thông tin giao hàng
+          .tz-card-section-divider
+          .tz-card-header
+            i.fas.fa-truck.mr-2
+            | Thông tin giao hàng
+          .tz-card-body
+            .tz-info-row
+              .tz-info-label Người nhận
+              .tz-info-value= order.customerName
+            .tz-info-row
+              .tz-info-label Điện thoại
+              .tz-info-value= order.customerPhone
+            .tz-info-row
+              .tz-info-label Địa chỉ
+              .tz-info-value= order.customerAddress
+            if order.customerNote
+              .tz-info-row
+                .tz-info-label Ghi chú
+                .tz-info-value.font-italic= order.customerNote
 
-            .tz-card
-              .tz-card-header
-                i.fas.fa-receipt.mr-2
-                | Tổng cộng
-              .tz-card-body
-                .tz-summary-row
-                  span Số sản phẩm
-                  span= order.items.length
-                .tz-summary-row
-                  span Tổng số lượng
-                  - var totalQty = order.items.reduce(function(sum, i) { return sum + i.quantity; }, 0)
-                  span= totalQty
-                .tz-summary-divider
-                .tz-summary-row.tz-summary-total
-                  span Thành tiền
-                  span= order.totalAmount.toLocaleString('vi-VN') + '₫'
+          //- Section 3: Tổng cộng
+          .tz-card-section-divider
+          .tz-card-header
+            i.fas.fa-receipt.mr-2
+            | Tổng cộng
+          .tz-card-body
+            .tz-summary-row
+              span Số sản phẩm
+              span= order.items.length
+            .tz-summary-row
+              span Tổng số lượng
+              - var totalQty = order.items.reduce(function(sum, i) { return sum + i.quantity; }, 0)
+              span= totalQty
+            .tz-summary-divider
+            .tz-summary-row.tz-summary-total
+              span Thành tiền
+              span= order.totalAmount.toLocaleString('vi-VN') + '₫'
 
         .mt-2.mb-4
           a.tz-btn-back(href="/orders")
             i.fas.fa-arrow-left.mr-2
             | Quay lại đơn hàng
+
