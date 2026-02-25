@@ -1,5 +1,5 @@
 const User = require("../../models/user.model");
-const md5 = require("md5");
+const bcrypt = require("bcryptjs");
 const searchHelper = require("../../helpers/search");
 const filterStatusHelper = require("../../helpers/filterStatus");
 const sortHelper = require("../../helpers/sort");
@@ -128,7 +128,7 @@ module.exports.editPatch = async (req, res) => {
         };
 
         if (req.body.password && req.body.password.trim() !== "") {
-            updateData.password = md5(req.body.password);
+            updateData.password = bcrypt.hashSync(req.body.password, 10);
         }
 
         if (req.file) {

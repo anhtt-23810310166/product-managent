@@ -1,8 +1,8 @@
 // Kế thừa pattern từ controllers/admin/auth.controller.js
 
 const User = require("../../models/user.model");
-const md5 = require("md5");
-const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const generateHelper = require("../../helpers/generate");
 const sendMailHelper = require("../../helpers/sendMail");
 
@@ -34,19 +34,21 @@ module.exports.registerPost = async (req, res) => {
             return res.redirect("back");
         }
 
-        // Tạo user mới (kế thừa pattern md5 + token từ admin)
-        const token = crypto.randomBytes(20).toString("hex");
-
+        // Tạo user mới với bcrypt hash
         const newUser = new User({
             fullName: fullName,
             email: email,
-            password: md5(password),
-            token: token
+            password: bcrypt.hashSync(password, 10)
         });
 
         await newUser.save();
 
-        // Tự động đăng nhập sau khi đăng ký
+        // Tạo JWT token và lưu vào session
+        const token = jwt.sign(
+            { id: newUser._id, email: newUser.email },
+            process.env.JWT_SECRET,
+            { expiresIn: "24h" }
+        );
         req.session.userToken = token;
 
         req.flash("success", "Đăng ký thành công!");
@@ -85,7 +87,8 @@ module.exports.loginPost = async (req, res) => {
             return res.redirect("back");
         }
 
-        if (md5(password) !== user.password) {
+        // So sánh mật khẩu bằng bcrypt
+        if (!bcrypt.compareSync(password, user.password)) {
             req.flash("error", "Sai mật khẩu!");
             return res.redirect("back");
         }
@@ -95,14 +98,13 @@ module.exports.loginPost = async (req, res) => {
             return res.redirect("back");
         }
 
-        // Tương thích ngược: Nếu user cũ bị khuyết token do lỗi Model Mongoose trước đó, tự tạo lại token
-        if (!user.token) {
-            user.token = crypto.randomBytes(20).toString("hex");
-            await User.updateOne({ _id: user.id }, { token: user.token });
-        }
-
-        // Lưu token vào session (dùng key riêng: userToken)
-        req.session.userToken = user.token;
+        // Tạo JWT token và lưu vào session
+        const token = jwt.sign(
+            { id: user._id, email: user.email },
+            process.env.JWT_SECRET,
+            { expiresIn: "24h" }
+        );
+        req.session.userToken = token;
 
         req.flash("success", "Đăng nhập thành công!");
         res.redirect("/");
@@ -189,8 +191,13 @@ module.exports.otpPasswordPost = async (req, res) => {
         return res.redirect("back");
     }
 
-    // OTP đúng -> lưu token vào session để xác thực bước đổi pass
-    req.session.tokenUser = user.token;
+    // OTP đúng -> tạo JWT tạm để xác thực bước đổi pass
+    const resetToken = jwt.sign(
+        { id: user._id, purpose: "reset-password" },
+        process.env.JWT_SECRET,
+        { expiresIn: "10m" }
+    );
+    req.session.tokenUser = resetToken;
     res.redirect("/user/password/reset");
 };
 
@@ -206,26 +213,32 @@ module.exports.resetPassword = async (req, res) => {
 
 // [POST] /user/password/reset
 module.exports.resetPasswordPost = async (req, res) => {
-    const user = await User.findOne({
-        token: req.session.tokenUser
-    });
+    try {
+        const decoded = jwt.verify(req.session.tokenUser, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id);
 
-    if (!user) {
-        req.flash("error", "Lỗi xác thực!");
-        return res.redirect("/");
-    }
-
-    await User.updateOne(
-        { _id: user.id },
-        {
-            password: md5(req.body.password),
-            otpPassword: "",
+        if (!user) {
+            req.flash("error", "Lỗi xác thực!");
+            return res.redirect("/");
         }
-    );
 
-    req.session.tokenUser = null;
-    req.flash("success", "Đổi mật khẩu thành công!");
-    res.redirect("/user/login");
+        await User.updateOne(
+            { _id: user._id },
+            {
+                password: bcrypt.hashSync(req.body.password, 10),
+                otpPassword: "",
+            }
+        );
+
+        req.session.tokenUser = null;
+        req.flash("success", "Đổi mật khẩu thành công!");
+        res.redirect("/user/login");
+    } catch (error) {
+        console.log(error);
+        req.session.tokenUser = null;
+        req.flash("error", "Phiên đổi mật khẩu đã hết hạn!");
+        res.redirect("/user/password/forgot");
+    }
 };
 
 // [GET] /user/info
@@ -248,7 +261,7 @@ module.exports.infoPost = async (req, res) => {
         }
 
         await User.updateOne(
-            { token: req.session.userToken },
+            { _id: res.locals.clientUser._id },
             updateData
         );
 
@@ -274,7 +287,7 @@ module.exports.changePasswordPost = async (req, res) => {
         const { currentPassword, newPassword } = req.body;
 
         const user = await User.findOne({
-            token: req.session.userToken,
+            _id: res.locals.clientUser._id,
             deleted: false
         });
 
@@ -283,14 +296,15 @@ module.exports.changePasswordPost = async (req, res) => {
             return res.redirect("/user/login");
         }
 
-        if (md5(currentPassword) !== user.password) {
+        // So sánh mật khẩu hiện tại bằng bcrypt
+        if (!bcrypt.compareSync(currentPassword, user.password)) {
             req.flash("error", "Mật khẩu hiện tại không đúng!");
             return res.redirect("back");
         }
 
         await User.updateOne(
             { _id: user._id },
-            { password: md5(newPassword) }
+            { password: bcrypt.hashSync(newPassword, 10) }
         );
 
         req.flash("success", "Đổi mật khẩu thành công!");

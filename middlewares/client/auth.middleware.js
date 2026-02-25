@@ -1,13 +1,17 @@
 // Kế thừa pattern từ middlewares/admin/auth.middleware.js
 
 const User = require("../../models/user.model");
+const jwt = require("jsonwebtoken");
 
-// [Global Middleware] Gắn clientUser vào res.locals nếu đã đăng nhập
+// [Global Middleware] Gắn clientUser vào res.locals nếu đã đăng nhập - Dùng JWT
 module.exports.authMiddleware = async (req, res, next) => {
     if (req.session.userToken) {
         try {
+            // Xác thực JWT token
+            const decoded = jwt.verify(req.session.userToken, process.env.JWT_SECRET);
+
             const user = await User.findOne({
-                token: req.session.userToken,
+                _id: decoded.id,
                 status: "active",
                 deleted: false
             }).select("-password");
@@ -19,7 +23,8 @@ module.exports.authMiddleware = async (req, res, next) => {
                 req.session.userToken = null;
             }
         } catch (error) {
-            console.log("Client auth middleware error:", error);
+            console.log("Client auth middleware error:", error.message);
+            // JWT hết hạn hoặc không hợp lệ → xóa session
             req.session.userToken = null;
         }
     }

@@ -1,5 +1,6 @@
 const Account = require("../../models/account.model");
-const md5 = require("md5");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const systemConfig = require("../../config/system");
 const prefixAdmin = systemConfig.prefixAdmin;
 const createLog = require("../../helpers/activityLog");
@@ -31,7 +32,8 @@ module.exports.loginPost = async (req, res) => {
             return res.redirect("back");
         }
 
-        if (md5(password) !== account.password) {
+        // So sánh mật khẩu bằng bcrypt
+        if (!bcrypt.compareSync(password, account.password)) {
             req.flash("error", "Sai mật khẩu!");
             return res.redirect("back");
         }
@@ -41,8 +43,13 @@ module.exports.loginPost = async (req, res) => {
             return res.redirect("back");
         }
 
-        // Save token to session
-        req.session.token = account.token;
+        // Tạo JWT token và lưu vào session
+        const token = jwt.sign(
+            { id: account._id, email: account.email },
+            process.env.JWT_SECRET,
+            { expiresIn: "24h" }
+        );
+        req.session.token = token;
 
         // Ghi log đăng nhập
         res.locals.user = account;

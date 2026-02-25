@@ -1,17 +1,21 @@
 const Account = require("../../models/account.model");
 const Role = require("../../models/role.model");
+const jwt = require("jsonwebtoken");
 const systemConfig = require("../../config/system");
 const prefixAdmin = systemConfig.prefixAdmin;
 
-// [Middleware] Kiểm tra đăng nhập (Authentication)
+// [Middleware] Kiểm tra đăng nhập (Authentication) - Dùng JWT
 module.exports.requireAuth = async (req, res, next) => {
     if (!req.session.token) {
         return res.redirect(`${prefixAdmin}/auth/login`);
     }
 
     try {
+        // Xác thực JWT token
+        const decoded = jwt.verify(req.session.token, process.env.JWT_SECRET);
+
         const user = await Account.findOne({
-            token: req.session.token,
+            _id: decoded.id,
             status: "active",
             deleted: false
         }).select("-password");
@@ -32,7 +36,7 @@ module.exports.requireAuth = async (req, res, next) => {
 
         next();
     } catch (error) {
-        console.log(error);
+        console.log("Admin auth middleware error:", error.message);
         req.session.token = null;
         res.redirect(`${prefixAdmin}/auth/login`);
     }
@@ -50,4 +54,3 @@ module.exports.requirePermission = (permission) => {
         return res.redirect("back");
     };
 };
-

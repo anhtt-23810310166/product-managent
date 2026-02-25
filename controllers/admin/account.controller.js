@@ -1,20 +1,10 @@
 const Account = require("../../models/account.model");
 const Role = require("../../models/role.model");
 const accountService = require("../../services/account.service");
-const md5 = require("md5");
+const bcrypt = require("bcryptjs");
 const systemConfig = require("../../config/system");
 const prefixAdmin = systemConfig.prefixAdmin;
 const createLog = require("../../helpers/activityLog");
-
-// Generate random token
-const generateToken = (length = 20) => {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let result = "";
-    for (let i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
-};
 
 // [GET] /admin/accounts
 module.exports.index = async (req, res) => {
@@ -89,8 +79,7 @@ module.exports.createPost = async (req, res) => {
             return res.redirect("back");
         }
 
-        req.body.password = md5(req.body.password);
-        req.body.token = generateToken();
+        req.body.password = bcrypt.hashSync(req.body.password, 10);
 
         if (req.file) {
             req.body.avatar = req.file.path;
@@ -163,7 +152,7 @@ module.exports.editPatch = async (req, res) => {
 
         // Only update password if provided
         if (req.body.password) {
-            req.body.password = md5(req.body.password);
+            req.body.password = bcrypt.hashSync(req.body.password, 10);
         } else {
             delete req.body.password;
         }

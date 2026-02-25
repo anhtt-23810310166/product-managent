@@ -1,6 +1,6 @@
 const Account = require("../../models/account.model");
 const Role = require("../../models/role.model");
-const md5 = require("md5");
+const bcrypt = require("bcryptjs");
 const systemConfig = require("../../config/system");
 const prefixAdmin = systemConfig.prefixAdmin;
 const createLog = require("../../helpers/activityLog");
@@ -63,7 +63,7 @@ module.exports.editPatch = async (req, res) => {
 
         // Đổi mật khẩu nếu có nhập
         if (req.body.password && req.body.password.trim() !== "") {
-            updateData.password = md5(req.body.password);
+            updateData.password = bcrypt.hashSync(req.body.password, 10);
         }
 
         // Cập nhật avatar nếu có upload
