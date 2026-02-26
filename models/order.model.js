@@ -52,6 +52,22 @@ const orderSchema = new mongoose.Schema({
         enum: ["pending", "confirmed", "shipping", "delivered", "cancelled"]
     },
 
+    // Thanh toán
+    paymentMethod: {
+        type: String,
+        default: "cod",
+        enum: ["cod", "vnpay"]
+    },
+    paymentStatus: {
+        type: String,
+        default: "unpaid",
+        enum: ["unpaid", "paid"]
+    },
+    vnpayTransactionNo: {
+        type: String,
+        default: ""
+    },
+
     deleted: {
         type: Boolean,
         default: false

@@ -51,7 +51,7 @@ block main
               span.text-muted.mr-3.tz-rating-text #{averageRating}/5 (#{reviewCount} đánh giá)
             else
               span.text-muted.mr-3.tz-rating-text (Chưa có đánh giá)
-            span.text-muted.tz-rating-text | Đã bán 0
+            span.text-muted.tz-rating-text | Đã bán #{soldCount || 0}
 
           //- Price
           .p-3.mb-4.tz-price-box

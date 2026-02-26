@@ -5,8 +5,9 @@
 
 module.exports = (err, req, res, next) => {
     // Log lỗi cho developer (sau này thay bằng winston/pino)
-    console.error(`[ERROR] ${new Date().toISOString()} | ${req.method} ${req.originalUrl}`);
-    console.error(err.stack || err.message || err);
+    console.error(`\n[GLOBAL ERROR] ${new Date().toISOString()} | ${req.method} ${req.originalUrl}`);
+    console.error(">>> ERROR DETAILS:", err);
+    if (err.stack) console.error(">>> ERROR STACK:", err.stack);
 
     const statusCode = err.statusCode || 500;
 

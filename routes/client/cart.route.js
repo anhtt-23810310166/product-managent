@@ -9,4 +9,7 @@ router.post("/add/:productId", controller.addPost);
 router.patch("/update/:productId", controller.update);
 router.delete("/remove/:productId", controller.remove);
 
+// VNPay return callback
+router.get("/vnpay-return", controller.vnpayReturn);
+
 module.exports = router;

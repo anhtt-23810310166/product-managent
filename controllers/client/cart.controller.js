@@ -6,6 +6,7 @@ const {
     getCartTotalQuantity,
     calculateCartTotal
 } = require("../../helpers/product");
+const vnpayHelper = require("../../helpers/vnpay");
 
 // Helper: Lấy cartItems và cartTotal từ Cart document
 const getCartDetails = async (cart) => {
@@ -288,6 +289,9 @@ module.exports.checkoutPost = async (req, res) => {
             }
         }
 
+        // Xử lý phương thức thanh toán
+        const paymentMethod = req.body.paymentMethod || "cod";
+
         // Tạo đơn hàng
         const order = new Order({
             userId: res.locals.clientUser ? res.locals.clientUser.id : "",
@@ -296,7 +300,9 @@ module.exports.checkoutPost = async (req, res) => {
             customerAddress,
             customerNote: customerNote || "",
             items,
-            totalAmount
+            totalAmount,
+            paymentMethod: paymentMethod,
+            paymentStatus: "unpaid"
         });
         await order.save();
 
@@ -306,6 +312,22 @@ module.exports.checkoutPost = async (req, res) => {
             { $set: { items: [] } }
         );
 
+        // Xử lý VNPay redirect hoặc render COD success
+        if (paymentMethod === "vnpay") {
+            // Lấy IP client
+            const ipAddr = req.headers['x-forwarded-for'] ||
+                req.connection.remoteAddress ||
+                req.socket.remoteAddress ||
+                req.connection.socket.remoteAddress || "127.0.0.1";
+
+            const vnpayInfo = vnpayHelper.createPaymentUrl(order.id, totalAmount, ipAddr);
+
+            // Lưu txnRef vào đơn hàng để đối chiếu
+            await Order.updateOne({ _id: order.id }, { vnpayTransactionNo: vnpayInfo.txnRef });
+
+            return res.redirect(vnpayInfo.paymentUrl);
+        }
+
         res.render("client/pages/cart/checkout-success", {
             title: "Đặt hàng thành công",
             order
@@ -314,5 +336,59 @@ module.exports.checkoutPost = async (req, res) => {
         console.log("Checkout post error:", error);
         req.flash("error", "Có lỗi xảy ra, vui lòng thử lại!");
         res.redirect("/cart/checkout");
+    }
+};
+
+// [GET] /cart/vnpay-return
+module.exports.vnpayReturn = async (req, res) => {
+    try {
+        let vnpParams = req.query;
+
+        // Verify checksum
+        const isSecure = vnpayHelper.verifyReturnUrl(vnpParams);
+
+        if (isSecure) {
+            // response code vnpay trả về
+            const rspCode = vnpParams['vnp_ResponseCode'];
+            const txnRef = vnpParams['vnp_TxnRef']; // orderId_timestamp
+
+            // Tìm đơn hàng theo txnRef
+            const order = await Order.findOne({ vnpayTransactionNo: txnRef });
+
+            if (!order) {
+                req.flash("error", "Không tìm thấy đơn hàng!");
+                return res.redirect("/");
+            }
+
+            if (rspCode === "00") {
+                // Thanh toán thành công -> Cập nhật paymentStatus
+                await Order.updateOne(
+                    { _id: order.id },
+                    { paymentStatus: "paid" }
+                );
+
+                res.render("client/pages/cart/checkout-success", {
+                    title: "Đặt hàng thành công",
+                    order,
+                    paymentMessage: "Thanh toán VNPay thành công!"
+                });
+            } else {
+                // Thanh toán thất bại -> Hủy/Pending
+                await Order.updateOne(
+                    { _id: order.id },
+                    { status: "cancelled", paymentStatus: "unpaid" }
+                );
+
+                req.flash("error", "Thanh toán thất bại hoặc đã bị hủy!");
+                res.redirect("/cart/checkout");
+            }
+        } else {
+            req.flash("error", "Tham số không hợp lệ. Sai checksum!");
+            res.redirect("/");
+        }
+    } catch (error) {
+        console.log("VNPay return error: ", error);
+        req.flash("error", "Có lỗi xảy ra khi xác nhận thanh toán!");
+        res.redirect("/");
     }
 };

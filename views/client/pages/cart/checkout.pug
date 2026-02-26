@@ -62,6 +62,28 @@ block main
                   label.font-weight-500(for="customerNote") Ghi chú (Tùy chọn)
                   textarea.form-control#customerNote(name="customerNote" rows="2" placeholder="Lưu ý cho người giao hàng..." class="tz-auto-d90f81")
 
+              //- Chọn phương thức thanh toán
+              .tz-payment-methods.mt-4
+                h5.font-weight-bold.mb-3
+                  i.fas.fa-credit-card.mr-2(class="tz-auto-aacc5d")
+                  | Phương thức thanh toán
+
+                .tz-payment-option
+                  input#paymentCod(type="radio" name="paymentMethod" value="cod" checked)
+                  label(for="paymentCod")
+                    img(src="/images/cod-icon.png" alt="COD" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2809/2809986.png'")
+                    .tz-payment-info
+                      span.tz-payment-name Thanh toán khi nhận hàng (COD)
+                      span.tz-payment-desc Thanh toán bằng tiền mặt khi giao hàng
+
+                .tz-payment-option
+                  input#paymentVnpay(type="radio" name="paymentMethod" value="vnpay")
+                  label(for="paymentVnpay")
+                    img(src="/images/vnpay-icon.png" alt="VNPay" onerror="this.src='https://vnpay.vn/s1/statics.vnpay.vn/2023/6/0oxhzjmxbksr1686814746087.png'")
+                    .tz-payment-info
+                      span.tz-payment-name Thanh toán online qua VNPAY
+                      span.tz-payment-desc Hỗ trợ ATM nội địa, Visa, MasterCard, JCB, QR Pay
+
               //- Ẩn nút đặt hàng nếu User đăng nhập mà CỐ TÌNH CHƯA có Address
               if (!clientUser || (clientUser && defaultAddress))
                 button.btn.btn-primary.w-100.mt-3(type="submit" class="tz-auto-ca8074")

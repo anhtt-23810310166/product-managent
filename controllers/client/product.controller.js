@@ -178,6 +178,21 @@ module.exports.detail = async (req, res) => {
             }
         }
 
+        // Tính tổng số lượng đã bán
+        const allOrders = await Order.find({
+            "items.productId": product._id.toString(),
+            status: { $ne: "cancelled" },
+            deleted: false
+        });
+        
+        let soldCount = 0;
+        for (const order of allOrders) {
+            const item = order.items.find(i => i.productId === product._id.toString());
+            if (item) {
+                soldCount += item.quantity;
+            }
+        }
+
         res.render("client/pages/products/detail", {
             title: product.title,
             product: product,
@@ -186,7 +201,8 @@ module.exports.detail = async (req, res) => {
             averageRating: averageRating,
             reviewCount: reviews.length,
             canReview: canReview,
-            hasReviewed: hasReviewed
+            hasReviewed: hasReviewed,
+            soldCount: soldCount
         });
     } catch (error) {
         res.redirect("/products");
