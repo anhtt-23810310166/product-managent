@@ -1,33 +1,16 @@
-module.exports.createPost = (req, res, next) => {
-    if (!req.body.title || req.body.title.trim() === "") {
-        req.flash("error", "Tên danh mục không được để trống!");
-        return res.redirect("back");
-    }
+const Joi = require("joi");
+const validate = require("../../middlewares/validate.middleware");
 
-    if (req.body.position !== "" && req.body.position !== undefined) {
-        const position = parseFloat(req.body.position);
-        if (isNaN(position) || position < 1) {
-            req.flash("error", "Vị trí phải là số >= 1!");
-            return res.redirect("back");
-        }
-    }
+const categorySchema = Joi.object({
+    title: Joi.string().trim().required().messages({
+        "string.empty": "Tên danh mục không được để trống!",
+        "any.required": "Tên danh mục không được để trống!"
+    }),
+    position: Joi.number().min(1).allow("", null).messages({
+        "number.base": "Vị trí phải là số >= 1!",
+        "number.min": "Vị trí phải là số >= 1!"
+    })
+});
 
-    next();
-};
-
-module.exports.editPatch = (req, res, next) => {
-    if (!req.body.title || req.body.title.trim() === "") {
-        req.flash("error", "Tên danh mục không được để trống!");
-        return res.redirect("back");
-    }
-
-    if (req.body.position !== "" && req.body.position !== undefined) {
-        const position = parseFloat(req.body.position);
-        if (isNaN(position) || position < 1) {
-            req.flash("error", "Vị trí phải là số >= 1!");
-            return res.redirect("back");
-        }
-    }
-
-    next();
-};
+module.exports.createPost = validate(categorySchema);
+module.exports.editPatch = validate(categorySchema);

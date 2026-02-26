@@ -1,44 +1,35 @@
-module.exports.createPost = (req, res, next) => {
-    if (!req.body.fullName || req.body.fullName.trim() === "") {
-        req.flash("error", "Họ tên không được để trống!");
-        return res.redirect("back");
-    }
+const Joi = require("joi");
+const validate = require("../../middlewares/validate.middleware");
 
-    if (!req.body.email || req.body.email.trim() === "") {
-        req.flash("error", "Email không được để trống!");
-        return res.redirect("back");
-    }
+// Schema tạo tài khoản
+const createSchema = Joi.object({
+    fullName: Joi.string().trim().required().messages({
+        "string.empty": "Họ tên không được để trống!",
+        "any.required": "Họ tên không được để trống!"
+    }),
+    email: Joi.string().trim().email().required().messages({
+        "string.empty": "Email không được để trống!",
+        "any.required": "Email không được để trống!",
+        "string.email": "Email không đúng định dạng!"
+    }),
+    password: Joi.string().trim().required().messages({
+        "string.empty": "Mật khẩu không được để trống!",
+        "any.required": "Mật khẩu không được để trống!"
+    })
+});
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(req.body.email)) {
-        req.flash("error", "Email không đúng định dạng!");
-        return res.redirect("back");
-    }
+// Schema chỉnh sửa tài khoản (không bắt buộc password)
+const editSchema = Joi.object({
+    fullName: Joi.string().trim().required().messages({
+        "string.empty": "Họ tên không được để trống!",
+        "any.required": "Họ tên không được để trống!"
+    }),
+    email: Joi.string().trim().email().required().messages({
+        "string.empty": "Email không được để trống!",
+        "any.required": "Email không được để trống!",
+        "string.email": "Email không đúng định dạng!"
+    })
+});
 
-    if (!req.body.password || req.body.password.trim() === "") {
-        req.flash("error", "Mật khẩu không được để trống!");
-        return res.redirect("back");
-    }
-
-    next();
-};
-
-module.exports.editPatch = (req, res, next) => {
-    if (!req.body.fullName || req.body.fullName.trim() === "") {
-        req.flash("error", "Họ tên không được để trống!");
-        return res.redirect("back");
-    }
-
-    if (!req.body.email || req.body.email.trim() === "") {
-        req.flash("error", "Email không được để trống!");
-        return res.redirect("back");
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(req.body.email)) {
-        req.flash("error", "Email không đúng định dạng!");
-        return res.redirect("back");
-    }
-
-    next();
-};
+module.exports.createPost = validate(createSchema);
+module.exports.editPatch = validate(editSchema);

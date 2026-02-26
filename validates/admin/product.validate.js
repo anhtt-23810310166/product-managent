@@ -1,81 +1,29 @@
-module.exports.createPost = (req, res, next) => {
-    if (!req.body.title || req.body.title.trim() === "") {
-        req.flash("error", "Tên sản phẩm không được để trống!");
-        return res.redirect("back");
-    }
+const Joi = require("joi");
+const validate = require("../../middlewares/validate.middleware");
 
-    if (req.body.price !== "" && req.body.price !== undefined) {
-        const price = parseFloat(req.body.price);
-        if (isNaN(price) || price < 0) {
-            req.flash("error", "Giá sản phẩm phải là số >= 0!");
-            return res.redirect("back");
-        }
-    }
+const productSchema = Joi.object({
+    title: Joi.string().trim().required().messages({
+        "string.empty": "Tên sản phẩm không được để trống!",
+        "any.required": "Tên sản phẩm không được để trống!"
+    }),
+    price: Joi.number().min(0).allow("", null).messages({
+        "number.base": "Giá sản phẩm phải là số >= 0!",
+        "number.min": "Giá sản phẩm phải là số >= 0!"
+    }),
+    discountPercentage: Joi.number().min(0).max(100).allow("", null).messages({
+        "number.base": "Giảm giá phải từ 0 đến 100!",
+        "number.min": "Giảm giá phải từ 0 đến 100!",
+        "number.max": "Giảm giá phải từ 0 đến 100!"
+    }),
+    stock: Joi.number().min(0).allow("", null).messages({
+        "number.base": "Số lượng phải là số >= 0!",
+        "number.min": "Số lượng phải là số >= 0!"
+    }),
+    position: Joi.number().min(1).allow("", null).messages({
+        "number.base": "Vị trí phải là số >= 1!",
+        "number.min": "Vị trí phải là số >= 1!"
+    })
+});
 
-    if (req.body.discountPercentage !== "" && req.body.discountPercentage !== undefined) {
-        const discount = parseFloat(req.body.discountPercentage);
-        if (isNaN(discount) || discount < 0 || discount > 100) {
-            req.flash("error", "Giảm giá phải từ 0 đến 100!");
-            return res.redirect("back");
-        }
-    }
-
-    if (req.body.stock !== "" && req.body.stock !== undefined) {
-        const stock = parseFloat(req.body.stock);
-        if (isNaN(stock) || stock < 0) {
-            req.flash("error", "Số lượng phải là số >= 0!");
-            return res.redirect("back");
-        }
-    }
-
-    if (req.body.position !== "" && req.body.position !== undefined) {
-        const position = parseFloat(req.body.position);
-        if (isNaN(position) || position < 1) {
-            req.flash("error", "Vị trí phải là số >= 1!");
-            return res.redirect("back");
-        }
-    }
-
-    next();
-};
-
-module.exports.editPatch = (req, res, next) => {
-    if (!req.body.title || req.body.title.trim() === "") {
-        req.flash("error", "Tên sản phẩm không được để trống!");
-        return res.redirect("back");
-    }
-
-    if (req.body.price !== "" && req.body.price !== undefined) {
-        const price = parseFloat(req.body.price);
-        if (isNaN(price) || price < 0) {
-            req.flash("error", "Giá sản phẩm phải là số >= 0!");
-            return res.redirect("back");
-        }
-    }
-
-    if (req.body.discountPercentage !== "" && req.body.discountPercentage !== undefined) {
-        const discount = parseFloat(req.body.discountPercentage);
-        if (isNaN(discount) || discount < 0 || discount > 100) {
-            req.flash("error", "Giảm giá phải từ 0 đến 100!");
-            return res.redirect("back");
-        }
-    }
-
-    if (req.body.stock !== "" && req.body.stock !== undefined) {
-        const stock = parseFloat(req.body.stock);
-        if (isNaN(stock) || stock < 0) {
-            req.flash("error", "Số lượng phải là số >= 0!");
-            return res.redirect("back");
-        }
-    }
-
-    if (req.body.position !== "" && req.body.position !== undefined) {
-        const position = parseFloat(req.body.position);
-        if (isNaN(position) || position < 1) {
-            req.flash("error", "Vị trí phải là số >= 1!");
-            return res.redirect("back");
-        }
-    }
-
-    next();
-};
+module.exports.createPost = validate(productSchema);
+module.exports.editPatch = validate(productSchema);

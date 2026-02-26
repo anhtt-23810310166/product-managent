@@ -4247,3 +4247,61 @@ a.btn-outline-primary.active {
   font-size: 14px;
   margin: 0;
 }
+
+/* ==========================================================
+   HEADER CUSTOMIZATION
+   ========================================================== */
+.tz-search-form .input-group {
+  border: 1px solid #e1e1e1;
+  border-radius: 50px;
+  overflow: hidden;
+  background: white;
+}
+
+.tz-search-form .input-group-text {
+  border: none !important;
+  background: white !important;
+  padding-left: 20px;
+  border-radius: 0;
+}
+
+.tz-search-form .form-control {
+  border: none !important;
+  background: white !important;
+  box-shadow: none !important;
+}
+
+.tz-search-form .tz-search-btn {
+  border-radius: 0 50px 50px 0 !important;
+  padding-right: 24px;
+  padding-left: 24px;
+  margin: -1px; /* Kéo nút lấp đầy viền phải */
+}
+
+.tz-lang-badge {
+  border-radius: 50px !important;
+}
+
+/* ==========================================================
+   FEATURES BAR CUSTOMIZATION
+   ========================================================== */
+.tz-features {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.tz-feature-item {
+  background: #fff;
+  border: 1px solid #e1e1e1;
+  border-radius: var(--tz-radius);
+  padding: 16px 20px;
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+.tz-feature-item:hover {
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  border-color: #d1d5db;
+}

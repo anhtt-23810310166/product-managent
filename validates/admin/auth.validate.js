@@ -1,13 +1,15 @@
-module.exports.loginPost = (req, res, next) => {
-    if (!req.body.email || req.body.email.trim() === "") {
-        req.flash("error", "Vui lòng nhập email!");
-        return res.redirect("back");
-    }
+const Joi = require("joi");
+const validate = require("../../middlewares/validate.middleware");
 
-    if (!req.body.password || req.body.password.trim() === "") {
-        req.flash("error", "Vui lòng nhập mật khẩu!");
-        return res.redirect("back");
-    }
+const loginSchema = Joi.object({
+    email: Joi.string().trim().required().messages({
+        "string.empty": "Vui lòng nhập email!",
+        "any.required": "Vui lòng nhập email!"
+    }),
+    password: Joi.string().trim().required().messages({
+        "string.empty": "Vui lòng nhập mật khẩu!",
+        "any.required": "Vui lòng nhập mật khẩu!"
+    })
+});
 
-    next();
-};
+module.exports.loginPost = validate(loginSchema);

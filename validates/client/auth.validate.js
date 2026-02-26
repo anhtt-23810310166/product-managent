@@ -1,114 +1,89 @@
-// Kế thừa pattern từ validates/admin/auth.validate.js
+const Joi = require("joi");
+const validate = require("../../middlewares/validate.middleware");
 
 // [POST] /user/register
-module.exports.registerPost = (req, res, next) => {
-    if (!req.body.fullName || req.body.fullName.trim() === "") {
-        req.flash("error", "Vui lòng nhập họ tên!");
-        return res.redirect("back");
-    }
+const registerSchema = Joi.object({
+    fullName: Joi.string().trim().required().messages({
+        "string.empty": "Vui lòng nhập họ tên!",
+        "any.required": "Vui lòng nhập họ tên!"
+    }),
+    email: Joi.string().trim().email().required().messages({
+        "string.empty": "Vui lòng nhập email!",
+        "any.required": "Vui lòng nhập email!",
+        "string.email": "Email không đúng định dạng!"
+    }),
+    password: Joi.string().trim().min(6).required().messages({
+        "string.empty": "Vui lòng nhập mật khẩu!",
+        "any.required": "Vui lòng nhập mật khẩu!",
+        "string.min": "Mật khẩu phải có ít nhất 6 ký tự!"
+    }),
+    confirmPassword: Joi.any().valid(Joi.ref("password")).required().messages({
+        "any.only": "Xác nhận mật khẩu không khớp!",
+        "any.required": "Vui lòng xác nhận mật khẩu!"
+    })
+});
 
-    if (!req.body.email || req.body.email.trim() === "") {
-        req.flash("error", "Vui lòng nhập email!");
-        return res.redirect("back");
-    }
+// [POST] /user/login
+const loginSchema = Joi.object({
+    email: Joi.string().trim().required().messages({
+        "string.empty": "Vui lòng nhập email!",
+        "any.required": "Vui lòng nhập email!"
+    }),
+    password: Joi.string().trim().required().messages({
+        "string.empty": "Vui lòng nhập mật khẩu!",
+        "any.required": "Vui lòng nhập mật khẩu!"
+    })
+});
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(req.body.email)) {
-        req.flash("error", "Email không đúng định dạng!");
-        return res.redirect("back");
-    }
+// [POST] /user/password/forgot
+const forgotPasswordSchema = Joi.object({
+    email: Joi.string().trim().required().messages({
+        "string.empty": "Vui lòng nhập email!",
+        "any.required": "Vui lòng nhập email!"
+    })
+});
 
-    if (!req.body.password || req.body.password.trim() === "") {
-        req.flash("error", "Vui lòng nhập mật khẩu!");
-        return res.redirect("back");
-    }
-
-    if (req.body.password.length < 6) {
-        req.flash("error", "Mật khẩu phải có ít nhất 6 ký tự!");
-        return res.redirect("back");
-    }
-
-    if (req.body.password !== req.body.confirmPassword) {
-        req.flash("error", "Xác nhận mật khẩu không khớp!");
-        return res.redirect("back");
-    }
-
-    next();
-};
-
-// [POST] /user/login — kế thừa y nguyên từ admin
-module.exports.loginPost = (req, res, next) => {
-    if (!req.body.email || req.body.email.trim() === "") {
-        req.flash("error", "Vui lòng nhập email!");
-        return res.redirect("back");
-    }
-
-    if (!req.body.password || req.body.password.trim() === "") {
-        req.flash("error", "Vui lòng nhập mật khẩu!");
-        return res.redirect("back");
-    }
-
-    next();
-};
-
-module.exports.forgotPasswordPost = (req, res, next) => {
-    if (!req.body.email || req.body.email.trim() === "") {
-        req.flash("error", "Vui lòng nhập email!");
-        return res.redirect("back");
-    }
-    next();
-};
-
-module.exports.resetPasswordPost = (req, res, next) => {
-    if (!req.body.password || req.body.password.trim() === "") {
-        req.flash("error", "Vui lòng nhập mật khẩu!");
-        return res.redirect("back");
-    }
-
-    if (req.body.password.length < 6) {
-        req.flash("error", "Mật khẩu phải có ít nhất 6 ký tự!");
-        return res.redirect("back");
-    }
-
-    if (req.body.password !== req.body.confirmPassword) {
-        req.flash("error", "Xác nhận mật khẩu không khớp!");
-        return res.redirect("back");
-    }
-
-    next();
-};
+// [POST] /user/password/reset
+const resetPasswordSchema = Joi.object({
+    password: Joi.string().trim().min(6).required().messages({
+        "string.empty": "Vui lòng nhập mật khẩu!",
+        "any.required": "Vui lòng nhập mật khẩu!",
+        "string.min": "Mật khẩu phải có ít nhất 6 ký tự!"
+    }),
+    confirmPassword: Joi.any().valid(Joi.ref("password")).required().messages({
+        "any.only": "Xác nhận mật khẩu không khớp!",
+        "any.required": "Vui lòng xác nhận mật khẩu!"
+    })
+});
 
 // [POST] /user/info
-module.exports.infoPost = (req, res, next) => {
-    if (!req.body.fullName || req.body.fullName.trim() === "") {
-        req.flash("error", "Vui lòng nhập họ tên!");
-        return res.redirect("back");
-    }
-
-    next();
-};
+const infoSchema = Joi.object({
+    fullName: Joi.string().trim().required().messages({
+        "string.empty": "Vui lòng nhập họ tên!",
+        "any.required": "Vui lòng nhập họ tên!"
+    })
+});
 
 // [POST] /user/password/change
-module.exports.changePasswordPost = (req, res, next) => {
-    if (!req.body.currentPassword || req.body.currentPassword.trim() === "") {
-        req.flash("error", "Vui lòng nhập mật khẩu hiện tại!");
-        return res.redirect("back");
-    }
+const changePasswordSchema = Joi.object({
+    currentPassword: Joi.string().trim().required().messages({
+        "string.empty": "Vui lòng nhập mật khẩu hiện tại!",
+        "any.required": "Vui lòng nhập mật khẩu hiện tại!"
+    }),
+    newPassword: Joi.string().trim().min(6).required().messages({
+        "string.empty": "Vui lòng nhập mật khẩu mới!",
+        "any.required": "Vui lòng nhập mật khẩu mới!",
+        "string.min": "Mật khẩu mới phải có ít nhất 6 ký tự!"
+    }),
+    confirmPassword: Joi.any().valid(Joi.ref("newPassword")).required().messages({
+        "any.only": "Xác nhận mật khẩu không khớp!",
+        "any.required": "Vui lòng xác nhận mật khẩu!"
+    })
+});
 
-    if (!req.body.newPassword || req.body.newPassword.trim() === "") {
-        req.flash("error", "Vui lòng nhập mật khẩu mới!");
-        return res.redirect("back");
-    }
-
-    if (req.body.newPassword.length < 6) {
-        req.flash("error", "Mật khẩu mới phải có ít nhất 6 ký tự!");
-        return res.redirect("back");
-    }
-
-    if (req.body.newPassword !== req.body.confirmPassword) {
-        req.flash("error", "Xác nhận mật khẩu không khớp!");
-        return res.redirect("back");
-    }
-
-    next();
-};
+module.exports.registerPost = validate(registerSchema);
+module.exports.loginPost = validate(loginSchema);
+module.exports.forgotPasswordPost = validate(forgotPasswordSchema);
+module.exports.resetPasswordPost = validate(resetPasswordSchema);
+module.exports.infoPost = validate(infoSchema);
+module.exports.changePasswordPost = validate(changePasswordSchema);
