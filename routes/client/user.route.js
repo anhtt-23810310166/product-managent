@@ -4,6 +4,8 @@ const controller = require("../../controllers/client/auth.controller");
 const validate = require("../../validates/client/auth.validate");
 const authMiddleware = require("../../middlewares/client/auth.middleware");
 const upload = require("../../helpers/upload");
+const passport = require("../../helpers/passport");
+const jwt = require("jsonwebtoken");
 
 router.get("/register", controller.register);
 router.post("/register", validate.registerPost, controller.registerPost);
@@ -27,6 +29,45 @@ router.post("/info", authMiddleware.requireAuth, upload.single("avatar"), valida
 
 router.get("/password/change", authMiddleware.requireAuth, controller.changePassword);
 router.post("/password/change", authMiddleware.requireAuth, validate.changePasswordPost, controller.changePasswordPost);
+
+// ==================== GOOGLE OAuth ====================
+router.get("/auth/google", passport.authenticate("google", {
+    scope: ["profile", "email"]
+}));
+
+router.get("/auth/google/callback",
+    passport.authenticate("google", { failureRedirect: "/user/login", session: false }),
+    (req, res) => {
+        // Tạo JWT token giống loginPost
+        const token = jwt.sign(
+            { id: req.user._id },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
+        req.session.userToken = token;
+        req.flash("success", "Đăng nhập bằng Google thành công!");
+        res.redirect("/");
+    }
+);
+
+// ==================== FACEBOOK OAuth ====================
+router.get("/auth/facebook", passport.authenticate("facebook", {
+    scope: ["email"]
+}));
+
+router.get("/auth/facebook/callback",
+    passport.authenticate("facebook", { failureRedirect: "/user/login", session: false }),
+    (req, res) => {
+        const token = jwt.sign(
+            { id: req.user._id },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
+        req.session.userToken = token;
+        req.flash("success", "Đăng nhập bằng Facebook thành công!");
+        res.redirect("/");
+    }
+);
 
 const addressRoutes = require("./address.route");
 router.use("/address", addressRoutes);

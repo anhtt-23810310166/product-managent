@@ -7,6 +7,13 @@ const userSchema = new mongoose.Schema(
         password: String,
         avatar: String,
         token: String,
+        authType: {
+            type: String,
+            enum: ["local", "google", "facebook"],
+            default: "local"
+        },
+        googleId: String,
+        facebookId: String,
         addresses: [
             {
                 fullName: String,

@@ -1684,6 +1684,78 @@ a.btn-outline-primary.active {
   text-decoration: underline;
 }
 
+/* Social Login Buttons */
+.auth-social-divider {
+  display: flex;
+  align-items: center;
+  margin: 20px 0 16px;
+  gap: 12px;
+}
+
+.auth-social-divider::before,
+.auth-social-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #ddd;
+}
+
+.auth-social-divider span {
+  font-size: 13px;
+  color: #999;
+  white-space: nowrap;
+}
+
+.auth-social-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.auth-social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 11px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.auth-social-btn:hover {
+  text-decoration: none;
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.auth-social-btn i {
+  font-size: 16px;
+}
+
+.auth-social-google {
+  background: linear-gradient(135deg, #ea4335, #d62d20);
+}
+
+.auth-social-google:hover {
+  background: linear-gradient(135deg, #d62d20, #c02516);
+}
+
+.auth-social-facebook {
+  background: linear-gradient(135deg, #1877f2, #0d65d9);
+}
+
+.auth-social-facebook:hover {
+  background: linear-gradient(135deg, #0d65d9, #0a52b5);
+}
+
 /* ==========================================================
    BREADCRUMBS & PAGE TITLES
    ========================================================== */

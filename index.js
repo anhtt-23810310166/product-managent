@@ -10,6 +10,8 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
+const passport = require("./helpers/passport");
+
 const database = require("./config/database");
 database.connect();
 
@@ -41,6 +43,9 @@ app.use(cookieSession({
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 app.use(flash());
+
+// Passport OAuth
+app.use(passport.initialize());
 
 // System config
 const systemConfig = require("./config/system");

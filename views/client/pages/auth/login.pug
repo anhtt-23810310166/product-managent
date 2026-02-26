@@ -32,6 +32,17 @@ block main
             i.fas.fa-sign-in-alt
             |  Đăng nhập
 
+        .auth-social-divider
+          span Hoặc đăng nhập bằng
+
+        .auth-social-buttons
+          a.auth-social-btn.auth-social-google(href="/user/auth/google")
+            i.fab.fa-google
+            span Đăng nhập bằng Google
+          a.auth-social-btn.auth-social-facebook(href="/user/auth/facebook")
+            i.fab.fa-facebook-f
+            span Đăng nhập bằng Facebook
+
         .auth-footer
           span Chưa có tài khoản?
           a(href="/user/register") Đăng ký ngay
